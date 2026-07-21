@@ -2,7 +2,11 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 import { AppError } from '../utils/AppError.js';
 import {prisma} from '../src/db.js';
 import validator from 'validator'
+import transport from '../config/nodemailer.js';
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
+// 1. auth register
 export const authRegister = asyncHandler(async(req, res, next)=>{
     const {email, password } = req.body;
     if(!email){
@@ -51,10 +55,60 @@ export const authRegister = asyncHandler(async(req, res, next)=>{
             provider:true,
         }
     })
+    const token = await jwt.sign({ id:user.id, email:user.email},process.env.SECRET_KEY,{expiresIn:'5min'})
+    const verificationLink = `http://localhost:6001/auth/verify-email?token=${token}`
+    await transport.sendMail({
+        from:`MY-app ${process.env.EMAIL}`,
+        to:normalizedEmail,
+        subject:"demo-message",
+        html:`just a checking message. Please click <a href="${verificationLink}">here</a> to verify your email.`
+
+    })
 
     res.status(201).json({
         success:true,
         message:"User Created Successfully",
         user
     })
+})
+
+//2. auth verify email
+export const authverifyEmail = asyncHandler(async(req, res, next)=>{
+    const token = req.query.token;
+    if(!token){
+        return next(new AppError("Token is required", 400))
+    }
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    if(!decoded){
+        return next(new AppError("Invalid Token", 401))
+    }
+    const user = await prisma.user.findUnique({
+        where:{
+            id:decoded.id
+        }
+    })
+    if(!user){
+        return next(new AppError("User not found", 404))
+    }
+    if(user.emailverified){
+        return next(new AppError("Email already verified", 400))
+    }
+    await prisma.user.update({
+        where:{
+            id:decoded.id
+        },
+        data:{
+            emailverified:true
+        }
+    })
+    res.status(200).json({
+        success:true,
+        message:"Email verified successfully",
+        
+    })
+})
+
+// 2. auth login
+export const authLogin = asyncHandler(async(req, res, next) =>{
+    
 })
