@@ -198,7 +198,6 @@ model ProductReview {
 }
 
 model ProductAttribute {
-
   id          String @id @default(cuid())
 
   productId   String
