@@ -10,7 +10,10 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));
 app.use(cookieParser());
-app.use(cors())
+app.use(cors({
+    origin:'http://localhost:6003',
+    credentials:true,
+}))
 app.use(helmet())
 
 app.use('/api',category)

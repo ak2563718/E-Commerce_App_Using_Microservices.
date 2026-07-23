@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Cart {
+  id          String      @id @default(cuid())
+
+  userId      String      @unique
+
+  status      CartStatus  @default(ACTIVE)
+
+  subtotal    Decimal     @db.Decimal(10,2) @default(0)
+  discount    Decimal     @db.Decimal(10,2) @default(0)
+  tax         Decimal     @db.Decimal(10,2) @default(0)
+  total       Decimal     @db.Decimal(10,2) @default(0)
+
+  items       CartItem[]
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+enum CartStatus {
+  ACTIVE
+  ORDERED
+  ABANDONED
+}
+
+model CartItem {
+  id                  String   @id @default(cuid())
+
+  cartId              String
+  cart                Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+
+  productId           String
+  variantId           String?
+
+  quantity            Int      @default(1)
+
+  productName         String
+  productSlug         String
+
+  variantName         String?
+
+  unitPrice           Decimal  @db.Decimal(10,2)
+  totalPrice          Decimal  @db.Decimal(10,2)
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@unique([cartId, productId, variantId])
+
+  @@index([productId])
+  @@index([variantId])
+}

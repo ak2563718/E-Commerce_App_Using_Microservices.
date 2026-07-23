@@ -1,0 +1,24 @@
+{
+  "name": "cart-services",
+  "version": "1.0.0",
+  "description": "This is cart-service app for e-commerce app",
+  "license": "ISC",
+  "author": "akash",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.9.0",
+    "@prisma/client": "^7.9.0",
+    "axios": "^1.18.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "nodemon": "^3.1.14",
+    "pg": "^8.22.0",
+    "prisma": "^7.9.0"
+  }
+}
