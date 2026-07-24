@@ -2,6 +2,8 @@
 import { useState } from 'react'
 import { BrandPanel, Divider, Field, GoogleButton, PasswordField, PinkButton } from './AuthLayout'
 import { useRouter } from 'next/navigation'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import { authSignup } from '@/redux/auth/auth.Action'
 
 function StrengthBar({ password }: { password: string }) {
   const strength = password.length === 0 ? 0
@@ -25,12 +27,19 @@ function StrengthBar({ password }: { password: string }) {
   )
 }
 
+
 export default function Signup() {
-    const router = useRouter()
+  const router = useRouter()
   const [data, setData] = useState({ email: '', password: '', confirm: '' })
   const [showPass, setShowPass] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
-
+  const dispatch = useAppDispatch()
+  const { user } = useAppSelector((state)=>state.auth)
+ 
+  const handleOnClick =async()=>{
+    await dispatch(authSignup(data))
+    console.log(user)
+  }
   return (
     <div className="flex rounded-2xl overflow-hidden shadow-2xl" style={{ boxShadow: '0 16px 48px rgba(233,30,140,0.18)', maxWidth: 740 }}>
       <BrandPanel />
@@ -64,7 +73,7 @@ export default function Signup() {
             value={data.confirm} onChange={v => setData(d => ({ ...d, confirm: v }))}
             show={showConfirm} onToggle={() => setShowConfirm(s => !s)} />
 
-          <PinkButton type="submit">Create Account</PinkButton>
+          <PinkButton type="button" onClick={handleOnClick} >Create Account</PinkButton>
 
           <Divider />
 

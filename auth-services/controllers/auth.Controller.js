@@ -102,11 +102,7 @@ export const authverifyEmail = asyncHandler(async(req, res, next)=>{
             emailverified:true
         }
     })
-    res.status(200).json({
-        success:true,
-        message:"Email verified successfully",
-
-    })
+    res.redirect('http://localhost:3000/login')
 })
 
 // 3. auth login
