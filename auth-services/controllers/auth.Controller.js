@@ -102,7 +102,7 @@ export const authverifyEmail = asyncHandler(async(req, res, next)=>{
             emailverified:true
         }
     })
-    res.redirect('http://localhost:3000/login')
+    res.redirect('http://localhost:3000/auth/verify-email')
 })
 
 // 3. auth login

@@ -18,7 +18,7 @@ export default function Login() {
           <button  className="flex-1 py-3.5 text-xs font-bold tracking-wide" style={{ color: '#e91e8c', borderBottom: '2px solid #e91e8c' }}>
             Sign In
           </button>
-          <button onClick={()=>router.push('/signup')}  className="flex-1 py-3.5 text-xs font-bold tracking-wide text-gray-400 hover:text-pink-400 transition-colors" style={{ borderBottom: '2px solid transparent' }}>
+          <button onClick={()=>router.push('/auth/signup')}  className="flex-1 py-3.5 text-xs font-bold tracking-wide text-gray-400 hover:text-pink-400 transition-colors" style={{ borderBottom: '2px solid transparent' }}>
             Create Account
           </button>
         </div>

@@ -4,6 +4,7 @@ import { BrandPanel, Divider, Field, GoogleButton, PasswordField, PinkButton } f
 import { useRouter } from 'next/navigation'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { authSignup } from '@/redux/auth/auth.Action'
+import { toast } from 'sonner'
 
 function StrengthBar({ password }: { password: string }) {
   const strength = password.length === 0 ? 0
@@ -34,11 +35,23 @@ export default function Signup() {
   const [showPass, setShowPass] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const dispatch = useAppDispatch()
-  const { user } = useAppSelector((state)=>state.auth)
+  const { user, error } = useAppSelector((state)=>state.auth)
  
   const handleOnClick =async()=>{
-    await dispatch(authSignup(data))
-    console.log(user)
+    try {
+      const res = await dispatch(authSignup(data)).unwrap()
+      toast.success(res.data.message)
+      setData({
+        email:'',
+        password:'',
+        confirm:'',
+      })
+      setTimeout(()=>{
+        router.push('/login')
+      },2000)
+    } catch (err) {
+      toast.error(error)
+    }
   }
   return (
     <div className="flex rounded-2xl overflow-hidden shadow-2xl" style={{ boxShadow: '0 16px 48px rgba(233,30,140,0.18)', maxWidth: 740 }}>
@@ -46,7 +59,7 @@ export default function Signup() {
 
       <div className="bg-white w-80 shrink-0">
         <div className="border-b border-gray-100 flex">
-          <button onClick={()=>router.push('/login')}  className="flex-1 py-3.5 text-xs font-bold tracking-wide text-gray-400 hover:text-pink-400 transition-colors" style={{ borderBottom: '2px solid transparent' }}>
+          <button onClick={()=>router.push('/auth/login')}  className="flex-1 py-3.5 text-xs font-bold tracking-wide text-gray-400 hover:text-pink-400 transition-colors" style={{ borderBottom: '2px solid transparent' }}>
             Sign In
           </button>
           <button className="flex-1 py-3.5 text-xs font-bold tracking-wide" style={{ color: '#e91e8c', borderBottom: '2px solid #e91e8c' }}>
