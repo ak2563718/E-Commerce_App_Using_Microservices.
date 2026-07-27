@@ -57,7 +57,7 @@ export const authRegister = asyncHandler(async(req, res, next)=>{
         }
     })
     const token = await jwt.sign({ id:user.id, email:user.email},process.env.SECRET_KEY,{expiresIn:'5m'})
-    const verificationLink = `http://localhost:6001/auth/verify-email?token=${token}`
+    const verificationLink = `http://localhost:3000/auth/verify-email?token=${token}`
     await transport.sendMail({
         from:`MY-app ${process.env.EMAIL}`,
         to:normalizedEmail,

@@ -36,10 +36,7 @@ export const authVerifyEmail = createAsyncThunk<any,string,{rejectValue:string}>
     'auth/verifyemail',
     async(token, {rejectWithValue})=>{
         try {
-            const { data } = await axios.get(`${authuri}/verify-email`,{
-                params:{
-                    token
-                }
+            const { data } = await axios.get(`${authuri}/verify-email/?token=${token}`,{
             })
             return data;
         } catch (error) {

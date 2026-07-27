@@ -1,6 +1,9 @@
 'use client'
-import { useRouter } from 'next/navigation'
+import { authVerifyEmail } from '@/redux/auth/auth.Action'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
+import { toast } from 'sonner'
 
 type Status = 'verifying' | 'success' | 'error'
 
@@ -14,6 +17,9 @@ export default function EmailVerification({ email = 'you@example.com', onResend,
   const [countdown, setCountdown] = useState(30)
   const [canResend, setCanResend] = useState(false)
   const [dots, setDots] = useState(0)
+  const dispatch = useAppDispatch();
+  const searchParams = useSearchParams();
+  const { loading, message, error} = useAppSelector((state)=>state.auth)
 
   // Simulate backend verification (remove in real use)
   useEffect(() => {
@@ -46,8 +52,20 @@ export default function EmailVerification({ email = 'you@example.com', onResend,
     onResend?.()
   }
 
+  useEffect(()=>{
+    const token = searchParams.get("token");
+    if(!token) return;
+    dispatch(authVerifyEmail(token))
+    if(message){
+      toast.success(message)
+    }
+    if(error){
+      toast.error(error)
+    }
+  },[searchParams])
+
   return (
-    <div className="flex items-center justify-center min-h-screen p-6"
+    <div className="flex items-center justify-center min-h-screen p-6 "
       style={{ background: 'linear-gradient(135deg, #fce4ec 0%, #fdf2f6 60%, #fff8fa 100%)' }}>
       <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-sm text-center"
         style={{ boxShadow: '0 16px 48px rgba(233,30,140,0.15)' }}>

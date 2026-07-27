@@ -2,13 +2,33 @@
 import { useState } from 'react'
 import { BrandPanel, Divider, Field, GoogleButton, PasswordField, PinkButton } from './AuthLayout'
 import { useRouter } from 'next/navigation'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import { toast } from 'sonner'
+import { authLogin } from '@/redux/auth/auth.Action'
+import { Loader2 } from 'lucide-react'
 
 
 export default function Login() {
   const router = useRouter()
   const [data, setData] = useState({ email: '', password: '' })
   const [showPass, setShowPass] = useState(false)
-
+  const { user, loading, error, message } = useAppSelector((state)=>state.auth)
+  const dispatch = useAppDispatch()
+  const handleClick =async()=>{
+    try {
+      const res = await dispatch(authLogin(data)).unwrap();
+      toast.success(res.message);
+      setData({
+        email:'',
+        password:'',
+      })
+      setTimeout(()=>{
+        router.replace('/')
+      },2000)
+    } catch (err:any) {
+      toast.error(err)
+    }
+  }
   return (
     <div className="flex rounded-2xl overflow-hidden shadow-2xl " style={{ boxShadow: '0 16px 48px rgba(233,30,140,0.18)', maxWidth: 740 }}>
       <BrandPanel />
@@ -42,7 +62,11 @@ export default function Login() {
             </button>
           </div>
 
-          <PinkButton  type="submit">Sign In</PinkButton>
+          <PinkButton onClick={handleClick} type="button">{loading?
+            <>
+            <Loader2 className='w-5 h-5 animate-spin'/>
+            </>
+            :"Sign In"}</PinkButton>
 
           <Divider />
 
@@ -50,7 +74,7 @@ export default function Login() {
 
           <p className="text-center text-xs text-gray-400">
             New to ShopHub?{' '}
-            <button type="button"  className="font-bold" style={{ color: '#e91e8c' }}>
+            <button onClick={()=>router.replace('/auth/signup')} type="button"  className="font-bold" style={{ color: '#e91e8c' }}>
               Create account
             </button>
           </p>

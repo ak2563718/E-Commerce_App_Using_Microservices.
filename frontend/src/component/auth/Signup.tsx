@@ -97,7 +97,7 @@ export default function Signup() {
           <PinkButton  type="button" onClick={handleOnClick} >{loading ? (
             <>
             <Loader2 className="h-5 w-5 animate-spin" />
-            <span>Creating...</span>
+            <span className='text-sm'>Creating...</span>
             </>
           ) : (
             "Create Account"
@@ -109,7 +109,7 @@ export default function Signup() {
 
           <p className="text-center text-xs text-gray-400">
             Already have an account?{' '}
-            <button type="button"  className="font-bold" style={{ color: '#e91e8c' }}>
+            <button onClick={()=>router.replace('/auth/login')} type="button"  className="font-bold" style={{ color: '#e91e8c' }}>
               Sign in
             </button>
           </p>

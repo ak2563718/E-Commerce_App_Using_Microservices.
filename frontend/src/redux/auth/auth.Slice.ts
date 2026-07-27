@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { auth_ForgotPassword, auth_ResetPassword, authCheckSession, authLogin, authLogout, authSignup } from "./auth.Action";
+import { auth_ForgotPassword, auth_ResetPassword, authCheckSession, authLogin, authLogout, authSignup, authVerifyEmail } from "./auth.Action";
 
 interface state {
     users:any[]|null,
@@ -109,6 +109,19 @@ const authSlice = createSlice({
         }).addCase(auth_ResetPassword.rejected,(state,action)=>{
             state.loading = false;
             state.error = action.payload?? " Reset Password failed";
+        });
+
+        // 7. authverifyEmail extra-reducer 
+        builder.addCase(authVerifyEmail.pending,(state)=>{
+            state.loading = true;
+            state.message = null;
+            state.error = null;
+        }).addCase(authVerifyEmail.fulfilled,(state,action)=>{
+            state.loading = false;
+            state.message = action.payload.message;
+        }).addCase(authVerifyEmail.rejected,(state,action)=>{
+            state.loading = false;
+            state.error = action.payload?? "verification failed";
         })
     }
 })
