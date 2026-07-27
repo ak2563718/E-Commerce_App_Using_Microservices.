@@ -1,34 +1,39 @@
 'use client'
+import { auth_ResetPassword } from '@/redux/auth/auth.Action'
+import { useAppDispatch } from '@/redux/hooks'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 
 type Status = 'idle' | 'submitting' | 'success' | 'error'
 
-interface ResetPasswordProps {
-  token?: string
-  onBack?: () => void
-  onSuccess?: () => void
-}
 
-export default function ResetPassword({ token = 'demo-token', onBack, onSuccess }: ResetPasswordProps) {
+export default function ResetPassword() {
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const [status, setStatus] = useState<Status>('idle')
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const dispatch = useAppDispatch()
 
   const mismatch = confirm.length > 0 && password !== confirm
   const tooShort = password.length > 0 && password.length < 8
-  const canSubmit = password.length >= 8 && password === confirm && status === 'idle' && !!token
+  const canSubmit = password.length >= 8 && password === confirm && status === 'idle'
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault()
+    const token = searchParams.get('token')
     if (!canSubmit) return
-    setStatus('submitting')
-    // Simulate API call — replace with real request
-    setTimeout(() => {
+    try {
+      setStatus("submitting")
+      const res = await dispatch(auth_ResetPassword({token,password})).unwrap()
+      console.log("res is",res)
       setStatus('success')
-      onSuccess?.()
-    }, 2000)
+    } catch (error) {
+      console.log('error is',error)
+      setStatus("idle")
+    }
   }
 
   const strength = password.length === 0 ? 0
@@ -298,7 +303,7 @@ export default function ResetPassword({ token = 'demo-token', onBack, onSuccess 
 
             <button
               type="button"
-              onClick={onBack}
+              onClick={()=>router.replace('/auth/login')}
               className="w-full py-2.5 rounded-lg font-bold text-sm text-white tracking-wide transition-all duration-200 active:scale-95 flex items-center justify-center gap-2"
               style={{
                 background: 'linear-gradient(135deg, #e91e8c 0%, #c2185b 100%)',
@@ -326,7 +331,7 @@ export default function ResetPassword({ token = 'demo-token', onBack, onSuccess 
         {status !== 'success' && (
           <button
             type="button"
-            onClick={onBack}
+            onClick={()=>router.replace('/auth/login')}
             className="w-full flex items-center justify-center gap-1.5 text-xs font-semibold text-gray-400 hover:text-pink-500 transition-colors mt-2"
           >
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none"

@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { toast } from 'sonner'
 import { authLogin } from '@/redux/auth/auth.Action'
 import { Loader2 } from 'lucide-react'
+import ForgotPassword from './FogotPassword'
 
 
 export default function Login() {
@@ -57,7 +58,7 @@ export default function Login() {
             show={showPass} onToggle={() => setShowPass(s => !s)} />
 
           <div className="flex justify-end -mt-1">
-            <button type="button" className="text-xs font-semibold" style={{ color: '#e91e8c' }}>
+            <button onClick={()=>router.push("/auth/forgot-password")} type="button" className="text-xs font-semibold" style={{ color: '#e91e8c' }}>
               Forgot Password?
             </button>
           </div>

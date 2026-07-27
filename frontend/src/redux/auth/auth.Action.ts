@@ -106,11 +106,11 @@ export const authCheckSession = createAsyncThunk<any,void,{rejectValue:string}>(
 )
 
 // 6. Auth forgot Password
-export const auth_ForgotPassword = createAsyncThunk<any,string,{rejectValue:string}>(
+export const auth_ForgotPassword = createAsyncThunk<any,any,{rejectValue:string}>(
     "auth/forgotPassword",
     async(email , {rejectWithValue})=>{
         try {
-            const { data } = await axios.post(`${authuri}/forgot-password`,email,{
+            const { data } = await axios.post(`${authuri}/forgot-password`,{email},{
                 headers:{'Content-Type':"application/json"},
                 withCredentials:true,
             })
@@ -125,11 +125,11 @@ export const auth_ForgotPassword = createAsyncThunk<any,string,{rejectValue:stri
 );
 
 // 7. Auth Reset- Password
-export const auth_ResetPassword = createAsyncThunk<any,string,{rejectValue:string}>(
+export const auth_ResetPassword = createAsyncThunk<any,any,{rejectValue:string}>(
     'auth/resetPassword',
-    async(password, {rejectWithValue})=>{
+    async({password,token}, {rejectWithValue})=>{
         try {
-            const { data } = await axios.patch(`${authuri}/reset-password`,password,{
+            const { data } = await axios.patch(`${authuri}/reset-password?token=${token}`,{password},{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })

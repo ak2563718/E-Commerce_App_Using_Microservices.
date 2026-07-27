@@ -1,18 +1,30 @@
 'use client'
+import { auth_ForgotPassword } from '@/redux/auth/auth.Action'
+import { useAppDispatch } from '@/redux/hooks'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 type Status = 'idle' | 'sending' | 'sent'
 
-export default function ForgotPassword({ onBack }: { onBack?: () => void }) {
+export default function ForgotPassword() {
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState<Status>('idle')
+  const router = useRouter()
+  const dispatch = useAppDispatch()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault()
     if (!email || status !== 'idle') return
-    setStatus('sending')
-    // Simulate API call — replace with real request
-    setTimeout(() => setStatus('sent'), 2000)
+    try {
+       setStatus('sending')
+       console.log(email)
+       const res = await dispatch(auth_ForgotPassword(email)).unwrap()
+       setStatus('sent')
+    } catch (err:any) {
+      setStatus("idle")
+      console.log(err)
+    }
   }
 
   return (
@@ -151,7 +163,7 @@ export default function ForgotPassword({ onBack }: { onBack?: () => void }) {
         {/* Back to login */}
         <button
           type="button"
-          onClick={onBack}
+          onClick={()=>router.push("/auth/login")}
           className="w-full flex items-center justify-center gap-1.5 text-xs font-semibold text-gray-400 hover:text-pink-500 transition-colors mt-2"
         >
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none"

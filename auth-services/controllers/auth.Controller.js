@@ -287,7 +287,7 @@ export const auth_forgotPassword = asyncHandler(async(req, res, next)=>{
     if(!user){
         return next(new AppError("Email not Registered", 400))
     }
-    await prisma.passwordResetToken.delete({
+    await prisma.passwordResetToken.deleteMany({
         where:{
             userId:user.id
         }
@@ -301,7 +301,7 @@ export const auth_forgotPassword = asyncHandler(async(req, res, next)=>{
             expiresAt: new Date(Date.now() +  10 * 60 * 1000)
         }
     })
-    const verificationLink = `http://localhost:6001/auth/reset_password?token=${token}`
+    const verificationLink = `http://localhost:3000/auth/reset-password?token=${token}`
     await transport.sendMail({
         from:`MY-app ${process.env.EMAIL}`,
         to:normalizedEmail,
@@ -342,7 +342,9 @@ export const auth_resetPassword = asyncHandler(async(req, res, next)=>{
         } 
     const hashtoken = crypto.createHash('sha256').update(token).digest('hex');
     const r_pass = await prisma.passwordResetToken.findUnique({
-        token:hashtoken
+       where:{
+         token:hashtoken
+       }
     })
     if (r_pass.expiresAt < new Date()) {
     await prisma.passwordResetToken.delete({
