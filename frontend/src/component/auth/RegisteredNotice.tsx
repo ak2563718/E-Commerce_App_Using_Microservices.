@@ -36,6 +36,16 @@ export default function RegisteredNotice() {
         <p className="text-gray-400 text-sm leading-relaxed">
           We've sent a verification link to your email address. Please open it to verify your account and login to ShopHub.
         </p>
+        <p className="text-center text-sm text-gray-500 mt-4">
+          Already verified your email?{" "}
+          <a
+            href="/auth/login"
+            className="font-semibold text-pink-600 hover:text-pink-700 hover:underline transition-colors"
+          >
+            Click here to sign in
+          </a>
+          .
+        </p>
 
         {/* Divider */}
         <div className="my-5 h-px bg-gray-100" />

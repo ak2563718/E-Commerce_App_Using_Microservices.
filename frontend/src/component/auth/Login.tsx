@@ -10,7 +10,7 @@ export default function Login() {
   const [showPass, setShowPass] = useState(false)
 
   return (
-    <div className="flex rounded-2xl overflow-hidden shadow-2xl" style={{ boxShadow: '0 16px 48px rgba(233,30,140,0.18)', maxWidth: 740 }}>
+    <div className="flex rounded-2xl overflow-hidden shadow-2xl " style={{ boxShadow: '0 16px 48px rgba(233,30,140,0.18)', maxWidth: 740 }}>
       <BrandPanel />
 
       <div className="bg-white w-80 shrink-0">

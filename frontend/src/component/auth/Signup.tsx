@@ -1,10 +1,12 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { BrandPanel, Divider, Field, GoogleButton, PasswordField, PinkButton } from './AuthLayout'
 import { useRouter } from 'next/navigation'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { authSignup } from '@/redux/auth/auth.Action'
 import { toast } from 'sonner'
+import { Loader2 } from 'lucide-react'
+import RegisteredNotice from './RegisteredNotice'
 
 function StrengthBar({ password }: { password: string }) {
   const strength = password.length === 0 ? 0
@@ -35,24 +37,30 @@ export default function Signup() {
   const [showPass, setShowPass] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const dispatch = useAppDispatch()
-  const { user, error } = useAppSelector((state)=>state.auth)
+  const [success,setSuccess] = useState(false)
+  const { user, error, loading } = useAppSelector((state)=>state.auth)
  
   const handleOnClick =async()=>{
     try {
       const res = await dispatch(authSignup(data)).unwrap()
-      toast.success(res.data.message)
+      toast.success(res.message)
       setData({
         email:'',
         password:'',
         confirm:'',
       })
       setTimeout(()=>{
-        router.push('/login')
+        setSuccess(true);
       },2000)
-    } catch (err) {
-      toast.error(error)
+    } catch (err:any) {
+      toast.error(err)
     }
   }
+  if(success){
+      return (
+        <div className='relative bottom-10'><RegisteredNotice/></div>
+      )
+    }
   return (
     <div className="flex rounded-2xl overflow-hidden shadow-2xl" style={{ boxShadow: '0 16px 48px rgba(233,30,140,0.18)', maxWidth: 740 }}>
       <BrandPanel />
@@ -86,7 +94,14 @@ export default function Signup() {
             value={data.confirm} onChange={v => setData(d => ({ ...d, confirm: v }))}
             show={showConfirm} onToggle={() => setShowConfirm(s => !s)} />
 
-          <PinkButton type="button" onClick={handleOnClick} >Create Account</PinkButton>
+          <PinkButton  type="button" onClick={handleOnClick} >{loading ? (
+            <>
+            <Loader2 className="h-5 w-5 animate-spin" />
+            <span>Creating...</span>
+            </>
+          ) : (
+            "Create Account"
+          )}</PinkButton>
 
           <Divider />
 
@@ -104,6 +119,7 @@ export default function Signup() {
             <span className="underline cursor-pointer" style={{ color: '#e91e8c' }}>Terms</span> &{' '}
             <span className="underline cursor-pointer" style={{ color: '#e91e8c' }}>Privacy</span>
           </p>
+          
         </div>
       </div>
     </div>

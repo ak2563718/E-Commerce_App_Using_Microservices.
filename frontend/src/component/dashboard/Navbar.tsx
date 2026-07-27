@@ -1,4 +1,5 @@
 'use client'
+import { useRouter } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
 
 interface NavbarProps {
@@ -28,6 +29,8 @@ export default function Navbar({
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
   }, [])
+
+  const router = useRouter()
 
   const notifications = [
     { id: 1, icon: '🛍️', text: 'Your order #4821 has been shipped!', time: '2m ago', unread: true },
@@ -108,7 +111,7 @@ export default function Navbar({
 
           {/* Login Button */}
           <button
-            onClick={onLoginClick}
+            onClick={()=>router.push('/auth/login')}
             className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-white transition-all duration-150 active:scale-95"
             style={{
               background: 'linear-gradient(135deg, #e91e8c 0%, #c2185b 100%)',

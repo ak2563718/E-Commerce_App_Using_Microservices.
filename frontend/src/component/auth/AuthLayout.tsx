@@ -62,7 +62,7 @@ export function PinkButton({ children, type, onClick }: { children: React.ReactN
     <button
       type={type}
       onClick={onClick}
-      className="w-full py-2.5 rounded-lg font-bold text-sm text-white tracking-wide transition-all duration-200 active:scale-95"
+      className="w-full py-2.5 rounded-lg font-bold text-sm text-white tracking-wide transition-all duration-200 active:scale-95 flex items-center justify-center"
       style={{ background: 'linear-gradient(135deg, #e91e8c 0%, #c2185b 100%)', boxShadow: '0 4px 14px rgba(233,30,140,0.35)' }}
       onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 6px 18px rgba(233,30,140,0.5)' }}
       onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 14px rgba(233,30,140,0.35)' }}
