@@ -12,18 +12,48 @@ app.use(cors({
 }));
 app.use(cookieParser())
 
-app.use('/auth',async(req, res)=>{
+// 1. Authentication service
+app.use("/auth", async (req, res) => {
+  try {
     const response = await axios({
-        method:req.method,
-        url:`${process.env.AUTH_URL}${req.originalUrl}`,
-        data:req.body,
-        headers:{
-            'Content-Type':'application/json'
-        },
-        params:req.query,
-    })
-    res.status(response.status).json(response.data);
-})
+      method: req.method,
+      url: `${process.env.AUTH_URL}${req.originalUrl}`,
+      data: req.body,
+      params: req.query,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    // Set cookie only if auth service sends a refresh token
+    if (response.data.refreshToken) {
+      res.cookie("refresh_token", response.data.refreshToken, {
+        httpOnly: true,
+        secure: false, // true in production with HTTPS
+        sameSite: "lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+    }
+    return res.status(response.status).json(response.data);
+  } catch (error) {
+    // Auth service returned an HTTP error (400, 401, 404, etc.)
+    if (error.response) {
+      return res.status(error.response.status).json(error.response.data);
+    }
+    // Network error or auth service is down
+    if (error.request) {
+      return res.status(503).json({
+        success: false,
+        message: "Auth service is unavailable",
+      });
+    }
+    // Unexpected error
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+      error: error.message,
+    });
+  }
+});
 
 const port = process.env.PORT;
 app.listen(port, ()=>{
