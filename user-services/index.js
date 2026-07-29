@@ -1,0 +1,18 @@
+import express from 'express';
+import 'dotenv/config';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import { errorMiddleware } from './middlewares/error.Middleware.js'
+import userRoutes from './routes/user.Route.js'
+const app = express();
+app.use(express.json());
+app.use(express.urlencoded({extends:false}));
+app.use(cookieParser());
+app.use(cors())
+
+app.use('/profile',userRoutes)
+app.use(errorMiddleware)
+const port = process.env.PORT;
+app.listen(port,()=>{
+    console.log(`server is running at port ${port}`)
+})

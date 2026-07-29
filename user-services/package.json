@@ -14,9 +14,11 @@
     "@prisma/client": "^7.9.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "nodemon": "^3.1.14",
-    "pg": "^8.22.0"
+    "pg": "^8.22.0",
+    "validator": "^13.15.35"
   },
   "devDependencies": {
     "prisma": "^7.9.1"
