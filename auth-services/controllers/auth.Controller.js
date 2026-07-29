@@ -41,7 +41,18 @@ export const authRegister = asyncHandler(async(req, res, next)=>{
         }
     })
     if(existingUser){
-        return next(new AppError("User Already Exists", 409))
+        if(existingUser.emailverified){
+            return next(new AppError("User already Exist", 409))
+        }else{
+            const token = await jwt.sign({id:existingUser.id,email:existingUser.email},proecess.env.SECRET_KEY,{expiresIn:'5m'})
+            const verificationLink = `http://localhost:3000/auth/verify-email?token=${token}`
+            await transport.sendMail({
+                from:`MY-app ${process.env.EMAIL}`,
+                to:normalizedEmail,
+                subject:"demo-message",
+                html:`Re-send Verification link to verify-email. Please click <a href="${verificationLink}">here</a> to verify your email.`
+            })
+        }
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
@@ -65,7 +76,6 @@ export const authRegister = asyncHandler(async(req, res, next)=>{
         html:`just a checking message. Please click <a href="${verificationLink}">here</a> to verify your email.`
 
     })
-
     res.status(201).json({
         success:true,
         message:"User Created Successfully",
