@@ -8,18 +8,19 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));
 app.use(cors({
-    origin:['http://localhost:3000','http://localhost:6001']
+    origin:['http://localhost:3000','http://localhost:6001'],
+    credentials:true,
 }));
 app.use(cookieParser())
 
 // 1. Authentication service
 app.use("/auth", async (req, res) => {
+    console.log('original url',req.originalUrl)
   try {
     const response = await axios({
       method: req.method,
       url: `${process.env.AUTH_URL}${req.originalUrl}`,
       data: req.body,
-      params: req.query,
       headers: {
         "Content-Type": "application/json",
       },

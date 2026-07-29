@@ -2,6 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios, { AxiosError } from "axios";
 
 const authuri = process.env.NEXT_PUBLIC_AUTH_URI;
+console.log("auth uri",authuri)
 
 interface signuprequest{
     email:string,
