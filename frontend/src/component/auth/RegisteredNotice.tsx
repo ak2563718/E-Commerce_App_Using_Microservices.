@@ -46,6 +46,13 @@ export default function RegisteredNotice() {
           </a>
           .
         </p>
+        <p className="text-center text-sm text-gray-500 mt-4">
+          Failed to Verify Email?{" "}
+          <a href="/auth/signup" className="font-semibold text-pink-600 hover:text-pink-700 hover:underline transition-colors">
+          click here
+          </a>
+          {" "} to Registered again.
+        </p>
 
         {/* Divider */}
         <div className="my-5 h-px bg-gray-100" />
