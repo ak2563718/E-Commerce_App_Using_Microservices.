@@ -124,3 +124,41 @@ export const deleteAttributesValue = createAsyncThunk<any, string, {rejectValue:
         }
     }
 )
+
+// 7. upload product images, here id = product id
+export const uploadProductImage = createAsyncThunk<any, any, { rejectValue:string}>(
+    'post/images',
+    async({id,formData}, {rejectWithValue})=>{
+        try {
+            const { data } = await axios.post(`${type_uri}/products/${id}/images`,formData,{
+                headers:{'Content-Type':'multipart/form-data'},
+                withCredentials:true,
+            })
+            return data;
+        } catch (error) {
+            if(axios.isAxiosError(error)){
+                return rejectWithValue(error.response?.data.message)
+            }
+            return rejectWithValue("something went wrong")
+        }
+    }
+)
+
+// 8. upload productimages variant, here id= productvariants id
+export const uploadProductVariantImages = createAsyncThunk<any, any, {rejectValue:string}>(
+    'post/variantimages',
+    async({id,formData},{rejectWithValue})=>{
+        try {
+            const { data } = await axios.post(`${type_uri}/variants/${id}/images`,formData,{
+                headers:{'Content-Type':'multipart/form-data'},
+                withCredentials:true,
+            })
+            return data;
+        } catch (error) {
+            if(axios.isAxiosError(error)){
+                return rejectWithValue(error.response?.data.message)
+            }
+            return rejectWithValue("something went wrong")
+        }
+    }
+)
