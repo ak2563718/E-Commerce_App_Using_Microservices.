@@ -81,7 +81,6 @@ export const categorybyId = asyncHandler(async(req, res, next)=>{
     })
 })
 
-
 // 4. Delete Category with their Id:
 export const deleteCategory = asyncHandler(async (req, res, next) => {
     const { id } = req.params;
