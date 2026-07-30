@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const product_uri = process.env.NEXT_PUBLIC_AUTH_URI;
+const product_uri = process.env.NEXT_PUBLIC_PRODUCT_URI;
 // 1. create a product details
 export const createProduct = createAsyncThunk<any,any,{rejectValue:string}>(
     'post/product',

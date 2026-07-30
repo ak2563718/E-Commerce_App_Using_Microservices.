@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const product_uri = process.env.NEXT_PUBLIC_AUTH_URI;
+const product_uri = process.env.NEXT_PUBLIC_PRODUCT_URI;
 
 // Categories all apis
 // 1. create categories api
