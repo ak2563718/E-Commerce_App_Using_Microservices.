@@ -1,10 +1,12 @@
 import { asyncHandler } from '../utils/asyncHandler.js'
 import { AppError } from '../utils/AppError.js';
 import { prisma } from '../generated/db.js'
+import validator from 'validator'
 
 // 1. create user information
 export const createInfo = asyncHandler(async(req, res, next)=>{
-    const { id, email } = req.body;
+    const email = req.body;
+    const id = req.user.id;
     if(!id || !email){
         return next(new AppError("Please Provide both id and email", 400))
     }
@@ -23,7 +25,7 @@ export const createInfo = asyncHandler(async(req, res, next)=>{
 
 // 2. Get user info
 export const getUser = asyncHandler(async(req, res, next)=>{
-    const { id } = req.body;
+    const  id  = req.user.id;
     const user = await prisma.user.findUnique({
         where:{
             id:id
@@ -41,8 +43,9 @@ export const getUser = asyncHandler(async(req, res, next)=>{
 
 // 3. Update user info
 export const updateUser = asyncHandler(async(req, res, next)=>{
-    const {id, firstName, lastName, phone, gender, dateofBirth } = req.body;
-    if(!firstName && !lastName && !phone && !gender && !dateofBirth){
+    const id = req.user.id;
+    const {firstName, lastName, phone, gender, dateOfBirth } = req.body;
+    if(!firstName && !lastName && !phone && !gender && !dateOfBirth){
         return next(new AppError("Provide something to update", 400))
     } 
     const obj ={};
@@ -55,11 +58,12 @@ export const updateUser = asyncHandler(async(req, res, next)=>{
         obj.phone = phone;
     }
     if(gender) obj.gender = gender.trim();
-    if(dateofBirth) obj.dateofBirth = dateofBirth;
+    if(dateOfBirth) obj.dateOfBirth =new Date(dateOfBirth);
     const found = await prisma.user.findUnique({where:{id}})
     if(!found){
         return next(new AppError("Invalid user Id", 404))
     }
+    console.log(obj)
     const user = await prisma.user.update({
         where:{
             id
@@ -75,7 +79,8 @@ export const updateUser = asyncHandler(async(req, res, next)=>{
 
 // 4. create user address
 export const createAddress = asyncHandler(async(req, res, next)=>{
-    const { userId, fullName, phone, add1, add2, city, state, country, pincode, landmark } = req.body;
+    const userId = req.user.id;
+    const { fullName, phone, add1, add2, city, state, country, pincode, landmark, type } = req.body;
     if(!fullName || !phone || !add1 ||!city || !state ||!country || !pincode){
         return next(new AppError("Please provide all required field", 400))
     }
@@ -88,12 +93,13 @@ export const createAddress = asyncHandler(async(req, res, next)=>{
            fullName:fullName.trim(),
            phone:phone.trim(),
            addressLine1:add1.trim(),
-           addressLine2:add2|'null',
+           addressLine2:add2?.trim() ?? '',
            city:city.trim(),
            state:state.trim(),
            country:country.trim(),
            postalCode:pincode.trim(),
-           landmark:landmark | "null",
+           landmark:landmark?.trim() ?? '',
+           type,
         }
     });
     res.status(201).json({
@@ -105,7 +111,7 @@ export const createAddress = asyncHandler(async(req, res, next)=>{
 
 // 5. get all address by userId 
 export const getAddresswithUserId = asyncHandler(async(req, res, next)=>{
-    const userId = req.body;
+    const {userId} = req.user.id;
     const address = await prisma.address.findMany({
         where:{
             userId
@@ -206,10 +212,11 @@ export const updatedefaultsetting = asyncHandler(async(req, res, next)=>{
     if(!found){
         return next(new AppError("address not found", 404))
     }
+    if(value){
     const address = await prisma.address.update({
         where:{id},
         data:{
-            isDefault:value
+            isDefault:true,
         }
     })
     res.status(200).json({
@@ -217,4 +224,5 @@ export const updatedefaultsetting = asyncHandler(async(req, res, next)=>{
         success:true,
         data:address
     })
+}
 })
