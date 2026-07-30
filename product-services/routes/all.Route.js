@@ -25,7 +25,7 @@ router.post('/products',createProduct)
 router.get('/products',getProduct)
 router.get('/products/:id',getProdctbyId)
 router.get('/products/slug/:slug',getProductbySlug)
-router.patch('/product/:id',updateProduct)
+router.patch('/products/:id',updateProduct)
 router.delete('/products/:id',deleteProductbyId)
 
 // 4.Product Variant
