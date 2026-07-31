@@ -59,6 +59,11 @@ export const authRegister = asyncHandler(async(req, res, next)=>{
         }
     }
     const hashedPassword = await bcrypt.hash(password, 10);
+    const userRole = await prisma.role.create({
+        data:{
+            
+        }
+    })
     const user = await prisma.user.create({
         data:{
             email: normalizedEmail,
