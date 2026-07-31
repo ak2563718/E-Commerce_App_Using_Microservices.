@@ -101,6 +101,64 @@ export const authRegister = asyncHandler(async(req, res, next)=>{
     })
 })
 
+// 1.1 seller registration
+export const sellerSignup = asyncHandler(async (req, res, next) => {
+    const userId = req.user.id; // Set by authentication middleware
+
+    const {
+        businessName,
+        businessEmail,
+        businessPhone,
+        gstNumber,
+        panNumber,
+        businessAddress,
+        description,
+    } = req.body;
+
+    // Check if already a seller
+    const existingSeller = await prisma.seller.findUnique({
+        where: {
+            userId,
+        },
+    });
+
+    if (existingSeller) {
+        return next(new AppError("Seller profile already exists.", 409));
+    }
+
+    // Validation
+    if (!businessName || businessName.trim().length < 3) {
+        return next(
+            new AppError("Business name must be at least 3 characters.", 400)
+        );
+    }
+
+    if (businessEmail && !validator.isEmail(businessEmail)) {
+        return next(new AppError("Invalid business email.", 400));
+    }
+
+    const seller = await prisma.seller.create({
+        data: {
+            userId,
+            businessName: businessName.trim(),
+            businessEmail: businessEmail?.trim().toLowerCase(),
+            businessPhone,
+            gstNumber,
+            panNumber,
+            businessAddress,
+            description,
+            // status defaults to PENDING
+        },
+    });
+
+    res.status(201).json({
+        success: true,
+        message:
+            "Seller application submitted successfully. Waiting for admin approval.",
+        seller,
+    });
+});
+
 //2. auth verify email
 export const authverifyEmail = asyncHandler(async(req, res, next)=>{
     const token = req.query.token;
