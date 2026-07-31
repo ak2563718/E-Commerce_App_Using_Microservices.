@@ -6,8 +6,6 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { toast } from 'sonner'
 import { authLogin } from '@/redux/auth/auth.Action'
 import { Loader2 } from 'lucide-react'
-import ForgotPassword from './FogotPassword'
-
 
 export default function Login() {
   const router = useRouter()

@@ -39,6 +39,11 @@ export default function Navbar({
     { id: 4, icon: '⭐', text: 'Rate your recent purchase from TechStore.', time: '1d ago', unread: false },
   ]
 
+  const handleClick =()=>{
+    setMoreOpen(false)
+    router.replace('/seller/information')
+  }
+
   return (
     <nav
       className="w-full sticky top-0 z-50"
@@ -153,7 +158,7 @@ export default function Navbar({
                 {/* Become a Seller */}
                 <button
                   className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-pink-50 hover:text-pink-600 transition-colors duration-100 group"
-                  onClick={() => setMoreOpen(false)}
+                  onClick={handleClick}
                 >
                   <span
                     className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors duration-100 group-hover:bg-pink-100"
