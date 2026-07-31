@@ -21,7 +21,7 @@ function SellNavbar() {
             className="w-9 h-9 rounded-xl flex items-center justify-center"
             style={{ background: 'linear-gradient(135deg, #e91e8c, #7c3aed)' }}
           >
-            <Store className="w-5 h-5 text-white" />
+            <a href='/seller/information'><Store className="w-5 h-5 text-white" /></a>
           </div>
           <div>
             <span className="font-black text-gray-900 text-lg tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>

@@ -1,4 +1,6 @@
+'use client'
 import { Store, TrendingUp, Package, Star, Shield, Zap, Users, ArrowRight, ChevronRight } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 const FEATURES = [
   {
@@ -40,48 +42,17 @@ const STATS = [
   { value: '4.8★', label: 'Seller Rating' },
 ]
 
-const TESTIMONIALS = [
-  {
-    name: 'Priya Sharma',
-    store: 'Priya\'s Fabrics',
-    quote: 'ShopHub doubled my monthly revenue within 3 months. The dashboard is incredibly easy to use.',
-    avatar: 'PS',
-  },
-  {
-    name: 'Rahul Mehta',
-    store: 'TechGadgets India',
-    quote: 'Seamless onboarding, instant payouts, and amazing support. Best platform I\'ve used.',
-    avatar: 'RM',
-  },
-  {
-    name: 'Ananya Iyer',
-    store: 'Green Home Essentials',
-    quote: 'The analytics alone are worth it. I know exactly what\'s selling and when to restock.',
-    avatar: 'AI',
-  },
-]
 
 export default function SellerLanding() {
+  const router = useRouter()
   return (
     <div className="min-h-screen w-full" style={{ background: '#faf5ff', fontFamily: 'DM Sans, sans-serif' }}>
-
-      {/* ── Navbar ──────────────────────────────────────────────────────────── */}
-      
-
+    
       {/* ── Hero ────────────────────────────────────────────────────────────── */}
       <section className="relative flex flex-col items-center text-center px-6 pt-20 pb-16 overflow-hidden">
         {/* Background orbs */}
         <div className="absolute rounded-full pointer-events-none" style={{ width: 600, height: 600, background: 'radial-gradient(circle, rgba(168,85,247,0.12), transparent)', top: -200, left: '50%', transform: 'translateX(-50%)' }} />
         <div className="absolute rounded-full pointer-events-none" style={{ width: 300, height: 300, background: 'radial-gradient(circle, rgba(233,30,140,0.08), transparent)', bottom: -60, right: '10%' }} />
-
-        <div
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold mb-6 relative"
-          style={{ background: '#f3e8ff', color: '#7c3aed', border: '1px solid #e9d5ff' }}
-        >
-          <span className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse" />
-          Now accepting new sellers · Join 50,000+ stores
-        </div>
-
         <h1
           className="text-5xl md:text-6xl font-black text-gray-900 leading-tight mb-5 max-w-3xl relative"
           style={{ fontFamily: 'Outfit, sans-serif' }}
@@ -102,6 +73,7 @@ export default function SellerLanding() {
 
         <div className="flex items-center gap-4 relative">
           <button
+            onClick={()=>router.replace('/seller/signup')}
             className="px-8 py-3.5 rounded-2xl text-white font-bold text-base flex items-center gap-2 transition-all active:scale-[0.97]"
             style={{
               background: 'linear-gradient(135deg, #7c3aed, #a855f7)',
@@ -111,6 +83,7 @@ export default function SellerLanding() {
             Start Selling Free <ArrowRight className="w-5 h-5" />
           </button>
           <button
+            onClick={()=>router.replace('/seller/login')}
             className="px-8 py-3.5 rounded-2xl font-bold text-base transition-all hover:bg-white"
             style={{ color: '#7c3aed', border: '1.5px solid #ddd6fe' }}
           >
@@ -121,26 +94,7 @@ export default function SellerLanding() {
         <p className="text-xs text-gray-400 mt-4 relative">No credit card required · Free forever plan available</p>
       </section>
 
-      {/* ── Stats strip ─────────────────────────────────────────────────────── */}
-      <section className="px-8 pb-10">
-        <div
-          className="max-w-3xl mx-auto grid grid-cols-2 md:grid-cols-4 rounded-2xl overflow-hidden"
-          style={{ border: '1px solid #e9d5ff', background: '#fff' }}
-        >
-          {STATS.map(({ value, label }, i) => (
-            <div
-              key={label}
-              className="flex flex-col items-center py-6 px-4"
-              style={{ borderRight: i < STATS.length - 1 ? '1px solid #f3e8ff' : 'none' }}
-            >
-              <span className="text-2xl font-black text-gray-900" style={{ fontFamily: 'Outfit, sans-serif', color: '#7c3aed' }}>
-                {value}
-              </span>
-              <span className="text-xs text-gray-500 mt-1 font-medium">{label}</span>
-            </div>
-          ))}
-        </div>
-      </section>
+     
 
       {/* ── Features ────────────────────────────────────────────────────────── */}
       <section className="px-8 py-14 max-w-5xl mx-auto">
@@ -178,53 +132,15 @@ export default function SellerLanding() {
         </div>
       </section>
 
-      {/* ── Testimonials ────────────────────────────────────────────────────── */}
-      <section className="px-8 py-14" style={{ background: 'linear-gradient(135deg, #1a0533, #2d0a5e)' }}>
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-black text-white mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
-              Sellers love ShopHub
-            </h2>
-            <p className="text-sm" style={{ color: 'rgba(255,255,255,0.45)' }}>Real stories from real sellers</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {TESTIMONIALS.map(({ name, store, quote, avatar }) => (
-              <div
-                key={name}
-                className="rounded-2xl p-6 flex flex-col gap-4"
-                style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}
-              >
-                <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.75)' }}>
-                  "{quote}"
-                </p>
-                <div className="flex items-center gap-3 mt-auto">
-                  <div
-                    className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-black text-white shrink-0"
-                    style={{ background: 'linear-gradient(135deg, #e91e8c, #a855f7)' }}
-                  >
-                    {avatar}
-                  </div>
-                  <div>
-                    <div className="text-white text-sm font-semibold">{name}</div>
-                    <div className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>{store}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ── CTA banner ──────────────────────────────────────────────────────── */}
       <section className="px-8 py-16 flex flex-col items-center text-center">
         <h2 className="text-3xl font-black text-gray-900 mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>
           Ready to start selling?
         </h2>
-        <p className="text-gray-500 mb-8 max-w-md">
-          Join 50,000+ sellers already growing their business on ShopHub. Setup takes less than 10 minutes.
-        </p>
         <div className="flex items-center gap-4">
           <button
+            onClick={()=>router.replace('/seller/signup')}
             className="px-8 py-3.5 rounded-2xl text-white font-bold text-base flex items-center gap-2 transition-all active:scale-[0.97]"
             style={{
               background: 'linear-gradient(135deg, #7c3aed, #a855f7)',
@@ -234,6 +150,7 @@ export default function SellerLanding() {
             Create Free Account <ArrowRight className="w-5 h-5" />
           </button>
           <button
+            onClick={()=>router.replace('/seller/login')}
             className="text-sm font-semibold hover:opacity-70 transition-opacity"
             style={{ color: '#7c3aed' }}
           >

@@ -9,12 +9,14 @@ import {
   Divider,
   GoogleButton,
 } from './SellerAuthLayout'
+import { useRouter } from 'next/navigation'
 
 
 export default function SellerLogin() {
   const [data, setData] = useState({ email: '', password: '' })
   const [showPass, setShowPass] = useState(false)
   const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
   const handleSubmit = async () => {
     if (!data.email || !data.password) return
@@ -44,6 +46,7 @@ export default function SellerLogin() {
             Sign In
           </button>
           <button
+            onClick={()=>router.push('/seller/signup')}
             className="flex-1 py-3.5 text-xs font-bold tracking-wide text-gray-400 hover:text-purple-400 transition-colors"
             style={{ borderBottom: '2px solid transparent' }}
           >
@@ -104,6 +107,7 @@ export default function SellerLogin() {
             New seller?{' '}
             <button
               type="button"
+              onClick={()=>router.push('/seller/signup')}
               className="font-bold hover:opacity-80 transition-opacity"
               style={{ color: '#7c3aed' }}
             >
