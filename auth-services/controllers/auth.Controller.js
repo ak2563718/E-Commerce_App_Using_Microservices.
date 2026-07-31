@@ -59,11 +59,14 @@ export const authRegister = asyncHandler(async(req, res, next)=>{
         }
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-    const userRole = await prisma.role.create({
-        data:{
-            
-        }
+    const userRole = await prisma.role.findFirst({
+        where:{
+            name:"USER"
+        },
     })
+    if(!userRole){{
+        return next(new AppError("User role not defined", 404))
+    }}
     const user = await prisma.user.create({
         data:{
             email: normalizedEmail,
@@ -74,6 +77,12 @@ export const authRegister = asyncHandler(async(req, res, next)=>{
             email:true,
             emailverified:true,
             provider:true,
+        }
+    })
+    await prisma.userRole.create({
+        data:{
+            userId:user.id,
+            roleId:userRole.id,
         }
     })
     const token = await jwt.sign({ id:user.id, email:user.email},process.env.SECRET_KEY,{expiresIn:'5m'})
