@@ -20,6 +20,7 @@ model User {
   provider       AuthProvider         @default(LOCAL)
   createdAt      DateTime             @default(now())
   updatedAt      DateTime             @updatedAt
+  seller         Seller?
   role           UserRole[]
   refreshTokens  RefreshToken[]
   passwordResets PasswordResetToken[]
@@ -33,7 +34,7 @@ enum AuthProvider {
 
 model UserRole {
   id        String   @id @default(cuid())
-  userId    String
+  userId    String   @unique
   user      User     @relation(fields: [userId], references: [id])
   role      Role     @relation(fields: [roleId], references: [id])
   roleId    String
@@ -56,6 +57,31 @@ enum RoleName {
   USER
   ADMIN
   SELLER
+}
+
+model Seller {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+
+  businessName    String
+  businessEmail   String?
+  businessPhone   String?
+  gstNumber       String?
+  panNumber       String?
+  businessAddress String?
+  description     String?
+
+  status SellerStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum SellerStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 model RefreshToken {

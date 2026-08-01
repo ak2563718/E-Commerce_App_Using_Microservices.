@@ -1,63 +1,69 @@
 'use client'
 import { useState } from 'react'
-import { Loader2, ChevronLeft, ChevronRight, Check } from 'lucide-react'
+import { Loader2, ChevronLeft, Check } from 'lucide-react'
 import {
   SellerBrandPanel,
-  Field,
-  PasswordField,
   PurpleButton,
-  Divider,
   GoogleButton,
+  Divider,
 } from './SellerAuthLayout'
 import { useRouter } from 'next/navigation'
 
+interface Props {
+  onGoLogin: () => void
+}
 
+function Label({ children }: { children: React.ReactNode }) {
+  return <label className="text-xs font-semibold text-gray-600 tracking-wide">{children}</label>
+}
 
-const CATEGORIES = [
-  'Electronics', 'Fashion', 'Home & Garden', 'Sports',
-  'Books', 'Beauty', 'Toys', 'Food & Grocery', 'Automotive', 'Other',
-]
+function Field({ label, placeholder, value, onChange, type = 'text' }: {
+  label: string; placeholder?: string; value: string; onChange: (v: string) => void; type?: string
+}) {
+  return (
+    <div className="flex flex-col gap-1">
+      <Label>{label}</Label>
+      <input
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        className="w-full px-3 py-2.5 rounded-xl text-sm outline-none transition-all"
+        style={{ border: '1.5px solid #e5e7eb', background: '#fafafa', color: '#111' }}
+        onFocus={e => { e.currentTarget.style.border = '1.5px solid #7c3aed'; e.currentTarget.style.background = '#fff' }}
+        onBlur={e => { e.currentTarget.style.border = '1.5px solid #e5e7eb'; e.currentTarget.style.background = '#fafafa' }}
+      />
+    </div>
+  )
+}
 
-export default function SellerSignup() {
-  const [step, setStep] = useState(1)
+export default function SellerSignup({ onGoLogin }: Props) {
   const [loading, setLoading] = useState(false)
-  const [showPass, setShowPass] = useState(false)
-  const [showConfirm, setShowConfirm] = useState(false)
+  const [done, setDone] = useState(false)
   const router = useRouter()
 
   const [form, setForm] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    password: '',
-    confirmPassword: '',
     businessName: '',
-    businessType: '' as '' | 'individual' | 'company',
-    category: '',
-    gstin: '',
+    businessEmail: '',
+    businessPhone: '',
+    gstNumber: '',
+    panNumber: '',
+    businessAddress: '',
+    description: '',
   })
 
   const set = (k: keyof typeof form) => (v: string) => setForm(f => ({ ...f, [k]: v }))
 
-  const handleNext = () => {
-    if (step < 3) setStep(s => s + 1)
-  }
-  const handleBack = () => {
-    if (step > 1) setStep(s => s - 1)
-  }
-
   const handleSubmit = async () => {
     setLoading(true)
-    await new Promise(r => setTimeout(r, 2000))
+    await new Promise(r => setTimeout(r, 1800))
     setLoading(false)
-    setStep(4)
+    setDone(true)
   }
 
-  const steps = ['Account', 'Business', 'Details']
-
   return (
-    <div 
-      className="flex rounded-2xl overflow-hidden mt-6"
+    <div
+      className="flex rounded-2xl overflow-hidden"
       style={{
         boxShadow: '0 20px 60px rgba(124,58,237,0.18), 0 4px 16px rgba(0,0,0,0.08)',
         maxWidth: 720,
@@ -65,9 +71,9 @@ export default function SellerSignup() {
     >
       <SellerBrandPanel />
 
-      <div className="bg-white flex flex-col" style={{ width: 380 }}>
+      <div className="bg-white flex flex-col" style={{ width: 400 }}>
         {/* Tabs */}
-        <div className="border-b border-gray-100 flex">
+        <div className="border-b border-gray-100 flex shrink-0">
           <button
             onClick={()=>router.push('/seller/login')}
             className="flex-1 py-3.5 text-xs font-bold tracking-wide text-gray-400 hover:text-purple-400 transition-colors"
@@ -83,10 +89,10 @@ export default function SellerSignup() {
           </button>
         </div>
 
-        <div className="p-6 flex flex-col gap-4 flex-1 overflow-y-auto">
-          {step < 4 && (
+        {/* Scrollable body */}
+        <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4" style={{ maxHeight: 560 }}>
+          {!done ? (
             <>
-              {/* Header */}
               <div>
                 <div
                   className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold mb-3"
@@ -95,51 +101,72 @@ export default function SellerSignup() {
                   <span>🏪</span> Seller Registration
                 </div>
                 <h2 className="text-lg font-black text-gray-800 mb-0.5" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                  {step === 1 && 'Create your account'}
-                  {step === 2 && 'Business info'}
-                  {step === 3 && 'Final details'}
+                  Register your business
                 </h2>
-                <p className="text-gray-400 text-xs">Step {step} of 3 — {steps[step - 1]}</p>
+                <p className="text-xs text-gray-400">Fill in your business details to get started</p>
               </div>
 
-              {/* Progress bar */}
-              <div className="flex gap-1.5">
-                {steps.map((_, i) => (
-                  <div
-                    key={i}
-                    className="h-1 flex-1 rounded-full transition-all duration-300"
-                    style={{ background: i < step ? '#7c3aed' : '#e5e7eb' }}
-                  />
-                ))}
+              <Field
+                label="Business Name"
+                placeholder="e.g. Priya's Fabrics"
+                value={form.businessName}
+                onChange={set('businessName')}
+              />
+
+              <Field
+                label="Business Email"
+                type="email"
+                placeholder="business@example.com"
+                value={form.businessEmail}
+                onChange={set('businessEmail')}
+              />
+
+              <Field
+                label="Business Phone"
+                type="tel"
+                placeholder="+91 98765 43210"
+                value={form.businessPhone}
+                onChange={set('businessPhone')}
+              />
+
+              <div className="grid grid-cols-2 gap-3">
+                <Field
+                  label="GST Number"
+                  placeholder="22ABCDE1234F1Z5"
+                  value={form.gstNumber}
+                  onChange={set('gstNumber')}
+                />
+                <Field
+                  label="PAN Number"
+                  placeholder="ABCDE1234F"
+                  value={form.panNumber}
+                  onChange={set('panNumber')}
+                />
               </div>
-            </>
-          )}
 
-          {/* ── Step 1: Account ── */}
-          {step === 1 && (
-            <>
-              <Field label="Full Name" placeholder="Jane Doe" value={form.fullName} onChange={set('fullName')} />
-              <Field label="Email Address" type="email" placeholder="seller@business.com" value={form.email} onChange={set('email')} />
-              <Field label="Phone Number" type="tel" placeholder="+91 98765 43210" value={form.phone} onChange={set('phone')} />
-              <PasswordField
-                label="Password"
-                placeholder="Create a strong password"
-                value={form.password}
-                onChange={set('password')}
-                show={showPass}
-                onToggle={() => setShowPass(s => !s)}
-              />
-              <PasswordField
-                label="Confirm Password"
-                placeholder="Repeat your password"
-                value={form.confirmPassword}
-                onChange={set('confirmPassword')}
-                show={showConfirm}
-                onToggle={() => setShowConfirm(s => !s)}
+              <Field
+                label="Business Address"
+                placeholder="Street, City, State, PIN"
+                value={form.businessAddress}
+                onChange={set('businessAddress')}
               />
 
-              <PurpleButton onClick={handleNext}>
-                Continue <ChevronRight className="w-4 h-4" />
+              <div className="flex flex-col gap-1">
+                <Label>Business Description</Label>
+                <textarea
+                  placeholder="Briefly describe what your business sells..."
+                  value={form.description}
+                  onChange={e => set('description')(e.target.value)}
+                  rows={3}
+                  className="w-full px-3 py-2.5 rounded-xl text-sm outline-none resize-none transition-all"
+                  style={{ border: '1.5px solid #e5e7eb', background: '#fafafa', color: '#111', lineHeight: 1.6 }}
+                  onFocus={e => { e.currentTarget.style.border = '1.5px solid #7c3aed'; e.currentTarget.style.background = '#fff' }}
+                  onBlur={e => { e.currentTarget.style.border = '1.5px solid #e5e7eb'; e.currentTarget.style.background = '#fafafa' }}
+                />
+              </div>
+
+              <PurpleButton onClick={handleSubmit} disabled={loading}>
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Create Seller Account'}
               </PurpleButton>
 
               <Divider />
@@ -149,144 +176,23 @@ export default function SellerSignup() {
                 Already a seller?{' '}
                 <button
                   type="button"
-                  onClick={()=>router.push('/seller/login')}
+                  onClick={onGoLogin}
                   className="font-bold hover:opacity-80 transition-opacity"
                   style={{ color: '#7c3aed' }}
                 >
                   Sign in
                 </button>
               </p>
-            </>
-          )}
 
-          {/* ── Step 2: Business ── */}
-          {step === 2 && (
-            <>
-              <Field
-                label="Business / Store Name"
-                placeholder="My Awesome Store"
-                value={form.businessName}
-                onChange={set('businessName')}
-              />
-
-              {/* Business type */}
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-semibold text-gray-600 tracking-wide">Business Type</label>
-                <div className="flex gap-2">
-                  {(['individual', 'company'] as const).map(type => (
-                    <button
-                      key={type}
-                      type="button"
-                      onClick={() => setForm(f => ({ ...f, businessType: type }))}
-                      className="flex-1 py-2.5 rounded-xl text-xs font-semibold transition-all capitalize"
-                      style={
-                        form.businessType === type
-                          ? { background: '#7c3aed', color: '#fff', border: '1.5px solid #7c3aed' }
-                          : { background: '#fafafa', color: '#6b7280', border: '1.5px solid #e5e7eb' }
-                      }
-                    >
-                      {type === 'individual' ? '👤 Individual' : '🏢 Company'}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Category */}
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-semibold text-gray-600 tracking-wide">Primary Category</label>
-                <div className="flex flex-wrap gap-1.5">
-                  {CATEGORIES.map(cat => (
-                    <button
-                      key={cat}
-                      type="button"
-                      onClick={() => setForm(f => ({ ...f, category: cat }))}
-                      className="px-2.5 py-1 rounded-lg text-xs font-medium transition-all"
-                      style={
-                        form.category === cat
-                          ? { background: '#7c3aed', color: '#fff' }
-                          : { background: '#f3f4f6', color: '#6b7280' }
-                      }
-                    >
-                      {cat}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex gap-2 mt-2">
-                <button
-                  type="button"
-                  onClick={handleBack}
-                  className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-gray-500 flex items-center justify-center gap-1 border border-gray-200 hover:border-purple-300 hover:text-purple-600 transition-all"
-                >
-                  <ChevronLeft className="w-4 h-4" /> Back
-                </button>
-                <div className="flex-1">
-                  <PurpleButton onClick={handleNext}>
-                    Continue <ChevronRight className="w-4 h-4" />
-                  </PurpleButton>
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* ── Step 3: Details ── */}
-          {step === 3 && (
-            <>
-              <Field
-                label="GSTIN (optional)"
-                placeholder="22ABCDE1234F1Z5"
-                value={form.gstin}
-                onChange={set('gstin')}
-              />
-
-              {/* Summary card */}
-              <div
-                className="rounded-xl p-4 flex flex-col gap-2.5"
-                style={{ background: '#faf5ff', border: '1px solid #e9d5ff' }}
-              >
-                <p className="text-xs font-bold text-purple-700 uppercase tracking-widest mb-1">Review Details</p>
-                {[
-                  { label: 'Name', value: form.fullName || '—' },
-                  { label: 'Email', value: form.email || '—' },
-                  { label: 'Store', value: form.businessName || '—' },
-                  { label: 'Type', value: form.businessType || '—' },
-                  { label: 'Category', value: form.category || '—' },
-                ].map(({ label, value }) => (
-                  <div key={label} className="flex justify-between items-center">
-                    <span className="text-xs text-gray-500">{label}</span>
-                    <span className="text-xs font-semibold text-gray-800 capitalize truncate ml-4 max-w-[160px]">{value}</span>
-                  </div>
-                ))}
-              </div>
-
-              <p className="text-xs text-gray-400 -mt-1">
+              <p className="text-center text-xs text-gray-300">
                 By registering you agree to ShopHub's{' '}
                 <span className="underline cursor-pointer" style={{ color: '#a78bfa' }}>Seller Terms</span>
                 {' '}&{' '}
-                <span className="underline cursor-pointer" style={{ color: '#a78bfa' }}>Privacy Policy</span>.
+                <span className="underline cursor-pointer" style={{ color: '#a78bfa' }}>Privacy Policy</span>
               </p>
-
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={handleBack}
-                  className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-gray-500 flex items-center justify-center gap-1 border border-gray-200 hover:border-purple-300 hover:text-purple-600 transition-all"
-                >
-                  <ChevronLeft className="w-4 h-4" /> Back
-                </button>
-                <div className="flex-1">
-                  <PurpleButton onClick={handleSubmit} disabled={loading}>
-                    {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Create Account'}
-                  </PurpleButton>
-                </div>
-              </div>
             </>
-          )}
-
-          {/* ── Step 4: Success ── */}
-          {step === 4 && (
-            <div className="flex flex-col items-center justify-center flex-1 gap-5 py-8 text-center">
+          ) : (
+            <div className="flex flex-col items-center justify-center flex-1 gap-5 py-10 text-center">
               <div
                 className="w-16 h-16 rounded-full flex items-center justify-center"
                 style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)', boxShadow: '0 8px 24px rgba(124,58,237,0.35)' }}
@@ -295,15 +201,19 @@ export default function SellerSignup() {
               </div>
               <div>
                 <h2 className="text-xl font-black text-gray-800 mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                  Welcome aboard!
+                  You're registered!
                 </h2>
                 <p className="text-sm text-gray-500 leading-relaxed max-w-[240px] mx-auto">
-                  Your seller account has been created. Start listing your products today.
+                  Your seller account is under review. We'll email you within 24 hours.
                 </p>
               </div>
-              <PurpleButton >
-                Go to Sign In
-              </PurpleButton>
+              <button
+                onClick={onGoLogin}
+                className="flex items-center gap-2 text-sm font-semibold hover:opacity-80 transition-opacity"
+                style={{ color: '#7c3aed' }}
+              >
+                <ChevronLeft className="w-4 h-4" /> Back to Sign In
+              </button>
             </div>
           )}
         </div>

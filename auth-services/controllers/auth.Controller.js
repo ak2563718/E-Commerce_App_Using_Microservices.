@@ -118,7 +118,7 @@ export const sellerSignup = asyncHandler(async (req, res, next) => {
     // Check if already a seller
     const existingSeller = await prisma.seller.findUnique({
         where: {
-            userId,
+            userId:userId,
         },
     });
 
@@ -137,25 +137,25 @@ export const sellerSignup = asyncHandler(async (req, res, next) => {
         return next(new AppError("Invalid business email.", 400));
     }
 
-    const userRole = await prisma.role.findFirst({
+    const roles = await prisma.role.findFirst({
         where:{
             name:"SELLER"
         }
     })
-    if(!userRole){
+    if(!roles){
         return next(new AppError('User not defined', 404))
     }
-
+    console.log("roles of ",roles)
     const seller = await prisma.seller.create({
         data: {
             userId,
             businessName: businessName.trim(),
             businessEmail: businessEmail?.trim().toLowerCase(),
-            businessPhone,
-            gstNumber,
-            panNumber,
-            businessAddress,
-            description,
+            businessPhone:businessPhone || null,
+            gstNumber:gstNumber || null,
+            panNumber:panNumber || null,
+            businessAddress:businessAddress || null,
+            description:description || null,
             // status defaults to PENDING
         },
     });
@@ -165,7 +165,7 @@ export const sellerSignup = asyncHandler(async (req, res, next) => {
             userId,
         },
         data:{
-            roleId:userRole.id,
+            roleId:roles.id,
         }
     })
 

@@ -32,6 +32,25 @@ export const authSignup = createAsyncThunk<any,signuprequest,{rejectValue:string
     }
 )
 
+// 1.1 seller signup
+export const sellerSignup = createAsyncThunk<any, any, {rejectValue:string}>(
+    'post/seller',
+    async(formData, { rejectWithValue })=>{
+        try {
+            const { data } = await axios.post(`${authuri}/seller-register`,formData,{
+                headers:{'Content-Type':'application/json'},
+                withCredentials:true,
+            })
+            return data;
+        } catch (error) {
+            if(axios.isAxiosError(error)){
+                return rejectWithValue(error.response?.data.message)
+            }
+            return rejectWithValue("something went wrong")
+        }
+    }
+)
+
 // 2. Auth verify-email
 export const authVerifyEmail = createAsyncThunk<any,string,{rejectValue:string}>(
     'auth/verifyemail',

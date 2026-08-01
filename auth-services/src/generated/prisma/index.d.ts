@@ -29,6 +29,11 @@ export type UserRole = $Result.DefaultSelection<Prisma.$UserRolePayload>
  */
 export type Role = $Result.DefaultSelection<Prisma.$RolePayload>
 /**
+ * Model Seller
+ * 
+ */
+export type Seller = $Result.DefaultSelection<Prisma.$SellerPayload>
+/**
  * Model RefreshToken
  * 
  */
@@ -64,6 +69,15 @@ export const RoleName: {
 
 export type RoleName = (typeof RoleName)[keyof typeof RoleName]
 
+
+export const SellerStatus: {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
+export type SellerStatus = (typeof SellerStatus)[keyof typeof SellerStatus]
+
 }
 
 export type AuthProvider = $Enums.AuthProvider
@@ -73,6 +87,10 @@ export const AuthProvider: typeof $Enums.AuthProvider
 export type RoleName = $Enums.RoleName
 
 export const RoleName: typeof $Enums.RoleName
+
+export type SellerStatus = $Enums.SellerStatus
+
+export const SellerStatus: typeof $Enums.SellerStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -224,6 +242,16 @@ export class PrismaClient<
     * ```
     */
   get role(): Prisma.RoleDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.seller`: Exposes CRUD operations for the **Seller** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Sellers
+    * const sellers = await prisma.seller.findMany()
+    * ```
+    */
+  get seller(): Prisma.SellerDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.refreshToken`: Exposes CRUD operations for the **RefreshToken** model.
@@ -691,6 +719,7 @@ export namespace Prisma {
     User: 'User',
     UserRole: 'UserRole',
     Role: 'Role',
+    Seller: 'Seller',
     RefreshToken: 'RefreshToken',
     PasswordResetToken: 'PasswordResetToken',
     LoginHistory: 'LoginHistory'
@@ -709,7 +738,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "userRole" | "role" | "refreshToken" | "passwordResetToken" | "loginHistory"
+      modelProps: "user" | "userRole" | "role" | "seller" | "refreshToken" | "passwordResetToken" | "loginHistory"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -932,6 +961,80 @@ export namespace Prisma {
           count: {
             args: Prisma.RoleCountArgs<ExtArgs>
             result: $Utils.Optional<RoleCountAggregateOutputType> | number
+          }
+        }
+      }
+      Seller: {
+        payload: Prisma.$SellerPayload<ExtArgs>
+        fields: Prisma.SellerFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SellerFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SellerPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SellerFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SellerPayload>
+          }
+          findFirst: {
+            args: Prisma.SellerFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SellerPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SellerFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SellerPayload>
+          }
+          findMany: {
+            args: Prisma.SellerFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SellerPayload>[]
+          }
+          create: {
+            args: Prisma.SellerCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SellerPayload>
+          }
+          createMany: {
+            args: Prisma.SellerCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SellerCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SellerPayload>[]
+          }
+          delete: {
+            args: Prisma.SellerDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SellerPayload>
+          }
+          update: {
+            args: Prisma.SellerUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SellerPayload>
+          }
+          deleteMany: {
+            args: Prisma.SellerDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SellerUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SellerUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SellerPayload>[]
+          }
+          upsert: {
+            args: Prisma.SellerUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SellerPayload>
+          }
+          aggregate: {
+            args: Prisma.SellerAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSeller>
+          }
+          groupBy: {
+            args: Prisma.SellerGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SellerGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SellerCountArgs<ExtArgs>
+            result: $Utils.Optional<SellerCountAggregateOutputType> | number
           }
         }
       }
@@ -1268,6 +1371,7 @@ export namespace Prisma {
     user?: UserOmit
     userRole?: UserRoleOmit
     role?: RoleOmit
+    seller?: SellerOmit
     refreshToken?: RefreshTokenOmit
     passwordResetToken?: PasswordResetTokenOmit
     loginHistory?: LoginHistoryOmit
@@ -1619,6 +1723,7 @@ export namespace Prisma {
     provider?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    seller?: boolean | User$sellerArgs<ExtArgs>
     role?: boolean | User$roleArgs<ExtArgs>
     refreshTokens?: boolean | User$refreshTokensArgs<ExtArgs>
     passwordResets?: boolean | User$passwordResetsArgs<ExtArgs>
@@ -1658,6 +1763,7 @@ export namespace Prisma {
 
   export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "password" | "emailverified" | "provider" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    seller?: boolean | User$sellerArgs<ExtArgs>
     role?: boolean | User$roleArgs<ExtArgs>
     refreshTokens?: boolean | User$refreshTokensArgs<ExtArgs>
     passwordResets?: boolean | User$passwordResetsArgs<ExtArgs>
@@ -1670,6 +1776,7 @@ export namespace Prisma {
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
+      seller: Prisma.$SellerPayload<ExtArgs> | null
       role: Prisma.$UserRolePayload<ExtArgs>[]
       refreshTokens: Prisma.$RefreshTokenPayload<ExtArgs>[]
       passwordResets: Prisma.$PasswordResetTokenPayload<ExtArgs>[]
@@ -2077,6 +2184,7 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    seller<T extends User$sellerArgs<ExtArgs> = {}>(args?: Subset<T, User$sellerArgs<ExtArgs>>): Prisma__SellerClient<$Result.GetResult<Prisma.$SellerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     role<T extends User$roleArgs<ExtArgs> = {}>(args?: Subset<T, User$roleArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserRolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     refreshTokens<T extends User$refreshTokensArgs<ExtArgs> = {}>(args?: Subset<T, User$refreshTokensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RefreshTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     passwordResets<T extends User$passwordResetsArgs<ExtArgs> = {}>(args?: Subset<T, User$passwordResetsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PasswordResetTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2507,6 +2615,25 @@ export namespace Prisma {
      * Limit how many Users to delete.
      */
     limit?: number
+  }
+
+  /**
+   * User.seller
+   */
+  export type User$sellerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Seller
+     */
+    select?: SellerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Seller
+     */
+    omit?: SellerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SellerInclude<ExtArgs> | null
+    where?: SellerWhereInput
   }
 
   /**
@@ -4767,6 +4894,1160 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: RoleInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Seller
+   */
+
+  export type AggregateSeller = {
+    _count: SellerCountAggregateOutputType | null
+    _min: SellerMinAggregateOutputType | null
+    _max: SellerMaxAggregateOutputType | null
+  }
+
+  export type SellerMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    businessName: string | null
+    businessEmail: string | null
+    businessPhone: string | null
+    gstNumber: string | null
+    panNumber: string | null
+    businessAddress: string | null
+    description: string | null
+    status: $Enums.SellerStatus | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type SellerMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    businessName: string | null
+    businessEmail: string | null
+    businessPhone: string | null
+    gstNumber: string | null
+    panNumber: string | null
+    businessAddress: string | null
+    description: string | null
+    status: $Enums.SellerStatus | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type SellerCountAggregateOutputType = {
+    id: number
+    userId: number
+    businessName: number
+    businessEmail: number
+    businessPhone: number
+    gstNumber: number
+    panNumber: number
+    businessAddress: number
+    description: number
+    status: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type SellerMinAggregateInputType = {
+    id?: true
+    userId?: true
+    businessName?: true
+    businessEmail?: true
+    businessPhone?: true
+    gstNumber?: true
+    panNumber?: true
+    businessAddress?: true
+    description?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type SellerMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    businessName?: true
+    businessEmail?: true
+    businessPhone?: true
+    gstNumber?: true
+    panNumber?: true
+    businessAddress?: true
+    description?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type SellerCountAggregateInputType = {
+    id?: true
+    userId?: true
+    businessName?: true
+    businessEmail?: true
+    businessPhone?: true
+    gstNumber?: true
+    panNumber?: true
+    businessAddress?: true
+    description?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type SellerAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Seller to aggregate.
+     */
+    where?: SellerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Sellers to fetch.
+     */
+    orderBy?: SellerOrderByWithRelationInput | SellerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SellerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Sellers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Sellers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Sellers
+    **/
+    _count?: true | SellerCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SellerMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SellerMaxAggregateInputType
+  }
+
+  export type GetSellerAggregateType<T extends SellerAggregateArgs> = {
+        [P in keyof T & keyof AggregateSeller]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSeller[P]>
+      : GetScalarType<T[P], AggregateSeller[P]>
+  }
+
+
+
+
+  export type SellerGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SellerWhereInput
+    orderBy?: SellerOrderByWithAggregationInput | SellerOrderByWithAggregationInput[]
+    by: SellerScalarFieldEnum[] | SellerScalarFieldEnum
+    having?: SellerScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SellerCountAggregateInputType | true
+    _min?: SellerMinAggregateInputType
+    _max?: SellerMaxAggregateInputType
+  }
+
+  export type SellerGroupByOutputType = {
+    id: string
+    userId: string
+    businessName: string
+    businessEmail: string | null
+    businessPhone: string | null
+    gstNumber: string | null
+    panNumber: string | null
+    businessAddress: string | null
+    description: string | null
+    status: $Enums.SellerStatus
+    createdAt: Date
+    updatedAt: Date
+    _count: SellerCountAggregateOutputType | null
+    _min: SellerMinAggregateOutputType | null
+    _max: SellerMaxAggregateOutputType | null
+  }
+
+  type GetSellerGroupByPayload<T extends SellerGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SellerGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SellerGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SellerGroupByOutputType[P]>
+            : GetScalarType<T[P], SellerGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SellerSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    businessName?: boolean
+    businessEmail?: boolean
+    businessPhone?: boolean
+    gstNumber?: boolean
+    panNumber?: boolean
+    businessAddress?: boolean
+    description?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["seller"]>
+
+  export type SellerSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    businessName?: boolean
+    businessEmail?: boolean
+    businessPhone?: boolean
+    gstNumber?: boolean
+    panNumber?: boolean
+    businessAddress?: boolean
+    description?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["seller"]>
+
+  export type SellerSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    businessName?: boolean
+    businessEmail?: boolean
+    businessPhone?: boolean
+    gstNumber?: boolean
+    panNumber?: boolean
+    businessAddress?: boolean
+    description?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["seller"]>
+
+  export type SellerSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    businessName?: boolean
+    businessEmail?: boolean
+    businessPhone?: boolean
+    gstNumber?: boolean
+    panNumber?: boolean
+    businessAddress?: boolean
+    description?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type SellerOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "businessName" | "businessEmail" | "businessPhone" | "gstNumber" | "panNumber" | "businessAddress" | "description" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["seller"]>
+  export type SellerInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type SellerIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type SellerIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $SellerPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Seller"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      businessName: string
+      businessEmail: string | null
+      businessPhone: string | null
+      gstNumber: string | null
+      panNumber: string | null
+      businessAddress: string | null
+      description: string | null
+      status: $Enums.SellerStatus
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["seller"]>
+    composites: {}
+  }
+
+  type SellerGetPayload<S extends boolean | null | undefined | SellerDefaultArgs> = $Result.GetResult<Prisma.$SellerPayload, S>
+
+  type SellerCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SellerFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SellerCountAggregateInputType | true
+    }
+
+  export interface SellerDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Seller'], meta: { name: 'Seller' } }
+    /**
+     * Find zero or one Seller that matches the filter.
+     * @param {SellerFindUniqueArgs} args - Arguments to find a Seller
+     * @example
+     * // Get one Seller
+     * const seller = await prisma.seller.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SellerFindUniqueArgs>(args: SelectSubset<T, SellerFindUniqueArgs<ExtArgs>>): Prisma__SellerClient<$Result.GetResult<Prisma.$SellerPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Seller that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SellerFindUniqueOrThrowArgs} args - Arguments to find a Seller
+     * @example
+     * // Get one Seller
+     * const seller = await prisma.seller.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SellerFindUniqueOrThrowArgs>(args: SelectSubset<T, SellerFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SellerClient<$Result.GetResult<Prisma.$SellerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Seller that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SellerFindFirstArgs} args - Arguments to find a Seller
+     * @example
+     * // Get one Seller
+     * const seller = await prisma.seller.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SellerFindFirstArgs>(args?: SelectSubset<T, SellerFindFirstArgs<ExtArgs>>): Prisma__SellerClient<$Result.GetResult<Prisma.$SellerPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Seller that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SellerFindFirstOrThrowArgs} args - Arguments to find a Seller
+     * @example
+     * // Get one Seller
+     * const seller = await prisma.seller.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SellerFindFirstOrThrowArgs>(args?: SelectSubset<T, SellerFindFirstOrThrowArgs<ExtArgs>>): Prisma__SellerClient<$Result.GetResult<Prisma.$SellerPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Sellers that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SellerFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Sellers
+     * const sellers = await prisma.seller.findMany()
+     * 
+     * // Get first 10 Sellers
+     * const sellers = await prisma.seller.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const sellerWithIdOnly = await prisma.seller.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SellerFindManyArgs>(args?: SelectSubset<T, SellerFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SellerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Seller.
+     * @param {SellerCreateArgs} args - Arguments to create a Seller.
+     * @example
+     * // Create one Seller
+     * const Seller = await prisma.seller.create({
+     *   data: {
+     *     // ... data to create a Seller
+     *   }
+     * })
+     * 
+     */
+    create<T extends SellerCreateArgs>(args: SelectSubset<T, SellerCreateArgs<ExtArgs>>): Prisma__SellerClient<$Result.GetResult<Prisma.$SellerPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Sellers.
+     * @param {SellerCreateManyArgs} args - Arguments to create many Sellers.
+     * @example
+     * // Create many Sellers
+     * const seller = await prisma.seller.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SellerCreateManyArgs>(args?: SelectSubset<T, SellerCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Sellers and returns the data saved in the database.
+     * @param {SellerCreateManyAndReturnArgs} args - Arguments to create many Sellers.
+     * @example
+     * // Create many Sellers
+     * const seller = await prisma.seller.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Sellers and only return the `id`
+     * const sellerWithIdOnly = await prisma.seller.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SellerCreateManyAndReturnArgs>(args?: SelectSubset<T, SellerCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SellerPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Seller.
+     * @param {SellerDeleteArgs} args - Arguments to delete one Seller.
+     * @example
+     * // Delete one Seller
+     * const Seller = await prisma.seller.delete({
+     *   where: {
+     *     // ... filter to delete one Seller
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SellerDeleteArgs>(args: SelectSubset<T, SellerDeleteArgs<ExtArgs>>): Prisma__SellerClient<$Result.GetResult<Prisma.$SellerPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Seller.
+     * @param {SellerUpdateArgs} args - Arguments to update one Seller.
+     * @example
+     * // Update one Seller
+     * const seller = await prisma.seller.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SellerUpdateArgs>(args: SelectSubset<T, SellerUpdateArgs<ExtArgs>>): Prisma__SellerClient<$Result.GetResult<Prisma.$SellerPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Sellers.
+     * @param {SellerDeleteManyArgs} args - Arguments to filter Sellers to delete.
+     * @example
+     * // Delete a few Sellers
+     * const { count } = await prisma.seller.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SellerDeleteManyArgs>(args?: SelectSubset<T, SellerDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Sellers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SellerUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Sellers
+     * const seller = await prisma.seller.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SellerUpdateManyArgs>(args: SelectSubset<T, SellerUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Sellers and returns the data updated in the database.
+     * @param {SellerUpdateManyAndReturnArgs} args - Arguments to update many Sellers.
+     * @example
+     * // Update many Sellers
+     * const seller = await prisma.seller.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Sellers and only return the `id`
+     * const sellerWithIdOnly = await prisma.seller.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SellerUpdateManyAndReturnArgs>(args: SelectSubset<T, SellerUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SellerPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Seller.
+     * @param {SellerUpsertArgs} args - Arguments to update or create a Seller.
+     * @example
+     * // Update or create a Seller
+     * const seller = await prisma.seller.upsert({
+     *   create: {
+     *     // ... data to create a Seller
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Seller we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SellerUpsertArgs>(args: SelectSubset<T, SellerUpsertArgs<ExtArgs>>): Prisma__SellerClient<$Result.GetResult<Prisma.$SellerPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Sellers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SellerCountArgs} args - Arguments to filter Sellers to count.
+     * @example
+     * // Count the number of Sellers
+     * const count = await prisma.seller.count({
+     *   where: {
+     *     // ... the filter for the Sellers we want to count
+     *   }
+     * })
+    **/
+    count<T extends SellerCountArgs>(
+      args?: Subset<T, SellerCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SellerCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Seller.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SellerAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SellerAggregateArgs>(args: Subset<T, SellerAggregateArgs>): Prisma.PrismaPromise<GetSellerAggregateType<T>>
+
+    /**
+     * Group by Seller.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SellerGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SellerGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SellerGroupByArgs['orderBy'] }
+        : { orderBy?: SellerGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SellerGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSellerGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Seller model
+   */
+  readonly fields: SellerFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Seller.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SellerClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Seller model
+   */
+  interface SellerFieldRefs {
+    readonly id: FieldRef<"Seller", 'String'>
+    readonly userId: FieldRef<"Seller", 'String'>
+    readonly businessName: FieldRef<"Seller", 'String'>
+    readonly businessEmail: FieldRef<"Seller", 'String'>
+    readonly businessPhone: FieldRef<"Seller", 'String'>
+    readonly gstNumber: FieldRef<"Seller", 'String'>
+    readonly panNumber: FieldRef<"Seller", 'String'>
+    readonly businessAddress: FieldRef<"Seller", 'String'>
+    readonly description: FieldRef<"Seller", 'String'>
+    readonly status: FieldRef<"Seller", 'SellerStatus'>
+    readonly createdAt: FieldRef<"Seller", 'DateTime'>
+    readonly updatedAt: FieldRef<"Seller", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Seller findUnique
+   */
+  export type SellerFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Seller
+     */
+    select?: SellerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Seller
+     */
+    omit?: SellerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SellerInclude<ExtArgs> | null
+    /**
+     * Filter, which Seller to fetch.
+     */
+    where: SellerWhereUniqueInput
+  }
+
+  /**
+   * Seller findUniqueOrThrow
+   */
+  export type SellerFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Seller
+     */
+    select?: SellerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Seller
+     */
+    omit?: SellerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SellerInclude<ExtArgs> | null
+    /**
+     * Filter, which Seller to fetch.
+     */
+    where: SellerWhereUniqueInput
+  }
+
+  /**
+   * Seller findFirst
+   */
+  export type SellerFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Seller
+     */
+    select?: SellerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Seller
+     */
+    omit?: SellerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SellerInclude<ExtArgs> | null
+    /**
+     * Filter, which Seller to fetch.
+     */
+    where?: SellerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Sellers to fetch.
+     */
+    orderBy?: SellerOrderByWithRelationInput | SellerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Sellers.
+     */
+    cursor?: SellerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Sellers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Sellers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Sellers.
+     */
+    distinct?: SellerScalarFieldEnum | SellerScalarFieldEnum[]
+  }
+
+  /**
+   * Seller findFirstOrThrow
+   */
+  export type SellerFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Seller
+     */
+    select?: SellerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Seller
+     */
+    omit?: SellerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SellerInclude<ExtArgs> | null
+    /**
+     * Filter, which Seller to fetch.
+     */
+    where?: SellerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Sellers to fetch.
+     */
+    orderBy?: SellerOrderByWithRelationInput | SellerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Sellers.
+     */
+    cursor?: SellerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Sellers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Sellers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Sellers.
+     */
+    distinct?: SellerScalarFieldEnum | SellerScalarFieldEnum[]
+  }
+
+  /**
+   * Seller findMany
+   */
+  export type SellerFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Seller
+     */
+    select?: SellerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Seller
+     */
+    omit?: SellerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SellerInclude<ExtArgs> | null
+    /**
+     * Filter, which Sellers to fetch.
+     */
+    where?: SellerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Sellers to fetch.
+     */
+    orderBy?: SellerOrderByWithRelationInput | SellerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Sellers.
+     */
+    cursor?: SellerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Sellers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Sellers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Sellers.
+     */
+    distinct?: SellerScalarFieldEnum | SellerScalarFieldEnum[]
+  }
+
+  /**
+   * Seller create
+   */
+  export type SellerCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Seller
+     */
+    select?: SellerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Seller
+     */
+    omit?: SellerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SellerInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Seller.
+     */
+    data: XOR<SellerCreateInput, SellerUncheckedCreateInput>
+  }
+
+  /**
+   * Seller createMany
+   */
+  export type SellerCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Sellers.
+     */
+    data: SellerCreateManyInput | SellerCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Seller createManyAndReturn
+   */
+  export type SellerCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Seller
+     */
+    select?: SellerSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Seller
+     */
+    omit?: SellerOmit<ExtArgs> | null
+    /**
+     * The data used to create many Sellers.
+     */
+    data: SellerCreateManyInput | SellerCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SellerIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Seller update
+   */
+  export type SellerUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Seller
+     */
+    select?: SellerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Seller
+     */
+    omit?: SellerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SellerInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Seller.
+     */
+    data: XOR<SellerUpdateInput, SellerUncheckedUpdateInput>
+    /**
+     * Choose, which Seller to update.
+     */
+    where: SellerWhereUniqueInput
+  }
+
+  /**
+   * Seller updateMany
+   */
+  export type SellerUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Sellers.
+     */
+    data: XOR<SellerUpdateManyMutationInput, SellerUncheckedUpdateManyInput>
+    /**
+     * Filter which Sellers to update
+     */
+    where?: SellerWhereInput
+    /**
+     * Limit how many Sellers to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Seller updateManyAndReturn
+   */
+  export type SellerUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Seller
+     */
+    select?: SellerSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Seller
+     */
+    omit?: SellerOmit<ExtArgs> | null
+    /**
+     * The data used to update Sellers.
+     */
+    data: XOR<SellerUpdateManyMutationInput, SellerUncheckedUpdateManyInput>
+    /**
+     * Filter which Sellers to update
+     */
+    where?: SellerWhereInput
+    /**
+     * Limit how many Sellers to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SellerIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Seller upsert
+   */
+  export type SellerUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Seller
+     */
+    select?: SellerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Seller
+     */
+    omit?: SellerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SellerInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Seller to update in case it exists.
+     */
+    where: SellerWhereUniqueInput
+    /**
+     * In case the Seller found by the `where` argument doesn't exist, create a new Seller with this data.
+     */
+    create: XOR<SellerCreateInput, SellerUncheckedCreateInput>
+    /**
+     * In case the Seller was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SellerUpdateInput, SellerUncheckedUpdateInput>
+  }
+
+  /**
+   * Seller delete
+   */
+  export type SellerDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Seller
+     */
+    select?: SellerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Seller
+     */
+    omit?: SellerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SellerInclude<ExtArgs> | null
+    /**
+     * Filter which Seller to delete.
+     */
+    where: SellerWhereUniqueInput
+  }
+
+  /**
+   * Seller deleteMany
+   */
+  export type SellerDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Sellers to delete
+     */
+    where?: SellerWhereInput
+    /**
+     * Limit how many Sellers to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Seller without action
+   */
+  export type SellerDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Seller
+     */
+    select?: SellerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Seller
+     */
+    omit?: SellerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SellerInclude<ExtArgs> | null
   }
 
 
@@ -8008,6 +9289,24 @@ export namespace Prisma {
   export type RoleScalarFieldEnum = (typeof RoleScalarFieldEnum)[keyof typeof RoleScalarFieldEnum]
 
 
+  export const SellerScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    businessName: 'businessName',
+    businessEmail: 'businessEmail',
+    businessPhone: 'businessPhone',
+    gstNumber: 'gstNumber',
+    panNumber: 'panNumber',
+    businessAddress: 'businessAddress',
+    description: 'description',
+    status: 'status',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type SellerScalarFieldEnum = (typeof SellerScalarFieldEnum)[keyof typeof SellerScalarFieldEnum]
+
+
   export const RefreshTokenScalarFieldEnum: {
     id: 'id',
     token: 'token',
@@ -8134,6 +9433,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'SellerStatus'
+   */
+  export type EnumSellerStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SellerStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'SellerStatus[]'
+   */
+  export type ListEnumSellerStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SellerStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -8161,6 +9474,7 @@ export namespace Prisma {
     provider?: EnumAuthProviderFilter<"User"> | $Enums.AuthProvider
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+    seller?: XOR<SellerNullableScalarRelationFilter, SellerWhereInput> | null
     role?: UserRoleListRelationFilter
     refreshTokens?: RefreshTokenListRelationFilter
     passwordResets?: PasswordResetTokenListRelationFilter
@@ -8175,6 +9489,7 @@ export namespace Prisma {
     provider?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    seller?: SellerOrderByWithRelationInput
     role?: UserRoleOrderByRelationAggregateInput
     refreshTokens?: RefreshTokenOrderByRelationAggregateInput
     passwordResets?: PasswordResetTokenOrderByRelationAggregateInput
@@ -8192,6 +9507,7 @@ export namespace Prisma {
     provider?: EnumAuthProviderFilter<"User"> | $Enums.AuthProvider
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+    seller?: XOR<SellerNullableScalarRelationFilter, SellerWhereInput> | null
     role?: UserRoleListRelationFilter
     refreshTokens?: RefreshTokenListRelationFilter
     passwordResets?: PasswordResetTokenListRelationFilter
@@ -8249,17 +9565,17 @@ export namespace Prisma {
 
   export type UserRoleWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    userId?: string
     userId_roleId?: UserRoleUserIdRoleIdCompoundUniqueInput
     AND?: UserRoleWhereInput | UserRoleWhereInput[]
     OR?: UserRoleWhereInput[]
     NOT?: UserRoleWhereInput | UserRoleWhereInput[]
-    userId?: StringFilter<"UserRole"> | string
     roleId?: StringFilter<"UserRole"> | string
     createdAt?: DateTimeFilter<"UserRole"> | Date | string
     updatedAt?: DateTimeFilter<"UserRole"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     role?: XOR<RoleScalarRelationFilter, RoleWhereInput>
-  }, "id" | "userId_roleId">
+  }, "id" | "userId" | "userId_roleId">
 
   export type UserRoleOrderByWithAggregationInput = {
     id?: SortOrder
@@ -8336,6 +9652,96 @@ export namespace Prisma {
     description?: StringNullableWithAggregatesFilter<"Role"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Role"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Role"> | Date | string
+  }
+
+  export type SellerWhereInput = {
+    AND?: SellerWhereInput | SellerWhereInput[]
+    OR?: SellerWhereInput[]
+    NOT?: SellerWhereInput | SellerWhereInput[]
+    id?: StringFilter<"Seller"> | string
+    userId?: StringFilter<"Seller"> | string
+    businessName?: StringFilter<"Seller"> | string
+    businessEmail?: StringNullableFilter<"Seller"> | string | null
+    businessPhone?: StringNullableFilter<"Seller"> | string | null
+    gstNumber?: StringNullableFilter<"Seller"> | string | null
+    panNumber?: StringNullableFilter<"Seller"> | string | null
+    businessAddress?: StringNullableFilter<"Seller"> | string | null
+    description?: StringNullableFilter<"Seller"> | string | null
+    status?: EnumSellerStatusFilter<"Seller"> | $Enums.SellerStatus
+    createdAt?: DateTimeFilter<"Seller"> | Date | string
+    updatedAt?: DateTimeFilter<"Seller"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type SellerOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    businessName?: SortOrder
+    businessEmail?: SortOrderInput | SortOrder
+    businessPhone?: SortOrderInput | SortOrder
+    gstNumber?: SortOrderInput | SortOrder
+    panNumber?: SortOrderInput | SortOrder
+    businessAddress?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type SellerWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    userId?: string
+    AND?: SellerWhereInput | SellerWhereInput[]
+    OR?: SellerWhereInput[]
+    NOT?: SellerWhereInput | SellerWhereInput[]
+    businessName?: StringFilter<"Seller"> | string
+    businessEmail?: StringNullableFilter<"Seller"> | string | null
+    businessPhone?: StringNullableFilter<"Seller"> | string | null
+    gstNumber?: StringNullableFilter<"Seller"> | string | null
+    panNumber?: StringNullableFilter<"Seller"> | string | null
+    businessAddress?: StringNullableFilter<"Seller"> | string | null
+    description?: StringNullableFilter<"Seller"> | string | null
+    status?: EnumSellerStatusFilter<"Seller"> | $Enums.SellerStatus
+    createdAt?: DateTimeFilter<"Seller"> | Date | string
+    updatedAt?: DateTimeFilter<"Seller"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "userId">
+
+  export type SellerOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    businessName?: SortOrder
+    businessEmail?: SortOrderInput | SortOrder
+    businessPhone?: SortOrderInput | SortOrder
+    gstNumber?: SortOrderInput | SortOrder
+    panNumber?: SortOrderInput | SortOrder
+    businessAddress?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: SellerCountOrderByAggregateInput
+    _max?: SellerMaxOrderByAggregateInput
+    _min?: SellerMinOrderByAggregateInput
+  }
+
+  export type SellerScalarWhereWithAggregatesInput = {
+    AND?: SellerScalarWhereWithAggregatesInput | SellerScalarWhereWithAggregatesInput[]
+    OR?: SellerScalarWhereWithAggregatesInput[]
+    NOT?: SellerScalarWhereWithAggregatesInput | SellerScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Seller"> | string
+    userId?: StringWithAggregatesFilter<"Seller"> | string
+    businessName?: StringWithAggregatesFilter<"Seller"> | string
+    businessEmail?: StringNullableWithAggregatesFilter<"Seller"> | string | null
+    businessPhone?: StringNullableWithAggregatesFilter<"Seller"> | string | null
+    gstNumber?: StringNullableWithAggregatesFilter<"Seller"> | string | null
+    panNumber?: StringNullableWithAggregatesFilter<"Seller"> | string | null
+    businessAddress?: StringNullableWithAggregatesFilter<"Seller"> | string | null
+    description?: StringNullableWithAggregatesFilter<"Seller"> | string | null
+    status?: EnumSellerStatusWithAggregatesFilter<"Seller"> | $Enums.SellerStatus
+    createdAt?: DateTimeWithAggregatesFilter<"Seller"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Seller"> | Date | string
   }
 
   export type RefreshTokenWhereInput = {
@@ -8511,6 +9917,7 @@ export namespace Prisma {
     provider?: $Enums.AuthProvider
     createdAt?: Date | string
     updatedAt?: Date | string
+    seller?: SellerCreateNestedOneWithoutUserInput
     role?: UserRoleCreateNestedManyWithoutUserInput
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
     passwordResets?: PasswordResetTokenCreateNestedManyWithoutUserInput
@@ -8525,6 +9932,7 @@ export namespace Prisma {
     provider?: $Enums.AuthProvider
     createdAt?: Date | string
     updatedAt?: Date | string
+    seller?: SellerUncheckedCreateNestedOneWithoutUserInput
     role?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
     passwordResets?: PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
@@ -8539,6 +9947,7 @@ export namespace Prisma {
     provider?: EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    seller?: SellerUpdateOneWithoutUserNestedInput
     role?: UserRoleUpdateManyWithoutUserNestedInput
     refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
     passwordResets?: PasswordResetTokenUpdateManyWithoutUserNestedInput
@@ -8553,6 +9962,7 @@ export namespace Prisma {
     provider?: EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    seller?: SellerUncheckedUpdateOneWithoutUserNestedInput
     role?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
     passwordResets?: PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -8699,6 +10109,110 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: EnumRoleNameFieldUpdateOperationsInput | $Enums.RoleName
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SellerCreateInput = {
+    id?: string
+    businessName: string
+    businessEmail?: string | null
+    businessPhone?: string | null
+    gstNumber?: string | null
+    panNumber?: string | null
+    businessAddress?: string | null
+    description?: string | null
+    status?: $Enums.SellerStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutSellerInput
+  }
+
+  export type SellerUncheckedCreateInput = {
+    id?: string
+    userId: string
+    businessName: string
+    businessEmail?: string | null
+    businessPhone?: string | null
+    gstNumber?: string | null
+    panNumber?: string | null
+    businessAddress?: string | null
+    description?: string | null
+    status?: $Enums.SellerStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SellerUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    businessName?: StringFieldUpdateOperationsInput | string
+    businessEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    businessPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    gstNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    panNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    businessAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumSellerStatusFieldUpdateOperationsInput | $Enums.SellerStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutSellerNestedInput
+  }
+
+  export type SellerUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    businessName?: StringFieldUpdateOperationsInput | string
+    businessEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    businessPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    gstNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    panNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    businessAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumSellerStatusFieldUpdateOperationsInput | $Enums.SellerStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SellerCreateManyInput = {
+    id?: string
+    userId: string
+    businessName: string
+    businessEmail?: string | null
+    businessPhone?: string | null
+    gstNumber?: string | null
+    panNumber?: string | null
+    businessAddress?: string | null
+    description?: string | null
+    status?: $Enums.SellerStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SellerUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    businessName?: StringFieldUpdateOperationsInput | string
+    businessEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    businessPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    gstNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    panNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    businessAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumSellerStatusFieldUpdateOperationsInput | $Enums.SellerStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SellerUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    businessName?: StringFieldUpdateOperationsInput | string
+    businessEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    businessPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    gstNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    panNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    businessAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumSellerStatusFieldUpdateOperationsInput | $Enums.SellerStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -8904,6 +10418,11 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type SellerNullableScalarRelationFilter = {
+    is?: SellerWhereInput | null
+    isNot?: SellerWhereInput | null
   }
 
   export type UserRoleListRelationFilter = {
@@ -9144,6 +10663,68 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
+  export type EnumSellerStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.SellerStatus | EnumSellerStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SellerStatus[] | ListEnumSellerStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SellerStatus[] | ListEnumSellerStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSellerStatusFilter<$PrismaModel> | $Enums.SellerStatus
+  }
+
+  export type SellerCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    businessName?: SortOrder
+    businessEmail?: SortOrder
+    businessPhone?: SortOrder
+    gstNumber?: SortOrder
+    panNumber?: SortOrder
+    businessAddress?: SortOrder
+    description?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SellerMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    businessName?: SortOrder
+    businessEmail?: SortOrder
+    businessPhone?: SortOrder
+    gstNumber?: SortOrder
+    panNumber?: SortOrder
+    businessAddress?: SortOrder
+    description?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SellerMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    businessName?: SortOrder
+    businessEmail?: SortOrder
+    businessPhone?: SortOrder
+    gstNumber?: SortOrder
+    panNumber?: SortOrder
+    businessAddress?: SortOrder
+    description?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumSellerStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SellerStatus | EnumSellerStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SellerStatus[] | ListEnumSellerStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SellerStatus[] | ListEnumSellerStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSellerStatusWithAggregatesFilter<$PrismaModel> | $Enums.SellerStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSellerStatusFilter<$PrismaModel>
+    _max?: NestedEnumSellerStatusFilter<$PrismaModel>
+  }
+
   export type RefreshTokenCountOrderByAggregateInput = {
     id?: SortOrder
     token?: SortOrder
@@ -9216,6 +10797,12 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
+  export type SellerCreateNestedOneWithoutUserInput = {
+    create?: XOR<SellerCreateWithoutUserInput, SellerUncheckedCreateWithoutUserInput>
+    connectOrCreate?: SellerCreateOrConnectWithoutUserInput
+    connect?: SellerWhereUniqueInput
+  }
+
   export type UserRoleCreateNestedManyWithoutUserInput = {
     create?: XOR<UserRoleCreateWithoutUserInput, UserRoleUncheckedCreateWithoutUserInput> | UserRoleCreateWithoutUserInput[] | UserRoleUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserRoleCreateOrConnectWithoutUserInput | UserRoleCreateOrConnectWithoutUserInput[]
@@ -9242,6 +10829,12 @@ export namespace Prisma {
     connectOrCreate?: LoginHistoryCreateOrConnectWithoutUserInput | LoginHistoryCreateOrConnectWithoutUserInput[]
     createMany?: LoginHistoryCreateManyUserInputEnvelope
     connect?: LoginHistoryWhereUniqueInput | LoginHistoryWhereUniqueInput[]
+  }
+
+  export type SellerUncheckedCreateNestedOneWithoutUserInput = {
+    create?: XOR<SellerCreateWithoutUserInput, SellerUncheckedCreateWithoutUserInput>
+    connectOrCreate?: SellerCreateOrConnectWithoutUserInput
+    connect?: SellerWhereUniqueInput
   }
 
   export type UserRoleUncheckedCreateNestedManyWithoutUserInput = {
@@ -9286,6 +10879,16 @@ export namespace Prisma {
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type SellerUpdateOneWithoutUserNestedInput = {
+    create?: XOR<SellerCreateWithoutUserInput, SellerUncheckedCreateWithoutUserInput>
+    connectOrCreate?: SellerCreateOrConnectWithoutUserInput
+    upsert?: SellerUpsertWithoutUserInput
+    disconnect?: SellerWhereInput | boolean
+    delete?: SellerWhereInput | boolean
+    connect?: SellerWhereUniqueInput
+    update?: XOR<XOR<SellerUpdateToOneWithWhereWithoutUserInput, SellerUpdateWithoutUserInput>, SellerUncheckedUpdateWithoutUserInput>
   }
 
   export type UserRoleUpdateManyWithoutUserNestedInput = {
@@ -9342,6 +10945,16 @@ export namespace Prisma {
     update?: LoginHistoryUpdateWithWhereUniqueWithoutUserInput | LoginHistoryUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: LoginHistoryUpdateManyWithWhereWithoutUserInput | LoginHistoryUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: LoginHistoryScalarWhereInput | LoginHistoryScalarWhereInput[]
+  }
+
+  export type SellerUncheckedUpdateOneWithoutUserNestedInput = {
+    create?: XOR<SellerCreateWithoutUserInput, SellerUncheckedCreateWithoutUserInput>
+    connectOrCreate?: SellerCreateOrConnectWithoutUserInput
+    upsert?: SellerUpsertWithoutUserInput
+    disconnect?: SellerWhereInput | boolean
+    delete?: SellerWhereInput | boolean
+    connect?: SellerWhereUniqueInput
+    update?: XOR<XOR<SellerUpdateToOneWithWhereWithoutUserInput, SellerUpdateWithoutUserInput>, SellerUncheckedUpdateWithoutUserInput>
   }
 
   export type UserRoleUncheckedUpdateManyWithoutUserNestedInput = {
@@ -9476,6 +11089,24 @@ export namespace Prisma {
     update?: UserRoleUpdateWithWhereUniqueWithoutRoleInput | UserRoleUpdateWithWhereUniqueWithoutRoleInput[]
     updateMany?: UserRoleUpdateManyWithWhereWithoutRoleInput | UserRoleUpdateManyWithWhereWithoutRoleInput[]
     deleteMany?: UserRoleScalarWhereInput | UserRoleScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutSellerInput = {
+    create?: XOR<UserCreateWithoutSellerInput, UserUncheckedCreateWithoutSellerInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSellerInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumSellerStatusFieldUpdateOperationsInput = {
+    set?: $Enums.SellerStatus
+  }
+
+  export type UserUpdateOneRequiredWithoutSellerNestedInput = {
+    create?: XOR<UserCreateWithoutSellerInput, UserUncheckedCreateWithoutSellerInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSellerInput
+    upsert?: UserUpsertWithoutSellerInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSellerInput, UserUpdateWithoutSellerInput>, UserUncheckedUpdateWithoutSellerInput>
   }
 
   export type UserCreateNestedOneWithoutRefreshTokensInput = {
@@ -9676,6 +11307,56 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedEnumSellerStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.SellerStatus | EnumSellerStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SellerStatus[] | ListEnumSellerStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SellerStatus[] | ListEnumSellerStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSellerStatusFilter<$PrismaModel> | $Enums.SellerStatus
+  }
+
+  export type NestedEnumSellerStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SellerStatus | EnumSellerStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SellerStatus[] | ListEnumSellerStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SellerStatus[] | ListEnumSellerStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSellerStatusWithAggregatesFilter<$PrismaModel> | $Enums.SellerStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSellerStatusFilter<$PrismaModel>
+    _max?: NestedEnumSellerStatusFilter<$PrismaModel>
+  }
+
+  export type SellerCreateWithoutUserInput = {
+    id?: string
+    businessName: string
+    businessEmail?: string | null
+    businessPhone?: string | null
+    gstNumber?: string | null
+    panNumber?: string | null
+    businessAddress?: string | null
+    description?: string | null
+    status?: $Enums.SellerStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SellerUncheckedCreateWithoutUserInput = {
+    id?: string
+    businessName: string
+    businessEmail?: string | null
+    businessPhone?: string | null
+    gstNumber?: string | null
+    panNumber?: string | null
+    businessAddress?: string | null
+    description?: string | null
+    status?: $Enums.SellerStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SellerCreateOrConnectWithoutUserInput = {
+    where: SellerWhereUniqueInput
+    create: XOR<SellerCreateWithoutUserInput, SellerUncheckedCreateWithoutUserInput>
+  }
+
   export type UserRoleCreateWithoutUserInput = {
     id?: string
     createdAt?: Date | string
@@ -9770,6 +11451,45 @@ export namespace Prisma {
   export type LoginHistoryCreateManyUserInputEnvelope = {
     data: LoginHistoryCreateManyUserInput | LoginHistoryCreateManyUserInput[]
     skipDuplicates?: boolean
+  }
+
+  export type SellerUpsertWithoutUserInput = {
+    update: XOR<SellerUpdateWithoutUserInput, SellerUncheckedUpdateWithoutUserInput>
+    create: XOR<SellerCreateWithoutUserInput, SellerUncheckedCreateWithoutUserInput>
+    where?: SellerWhereInput
+  }
+
+  export type SellerUpdateToOneWithWhereWithoutUserInput = {
+    where?: SellerWhereInput
+    data: XOR<SellerUpdateWithoutUserInput, SellerUncheckedUpdateWithoutUserInput>
+  }
+
+  export type SellerUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    businessName?: StringFieldUpdateOperationsInput | string
+    businessEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    businessPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    gstNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    panNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    businessAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumSellerStatusFieldUpdateOperationsInput | $Enums.SellerStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SellerUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    businessName?: StringFieldUpdateOperationsInput | string
+    businessEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    businessPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    gstNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    panNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    businessAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumSellerStatusFieldUpdateOperationsInput | $Enums.SellerStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserRoleUpsertWithWhereUniqueWithoutUserInput = {
@@ -9888,6 +11608,7 @@ export namespace Prisma {
     provider?: $Enums.AuthProvider
     createdAt?: Date | string
     updatedAt?: Date | string
+    seller?: SellerCreateNestedOneWithoutUserInput
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
     passwordResets?: PasswordResetTokenCreateNestedManyWithoutUserInput
     loginHistory?: LoginHistoryCreateNestedManyWithoutUserInput
@@ -9901,6 +11622,7 @@ export namespace Prisma {
     provider?: $Enums.AuthProvider
     createdAt?: Date | string
     updatedAt?: Date | string
+    seller?: SellerUncheckedCreateNestedOneWithoutUserInput
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
     passwordResets?: PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
     loginHistory?: LoginHistoryUncheckedCreateNestedManyWithoutUserInput
@@ -9951,6 +11673,7 @@ export namespace Prisma {
     provider?: EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    seller?: SellerUpdateOneWithoutUserNestedInput
     refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
     passwordResets?: PasswordResetTokenUpdateManyWithoutUserNestedInput
     loginHistory?: LoginHistoryUpdateManyWithoutUserNestedInput
@@ -9964,6 +11687,7 @@ export namespace Prisma {
     provider?: EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    seller?: SellerUncheckedUpdateOneWithoutUserNestedInput
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
     passwordResets?: PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
     loginHistory?: LoginHistoryUncheckedUpdateManyWithoutUserNestedInput
@@ -10036,6 +11760,78 @@ export namespace Prisma {
     data: XOR<UserRoleUpdateManyMutationInput, UserRoleUncheckedUpdateManyWithoutRoleInput>
   }
 
+  export type UserCreateWithoutSellerInput = {
+    id?: string
+    email: string
+    password: string
+    emailverified?: boolean
+    provider?: $Enums.AuthProvider
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    role?: UserRoleCreateNestedManyWithoutUserInput
+    refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
+    passwordResets?: PasswordResetTokenCreateNestedManyWithoutUserInput
+    loginHistory?: LoginHistoryCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutSellerInput = {
+    id?: string
+    email: string
+    password: string
+    emailverified?: boolean
+    provider?: $Enums.AuthProvider
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    role?: UserRoleUncheckedCreateNestedManyWithoutUserInput
+    refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+    passwordResets?: PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+    loginHistory?: LoginHistoryUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutSellerInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutSellerInput, UserUncheckedCreateWithoutSellerInput>
+  }
+
+  export type UserUpsertWithoutSellerInput = {
+    update: XOR<UserUpdateWithoutSellerInput, UserUncheckedUpdateWithoutSellerInput>
+    create: XOR<UserCreateWithoutSellerInput, UserUncheckedCreateWithoutSellerInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutSellerInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutSellerInput, UserUncheckedUpdateWithoutSellerInput>
+  }
+
+  export type UserUpdateWithoutSellerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    emailverified?: BoolFieldUpdateOperationsInput | boolean
+    provider?: EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: UserRoleUpdateManyWithoutUserNestedInput
+    refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
+    passwordResets?: PasswordResetTokenUpdateManyWithoutUserNestedInput
+    loginHistory?: LoginHistoryUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutSellerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    emailverified?: BoolFieldUpdateOperationsInput | boolean
+    provider?: EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
+    refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+    passwordResets?: PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+    loginHistory?: LoginHistoryUncheckedUpdateManyWithoutUserNestedInput
+  }
+
   export type UserCreateWithoutRefreshTokensInput = {
     id?: string
     email: string
@@ -10044,6 +11840,7 @@ export namespace Prisma {
     provider?: $Enums.AuthProvider
     createdAt?: Date | string
     updatedAt?: Date | string
+    seller?: SellerCreateNestedOneWithoutUserInput
     role?: UserRoleCreateNestedManyWithoutUserInput
     passwordResets?: PasswordResetTokenCreateNestedManyWithoutUserInput
     loginHistory?: LoginHistoryCreateNestedManyWithoutUserInput
@@ -10057,6 +11854,7 @@ export namespace Prisma {
     provider?: $Enums.AuthProvider
     createdAt?: Date | string
     updatedAt?: Date | string
+    seller?: SellerUncheckedCreateNestedOneWithoutUserInput
     role?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     passwordResets?: PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
     loginHistory?: LoginHistoryUncheckedCreateNestedManyWithoutUserInput
@@ -10086,6 +11884,7 @@ export namespace Prisma {
     provider?: EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    seller?: SellerUpdateOneWithoutUserNestedInput
     role?: UserRoleUpdateManyWithoutUserNestedInput
     passwordResets?: PasswordResetTokenUpdateManyWithoutUserNestedInput
     loginHistory?: LoginHistoryUpdateManyWithoutUserNestedInput
@@ -10099,6 +11898,7 @@ export namespace Prisma {
     provider?: EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    seller?: SellerUncheckedUpdateOneWithoutUserNestedInput
     role?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     passwordResets?: PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
     loginHistory?: LoginHistoryUncheckedUpdateManyWithoutUserNestedInput
@@ -10112,6 +11912,7 @@ export namespace Prisma {
     provider?: $Enums.AuthProvider
     createdAt?: Date | string
     updatedAt?: Date | string
+    seller?: SellerCreateNestedOneWithoutUserInput
     role?: UserRoleCreateNestedManyWithoutUserInput
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
     loginHistory?: LoginHistoryCreateNestedManyWithoutUserInput
@@ -10125,6 +11926,7 @@ export namespace Prisma {
     provider?: $Enums.AuthProvider
     createdAt?: Date | string
     updatedAt?: Date | string
+    seller?: SellerUncheckedCreateNestedOneWithoutUserInput
     role?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
     loginHistory?: LoginHistoryUncheckedCreateNestedManyWithoutUserInput
@@ -10154,6 +11956,7 @@ export namespace Prisma {
     provider?: EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    seller?: SellerUpdateOneWithoutUserNestedInput
     role?: UserRoleUpdateManyWithoutUserNestedInput
     refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
     loginHistory?: LoginHistoryUpdateManyWithoutUserNestedInput
@@ -10167,6 +11970,7 @@ export namespace Prisma {
     provider?: EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    seller?: SellerUncheckedUpdateOneWithoutUserNestedInput
     role?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
     loginHistory?: LoginHistoryUncheckedUpdateManyWithoutUserNestedInput
@@ -10180,6 +11984,7 @@ export namespace Prisma {
     provider?: $Enums.AuthProvider
     createdAt?: Date | string
     updatedAt?: Date | string
+    seller?: SellerCreateNestedOneWithoutUserInput
     role?: UserRoleCreateNestedManyWithoutUserInput
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
     passwordResets?: PasswordResetTokenCreateNestedManyWithoutUserInput
@@ -10193,6 +11998,7 @@ export namespace Prisma {
     provider?: $Enums.AuthProvider
     createdAt?: Date | string
     updatedAt?: Date | string
+    seller?: SellerUncheckedCreateNestedOneWithoutUserInput
     role?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
     passwordResets?: PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
@@ -10222,6 +12028,7 @@ export namespace Prisma {
     provider?: EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    seller?: SellerUpdateOneWithoutUserNestedInput
     role?: UserRoleUpdateManyWithoutUserNestedInput
     refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
     passwordResets?: PasswordResetTokenUpdateManyWithoutUserNestedInput
@@ -10235,6 +12042,7 @@ export namespace Prisma {
     provider?: EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    seller?: SellerUncheckedUpdateOneWithoutUserNestedInput
     role?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
     passwordResets?: PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput

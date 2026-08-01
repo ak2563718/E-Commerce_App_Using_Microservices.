@@ -1,4 +1,5 @@
 import SellNavbar from '@/component/seller/SellNavbar'
+import SellerFooter from '@/component/seller/SellerFooter'
 import React, { ReactNode } from 'react'
 
 type props={
@@ -10,6 +11,7 @@ function Layout({children}:props) {
     <div>
         <SellNavbar/>
         <div>{children}</div>
+        <SellerFooter/>
     </div>
   )
 }

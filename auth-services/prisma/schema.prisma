@@ -33,7 +33,7 @@ enum AuthProvider {
 
 model UserRole {
   id       String      @id @default(cuid())
-  userId    String
+  userId    String    @unique
   user      User     @relation(fields: [userId], references: [id])
   role      Role     @relation(fields: [roleId], references: [id])
   roleId    String
