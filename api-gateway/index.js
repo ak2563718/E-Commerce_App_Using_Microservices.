@@ -23,6 +23,7 @@ app.use("/auth", async (req, res) => {
       headers: {
         "Content-Type": "application/json",
          Authorization: req.headers.authorization,
+         Cookie: req.headers.cookie,
       },
     });
     // Set cookie only if auth service sends a refresh token

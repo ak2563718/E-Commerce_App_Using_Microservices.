@@ -10,20 +10,26 @@ import {
   GoogleButton,
 } from './SellerAuthLayout'
 import { useRouter } from 'next/navigation'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import { toast } from 'sonner'
+import { authLogin } from '@/redux/auth/auth.Action'
 
 
 export default function SellerLogin() {
   const [data, setData] = useState({ email: '', password: '' })
   const [showPass, setShowPass] = useState(false)
-  const [loading, setLoading] = useState(false)
   const router = useRouter()
-
+  const dispatch = useAppDispatch()
+  const { loading } = useAppSelector((state)=>state.auth)
   const handleSubmit = async () => {
     if (!data.email || !data.password) return
-    setLoading(true)
-    // Simulate API call
-    await new Promise(r => setTimeout(r, 1800))
-    setLoading(false)
+    try {
+      const res = await dispatch(authLogin(data)).unwrap();
+      toast.success(res.message)
+      await new Promise(r => setTimeout(r, 1800))
+    } catch (error:any) {
+      toast.error(error)
+    }
   }
 
   return (

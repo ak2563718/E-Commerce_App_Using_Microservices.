@@ -1,6 +1,9 @@
 'use client'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { useRouter } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
+import ProfileDropdown from './ProfileDropdown'
+import { authCheckSession } from '@/redux/auth/auth.Action'
 
 interface NavbarProps {
   onLoginClick?: () => void
@@ -20,7 +23,9 @@ export default function Navbar({
   const [notifOpen, setNotifOpen] = useState(false)
   const moreRef = useRef<HTMLDivElement>(null)
   const notifRef = useRef<HTMLDivElement>(null)
-
+  const { islogin } = useAppSelector((state)=>state.auth)
+  const dispatch = useAppDispatch()
+  console.log("islogin is ", islogin)
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (moreRef.current && !moreRef.current.contains(e.target as Node)) setMoreOpen(false)
@@ -43,6 +48,10 @@ export default function Navbar({
     setMoreOpen(false)
     router.replace('/seller/information')
   }
+
+  useEffect(()=>{
+    dispatch(authCheckSession())
+  },[])
 
   return (
     <nav
@@ -115,7 +124,9 @@ export default function Navbar({
         <div className="flex items-center gap-3 shrink-0">
 
           {/* Login Button */}
-          <button
+          {!islogin 
+          ? (
+            <button
             onClick={()=>router.push('/auth/login')}
             className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-white transition-all duration-150 active:scale-95"
             style={{
@@ -132,6 +143,11 @@ export default function Navbar({
             </svg>
             Login
           </button>
+          )
+          :(
+            <ProfileDropdown/>
+          )}
+          
 
           {/* More Dropdown */}
           <div className="relative" ref={moreRef}>
