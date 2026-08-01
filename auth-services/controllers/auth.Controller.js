@@ -223,6 +223,9 @@ export const authLogin = asyncHandler(async(req, res, next) =>{
         where:{
             email:normalizedEmail
         },
+        include:{
+            role:true,
+        }
     })
     if(!user){
         return next(new AppError("Email is Not Registered on our Platfrom",401))
@@ -230,12 +233,21 @@ export const authLogin = asyncHandler(async(req, res, next) =>{
     if(!user.emailverified){
         return next(new AppError("Please verify your email before loggin in ",401))
     }
+    const roleId = user.role[0].roleId;
+    const userRole = await prisma.role.findFirst({
+        where:{
+            id:roleId
+        }
+    })
+    if(!userRole){
+        return next(new AppError("user role not found", 404))
+    }
     const matched = await bcrypt.compare(password,user.password);
     if(!matched){
         return next(new AppError("Wrong password!", 400))
     }
-    const refreshToken = await encryptRefreshToken(user);
-    const accessToken = await encryptAccessToken(user);
+    const refreshToken = await encryptRefreshToken(user,userRole.name);
+    const accessToken = await encryptAccessToken(user,userRole.name);
     await prisma.refreshToken.deleteMany({
         where:{
             userId:user.id
@@ -475,5 +487,22 @@ export const auth_resetPassword = asyncHandler(async(req, res, next)=>{
     res.status(200).json({
         message:"Password reset Successfully",
         success:true,
+    })
+})
+
+
+// create user role
+export const createRole = asyncHandler(async(req, res, next)=>{
+    const { role, description } = req.body;
+    const roles = await prisma.role.create({
+        data:{
+            name:role,
+            description:description || "",
+        }
+    })
+    res.status(201).json({
+        message:"User role created",
+        success:true,
+        data:roles
     })
 })
