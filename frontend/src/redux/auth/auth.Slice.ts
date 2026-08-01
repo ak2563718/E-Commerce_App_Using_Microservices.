@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { auth_ForgotPassword, auth_ResetPassword, authCheckSession, authLogin, authLogout, authSignup, authVerifyEmail } from "./auth.Action";
+import { auth_ForgotPassword, auth_ResetPassword, authCheckSession, authLogin, authLogout, authSignup, authVerifyEmail, sellerSignup } from "./auth.Action";
 
 interface state {
     users:any[]|null,
@@ -8,6 +8,7 @@ interface state {
     islogin:boolean,
     error:string|null,
     message:string|null,
+    accessToken:string|null,
 }
 
 const initialState:state={
@@ -17,6 +18,7 @@ const initialState:state={
     islogin:false,
     error:null,
     message:null,
+    accessToken:null,
 }
 
 const authSlice = createSlice({
@@ -48,6 +50,7 @@ const authSlice = createSlice({
             state.message = action.payload?.message;
             state.user = action.payload.user;
             state.islogin = true;
+            state.accessToken = action.payload.accessToken;
         }).addCase(authLogin.rejected,(state,action)=>{
             state.loading = false;
             state.islogin = false;
@@ -122,6 +125,18 @@ const authSlice = createSlice({
         }).addCase(authVerifyEmail.rejected,(state,action)=>{
             state.loading = false;
             state.error = action.payload?? "verification failed";
+        });
+
+        builder.addCase(sellerSignup.pending,(state)=>{
+            state.loading = true;
+            state.error = null;
+            state.message = null;
+        }).addCase(sellerSignup.fulfilled,(state,action)=>{
+            state.loading = false;
+            state.message = action.payload.message;
+        }).addCase(sellerSignup.rejected,(state,action)=>{
+            state.loading = false;
+            state.error = action.payload ?? "failed";
         })
     }
 })

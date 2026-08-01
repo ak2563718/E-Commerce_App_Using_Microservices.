@@ -15,7 +15,6 @@ app.use(cookieParser())
 
 // 1. Authentication service
 app.use("/auth", async (req, res) => {
-    console.log('original url',req.originalUrl)
   try {
     const response = await axios({
       method: req.method,
@@ -23,6 +22,7 @@ app.use("/auth", async (req, res) => {
       data: req.body,
       headers: {
         "Content-Type": "application/json",
+         Authorization: req.headers.authorization,
       },
     });
     // Set cookie only if auth service sends a refresh token

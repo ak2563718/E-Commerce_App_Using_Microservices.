@@ -8,6 +8,9 @@ import {
   Divider,
 } from './SellerAuthLayout'
 import { useRouter } from 'next/navigation'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import { sellerSignup } from '@/redux/auth/auth.Action'
+import { toast } from 'sonner'
 
 interface Props {
   onGoLogin: () => void
@@ -38,9 +41,11 @@ function Field({ label, placeholder, value, onChange, type = 'text' }: {
 }
 
 export default function SellerSignup({ onGoLogin }: Props) {
-  const [loading, setLoading] = useState(false)
   const [done, setDone] = useState(false)
   const router = useRouter()
+  const dispatch = useAppDispatch()
+  const { loading, accessToken } = useAppSelector((state)=>state.auth)
+  console.log('accessToken is',accessToken)
 
   const [form, setForm] = useState({
     businessName: '',
@@ -55,12 +60,16 @@ export default function SellerSignup({ onGoLogin }: Props) {
   const set = (k: keyof typeof form) => (v: string) => setForm(f => ({ ...f, [k]: v }))
 
   const handleSubmit = async () => {
-    setLoading(true)
-    await new Promise(r => setTimeout(r, 1800))
-    setLoading(false)
-    setDone(true)
+    try {
+      const res = await dispatch(sellerSignup({formData:form,accessToken})).unwrap()
+      toast.success(res.message)
+      await new Promise(r => setTimeout(r, 1800))
+      setDone(true)
+    } catch (error:any) {
+      toast.error(error)
+      setDone(false)
+    } 
   }
-
   return (
     <div
       className="flex rounded-2xl overflow-hidden"

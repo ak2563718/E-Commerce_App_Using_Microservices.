@@ -1,8 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios, { AxiosError } from "axios";
 
+
 const authuri = process.env.NEXT_PUBLIC_AUTH_URI;
-console.log("auth uri",authuri)
 
 interface signuprequest{
     email:string,
@@ -35,10 +35,10 @@ export const authSignup = createAsyncThunk<any,signuprequest,{rejectValue:string
 // 1.1 seller signup
 export const sellerSignup = createAsyncThunk<any, any, {rejectValue:string}>(
     'post/seller',
-    async(formData, { rejectWithValue })=>{
+    async({formData,accessToken}, { rejectWithValue })=>{
         try {
             const { data } = await axios.post(`${authuri}/seller-register`,formData,{
-                headers:{'Content-Type':'application/json'},
+                headers:{'Content-Type':'application/json',Authorization:`Bearer ${accessToken}`},
                 withCredentials:true,
             })
             return data;
