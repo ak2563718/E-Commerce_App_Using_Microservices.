@@ -12,7 +12,6 @@ interface Props {
   setActive: (n: NavItem) => void
   open: boolean
   setOpen: (v: boolean) => void
-  onLogout: () => void
 }
 
 const NAV: { id: NavItem; label: string; icon: typeof LayoutDashboard }[] = [
@@ -23,7 +22,7 @@ const NAV: { id: NavItem; label: string; icon: typeof LayoutDashboard }[] = [
   { id: 'payouts', label: 'Payouts', icon: Wallet },
 ]
 
-export default function Sidebar({ active, setActive, open, setOpen, onLogout }: Props) {
+export default function Sidebar({ active, setActive, open, setOpen,  }: Props) {
   return (
     <aside
       className="flex flex-col shrink-0 transition-all duration-300 relative"
@@ -138,7 +137,6 @@ export default function Sidebar({ active, setActive, open, setOpen, onLogout }: 
           {open && <span className="text-sm font-medium">Settings</span>}
         </button>
         <button
-          onClick={onLogout}
           className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all hover:bg-red-500/10"
           style={{ color: 'rgba(255,100,100,0.6)' }}
         >

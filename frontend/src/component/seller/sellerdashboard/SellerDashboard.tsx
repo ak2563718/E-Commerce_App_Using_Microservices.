@@ -1,3 +1,4 @@
+'use client'
 import { useState } from 'react'
 import Sidebar from './Sidebar'
 import Overview from './Overview'
@@ -8,15 +9,13 @@ import Payouts from './Payouts'
 
 export type NavItem = 'overview' | 'orders' | 'products' | 'analytics' | 'payouts'
 
-interface Props {
-  onLogout: () => void
-}
 
-export default function SellerDashboard({ onLogout }: Props) {
+
+export default function SellerDashboard() {
   const [active, setActive] = useState<NavItem>('overview')
   const [sidebarOpen, setSidebarOpen] = useState(true)
 
-  const pages: Record<NavItem, JSX.Element> = {
+  const pages: Record<NavItem, React.ReactElement> = {
     overview: <Overview />,
     orders: <Orders />,
     products: <Products />,
@@ -31,7 +30,6 @@ export default function SellerDashboard({ onLogout }: Props) {
         setActive={setActive}
         open={sidebarOpen}
         setOpen={setSidebarOpen}
-        onLogout={onLogout}
       />
       <main className="flex-1 overflow-y-auto">
         {pages[active]}

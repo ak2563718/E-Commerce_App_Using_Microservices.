@@ -4,7 +4,9 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { errorMiddleware } from './middleware/errorMiddleware.js'
 import auth from './routes/auth.Routes.js'
+import { apiLimiter } from './config/rateLimiting.js';
 const app = express();
+app.use(apiLimiter);
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));
 app.use(cookieParser());
