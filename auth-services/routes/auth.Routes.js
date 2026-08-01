@@ -1,7 +1,9 @@
 import express from 'express';
-import { auth_CheckSession, auth_forgotPassword, auth_refresh_AccessToken, auth_resetPassword, authLogin, authLogout, authRegister, authverifyEmail } from '../controllers/auth.Controller.js';
+import { auth_CheckSession, auth_forgotPassword, auth_refresh_AccessToken, auth_resetPassword, authLogin, authLogout, authRegister, authverifyEmail, sellerSignup } from '../controllers/auth.Controller.js';
+import { authMiddleware } from '../middleware/authMiddleware.js';
 const router = express.Router();
 router.post('/register',authRegister)
+router.post('/seller-register',authMiddleware,sellerSignup)
 router.get('/verify-email',authverifyEmail)
 router.post('/login',authLogin)
 router.get('/logout',authLogout)

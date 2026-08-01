@@ -137,6 +137,15 @@ export const sellerSignup = asyncHandler(async (req, res, next) => {
         return next(new AppError("Invalid business email.", 400));
     }
 
+    const userRole = await prisma.role.findFirst({
+        where:{
+            name:"SELLER"
+        }
+    })
+    if(!userRole){
+        return next(new AppError('User not defined', 404))
+    }
+
     const seller = await prisma.seller.create({
         data: {
             userId,
@@ -150,6 +159,15 @@ export const sellerSignup = asyncHandler(async (req, res, next) => {
             // status defaults to PENDING
         },
     });
+
+    await prisma.userRole.update({
+        where:{
+            userId,
+        },
+        data:{
+            roleId:userRole.id,
+        }
+    })
 
     res.status(201).json({
         success: true,
