@@ -1,210 +1,267 @@
 'use client'
-import { useState, useRef } from 'react'
-import { Pencil, Check, X, Camera } from 'lucide-react'
-import { USER } from './userData'
+import { useState } from 'react'
 
-function ReadonlyField({ label, value, editing, type = 'text', onChange }: {
-  label: string; value: string; editing: boolean; type?: string; onChange: (v: string) => void
+interface ProfileData {
+  firstName: string
+  lastName: string
+  email: string
+  phone: string
+  gender: string
+  dob: string
+}
+
+const initial: ProfileData = {
+  firstName: 'Priya',
+  lastName: 'Sharma',
+  email: 'priya.sharma@gmail.com',
+  phone: '+91 98765 43210',
+  gender: 'Female',
+  dob: '1995-03-14',
+}
+
+function Label({ children }: { children: React.ReactNode }) {
+  return (
+    <label className="text-xs font-700 uppercase tracking-wide" style={{ color: '#be185d', fontFamily: 'Outfit, sans-serif' }}>
+      {children}
+    </label>
+  )
+}
+
+function Field({
+  label, value, type = 'text', editing, onChange, icon,
+}: {
+  label: string; value: string; type?: string; editing: boolean; onChange: (v: string) => void; icon: string
 }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="text-xs font-semibold text-gray-500 tracking-wide uppercase">{label}</label>
-      <input
-        type={type}
-        value={value}
-        readOnly={!editing}
-        onChange={e => onChange(e.target.value)}
-        className="w-full px-4 py-2.5 rounded-xl text-sm font-medium transition-all outline-none"
-        style={{
-          border: editing ? '1.5px solid #7c3aed' : '1.5px solid #e9d5ff',
-          background: editing ? '#fff' : '#faf5ff',
-          color: '#111',
-          cursor: editing ? 'text' : 'default',
-        }}
-      />
+      <Label>{label}</Label>
+      <div className="relative">
+        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-base pointer-events-none">{icon}</span>
+        <input
+          type={type}
+          value={value}
+          readOnly={!editing}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full pl-10 pr-4 py-3 rounded-xl text-sm outline-none transition-all duration-200"
+          style={
+            editing
+              ? { border: '1.5px solid #f9a8d4', background: '#fdf2f8', color: '#831843', cursor: 'text', fontFamily: 'Outfit, sans-serif' }
+              : { border: '1.5px solid #fce7f3', background: '#fff', color: '#9d174d', cursor: 'default', fontFamily: 'Outfit, sans-serif' }
+          }
+          onFocus={(e) => { if (editing) e.currentTarget.style.borderColor = '#db2777' }}
+          onBlur={(e) => { if (editing) e.currentTarget.style.borderColor = '#f9a8d4' }}
+        />
+      </div>
     </div>
   )
 }
 
-function GenderField({ value, editing, onChange }: {
-  value: string; editing: boolean; onChange: (v: string) => void
-}) {
+function GenderField({ value, editing, onChange }: { value: string; editing: boolean; onChange: (v: string) => void }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="text-xs font-semibold text-gray-500 tracking-wide uppercase">Gender</label>
-      <select
-        value={value}
-        disabled={!editing}
-        onChange={e => onChange(e.target.value)}
-        className="w-full px-4 py-2.5 rounded-xl text-sm font-medium transition-all outline-none appearance-none"
-        style={{
-          border: editing ? '1.5px solid #7c3aed' : '1.5px solid #e9d5ff',
-          background: editing ? '#fff' : '#faf5ff',
-          color: '#111',
-          cursor: editing ? 'pointer' : 'default',
-        }}
-      >
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-        <option value="other">Other</option>
-        <option value="prefer_not">Prefer not to say</option>
-      </select>
+      <Label>Gender</Label>
+      <div className="relative">
+        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-base pointer-events-none">⚧️</span>
+        {editing ? (
+          <select
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 rounded-xl text-sm outline-none transition-all duration-200 appearance-none"
+            style={{ border: '1.5px solid #f9a8d4', background: '#fdf2f8', color: '#831843', fontFamily: 'Outfit, sans-serif' }}
+          >
+            <option>Female</option>
+            <option>Male</option>
+            <option>Non-binary</option>
+            <option>Prefer not to say</option>
+          </select>
+        ) : (
+          <input
+            readOnly
+            value={value}
+            className="w-full pl-10 pr-4 py-3 rounded-xl text-sm outline-none"
+            style={{ border: '1.5px solid #fce7f3', background: '#fff', color: '#9d174d', cursor: 'default', fontFamily: 'Outfit, sans-serif' }}
+          />
+        )}
+      </div>
     </div>
   )
 }
 
 export default function Profile() {
   const [editing, setEditing] = useState(false)
-  const [form, setForm] = useState({ ...USER })
-  const [saved, setSaved] = useState({ ...USER })
-  const [avatar, setAvatar] = useState<string>('')
-  const fileRef = useRef<HTMLInputElement>(null)
+  const [saved, setSaved] = useState<ProfileData>(initial)
+  const [draft, setDraft] = useState<ProfileData>(initial)
 
-  const set = (k: keyof typeof form) => (v: string) => setForm(f => ({ ...f, [k]: v }))
+  const set = (key: keyof ProfileData) => (v: string) => setDraft((d) => ({ ...d, [key]: v }))
 
-  const handleSave = () => {
-    setSaved({ ...form })
-    setEditing(false)
-  }
+  const handleSave = () => { setSaved(draft); setEditing(false) }
+  const handleCancel = () => { setDraft(saved); setEditing(false) }
 
-  const handleCancel = () => {
-    setForm({ ...saved })
-    setEditing(false)
-  }
-
-  const handleAvatar = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) setAvatar(URL.createObjectURL(file))
-  }
-
-  const initials = `${form.firstName[0] ?? ''}${form.lastName[0] ?? ''}`.toUpperCase()
+  const current = editing ? draft : saved
 
   return (
-    <div className="max-w-2xl flex flex-col gap-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-black text-gray-900" style={{ fontFamily: 'Outfit, sans-serif' }}>My Profile</h1>
-        <p className="text-sm text-gray-500 mt-0.5">Manage your personal information</p>
-      </div>
-
-      {/* Card */}
-      <div className="rounded-2xl overflow-hidden" style={{ background: '#fff', border: '1px solid #f0ebff', boxShadow: '0 2px 16px rgba(124,58,237,0.07)' }}>
-        {/* Top banner */}
-        <div className="h-24 relative" style={{ background: 'linear-gradient(135deg, #7c3aed, #e91e8c)' }}>
-          {!editing && (
-            <button
-              onClick={() => setEditing(true)}
-              className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all hover:bg-white/20"
-              style={{ background: 'rgba(255,255,255,0.15)', color: '#fff', border: '1px solid rgba(255,255,255,0.3)' }}
-            >
-              <Pencil className="w-3.5 h-3.5" /> Edit Profile
-            </button>
-          )}
-          {editing && (
-            <div className="absolute top-4 right-4 flex gap-2">
+    <div className="h-full flex flex-col" style={{ background: 'linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%)' }}>
+      {/* Top bar */}
+      <div
+        className="flex items-center justify-between px-8 py-5 flex-shrink-0"
+        style={{ background: '#fff', borderBottom: '1px solid #fbcfe8', boxShadow: '0 1px 8px rgba(190,24,93,0.05)' }}
+      >
+        <div>
+          <h1 className="text-2xl font-900 text-pink-900" style={{ fontFamily: 'Outfit, sans-serif' }}>My Profile</h1>
+          <p className="text-sm font-500 mt-0.5" style={{ color: '#f472b6' }}>Manage your personal information</p>
+        </div>
+        <div className="flex gap-2">
+          {editing ? (
+            <>
               <button
                 onClick={handleCancel}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all hover:bg-white/20"
-                style={{ background: 'rgba(255,255,255,0.15)', color: '#fff', border: '1px solid rgba(255,255,255,0.3)' }}
+                className="px-5 py-2.5 rounded-xl text-sm font-600 transition-all duration-200 cursor-pointer"
+                style={{ border: '1.5px solid #fbcfe8', color: '#be185d', background: '#fff', fontFamily: 'Outfit, sans-serif' }}
+                onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.background = '#fdf2f8')}
+                onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.background = '#fff')}
               >
-                <X className="w-3.5 h-3.5" /> Cancel
+                Cancel
               </button>
               <button
                 onClick={handleSave}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold"
-                style={{ background: '#fff', color: '#7c3aed' }}
+                className="px-5 py-2.5 rounded-xl text-sm font-700 text-white transition-all duration-200 cursor-pointer active:scale-95"
+                style={{ background: 'linear-gradient(135deg, #be185d, #ec4899)', boxShadow: '0 4px 14px rgba(190,24,93,0.3)', fontFamily: 'Outfit, sans-serif' }}
+                onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(135deg, #9d174d, #db2777)')}
+                onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(135deg, #be185d, #ec4899)')}
               >
-                <Check className="w-3.5 h-3.5" /> Save
+                Save Changes
               </button>
-            </div>
+            </>
+          ) : (
+            <button
+              onClick={() => setEditing(true)}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-700 text-white transition-all duration-200 cursor-pointer active:scale-95"
+              style={{ background: 'linear-gradient(135deg, #be185d, #ec4899)', boxShadow: '0 4px 14px rgba(190,24,93,0.3)', fontFamily: 'Outfit, sans-serif' }}
+              onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(135deg, #9d174d, #db2777)')}
+              onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(135deg, #be185d, #ec4899)')}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+              Edit Profile
+            </button>
           )}
         </div>
+      </div>
 
-        {/* Avatar */}
-        <div className="px-6 pb-6">
-          <div className="flex items-end gap-4 -mt-10 mb-6">
-            <div className="relative">
-              <div
-                className="w-20 h-20 rounded-2xl flex items-center justify-center text-white font-black text-xl overflow-hidden"
-                style={{
-                  background: avatar ? 'transparent' : 'linear-gradient(135deg, #e91e8c, #a855f7)',
-                  border: '3px solid #fff',
-                  boxShadow: '0 4px 16px rgba(124,58,237,0.2)',
-                }}
-              >
-                {avatar
-                  ? <img src={avatar} alt="avatar" className="w-full h-full object-cover" />
-                  : initials
-                }
-              </div>
-              {editing && (
-                <button
-                  onClick={() => fileRef.current?.click()}
-                  className="absolute -bottom-1.5 -right-1.5 w-7 h-7 rounded-full flex items-center justify-center text-white shadow-md"
-                  style={{ background: '#7c3aed' }}
-                >
-                  <Camera className="w-3.5 h-3.5" />
-                </button>
-              )}
-              <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleAvatar} />
+      {/* Content */}
+      <div className="flex-1 overflow-y-auto p-8">
+        <div className="max-w-4xl mx-auto flex flex-col gap-6">
+          {/* Avatar card */}
+          <div
+            className="rounded-2xl p-6 flex items-center gap-6"
+            style={{ background: '#fff', border: '1px solid #fbcfe8', boxShadow: '0 2px 16px rgba(190,24,93,0.07)' }}
+          >
+            <div
+              className="w-24 h-24 rounded-2xl flex items-center justify-center text-5xl flex-shrink-0"
+              style={{ background: 'linear-gradient(135deg, #fbcfe8, #f9a8d4)', boxShadow: '0 4px 20px rgba(219,39,119,0.2)' }}
+            >
+              👩
             </div>
-            <div className="pb-1">
-              <p className="font-black text-gray-800 text-lg" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            <div className="flex-1">
+              <h2 className="text-xl font-800 text-pink-900" style={{ fontFamily: 'Outfit, sans-serif' }}>
                 {saved.firstName} {saved.lastName}
-              </p>
-              <p className="text-xs text-gray-400">{saved.email}</p>
+              </h2>
+              <p className="text-sm mt-1" style={{ color: '#f472b6' }}>{saved.email}</p>
+              <div className="flex items-center gap-3 mt-3">
+                <span
+                  className="text-xs font-700 px-3 py-1.5 rounded-full"
+                  style={{ background: 'linear-gradient(135deg, #be185d, #ec4899)', color: '#fff', fontFamily: 'Outfit, sans-serif' }}
+                >
+                  ✨ Premium Member
+                </span>
+                <span
+                  className="text-xs font-600 px-3 py-1.5 rounded-full"
+                  style={{ background: '#fdf2f8', color: '#db2777', border: '1px solid #fbcfe8' }}
+                >
+                  Since Jan 2023
+                </span>
+              </div>
+            </div>
+            {/* Stats */}
+            <div className="flex gap-4 flex-shrink-0">
+              {[{ label: 'Orders', val: '24' }, { label: 'Wishlist', val: '12' }, { label: 'Reviews', val: '8' }].map(({ label, val }) => (
+                <div key={label} className="text-center rounded-xl px-4 py-3" style={{ background: '#fdf2f8', minWidth: 60 }}>
+                  <div className="text-lg font-900 text-pink-800" style={{ fontFamily: 'Outfit, sans-serif' }}>{val}</div>
+                  <div className="text-xs font-500 mt-0.5" style={{ color: '#f472b6' }}>{label}</div>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Fields */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <ReadonlyField
-              label="First Name"
-              value={form.firstName}
-              editing={editing}
-              onChange={set('firstName')}
-            />
-            <ReadonlyField
-              label="Last Name"
-              value={form.lastName}
-              editing={editing}
-              onChange={set('lastName')}
-            />
-            <ReadonlyField
-              label="Phone Number"
-              type="tel"
-              value={form.phone}
-              editing={editing}
-              onChange={set('phone')}
-            />
-            <ReadonlyField
-              label="Email Address"
-              type="email"
-              value={form.email}
-              editing={editing}
-              onChange={set('email')}
-            />
-            <GenderField
-              value={form.gender}
-              editing={editing}
-              onChange={set('gender')}
-            />
-            <ReadonlyField
-              label="Date of Birth"
-              type="date"
-              value={form.dob}
-              editing={editing}
-              onChange={set('dob')}
-            />
+          {/* Form card */}
+          <div
+            className="rounded-2xl p-8"
+            style={{ background: '#fff', border: '1px solid #fbcfe8', boxShadow: '0 2px 16px rgba(190,24,93,0.07)' }}
+          >
+            <div className="flex items-center gap-2 mb-6">
+              <div className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, #be185d, #ec4899)' }} />
+              <h3 className="font-800 text-pink-900 text-base" style={{ fontFamily: 'Outfit, sans-serif' }}>Personal Information</h3>
+              {editing && (
+                <span
+                  className="ml-auto text-xs font-600 px-2.5 py-1 rounded-full"
+                  style={{ background: '#fdf2f8', color: '#db2777', border: '1px solid #fbcfe8' }}
+                >
+                  Editing mode
+                </span>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 gap-5">
+              <Field label="First Name" value={current.firstName} editing={editing} onChange={set('firstName')} icon="👤" />
+              <Field label="Last Name" value={current.lastName} editing={editing} onChange={set('lastName')} icon="👤" />
+              <Field label="Email Address" type="email" value={current.email} editing={editing} onChange={set('email')} icon="✉️" />
+              <Field label="Phone Number" type="tel" value={current.phone} editing={editing} onChange={set('phone')} icon="📱" />
+              <GenderField value={current.gender} editing={editing} onChange={set('gender')} />
+              <Field label="Date of Birth" type="date" value={current.dob} editing={editing} onChange={set('dob')} icon="🎂" />
+            </div>
+
+            {editing && (
+              <p className="text-xs text-center mt-6 font-500" style={{ color: '#f9a8d4' }}>
+                Fields are editable — make your changes and click <strong style={{ color: '#db2777' }}>Save Changes</strong> to update
+              </p>
+            )}
           </div>
 
-          {/* Edit hint */}
-          {!editing && (
-            <p className="text-xs text-gray-400 mt-5 flex items-center gap-1.5">
-              <Pencil className="w-3 h-3" />
-              Click "Edit Profile" to update your information
-            </p>
-          )}
+          {/* Account preferences card */}
+          <div
+            className="rounded-2xl p-8"
+            style={{ background: '#fff', border: '1px solid #fbcfe8', boxShadow: '0 2px 16px rgba(190,24,93,0.07)' }}
+          >
+            <div className="flex items-center gap-2 mb-6">
+              <div className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, #be185d, #ec4899)' }} />
+              <h3 className="font-800 text-pink-900 text-base" style={{ fontFamily: 'Outfit, sans-serif' }}>Account Preferences</h3>
+            </div>
+            <div className="flex flex-col gap-4">
+              {[
+                { label: 'Order Confirmations', desc: 'Get notified when an order is placed or updated', on: true },
+                { label: 'Promotional Emails', desc: 'Receive deals, offers and flash sale alerts', on: true },
+                { label: 'Wishlist Alerts', desc: 'Price drops for your saved items', on: false },
+              ].map(({ label, desc, on }) => (
+                <div key={label} className="flex items-center justify-between py-3" style={{ borderBottom: '1px solid #fdf2f8' }}>
+                  <div>
+                    <p className="text-sm font-700 text-pink-900" style={{ fontFamily: 'Outfit, sans-serif' }}>{label}</p>
+                    <p className="text-xs mt-0.5 font-400" style={{ color: '#f472b6' }}>{desc}</p>
+                  </div>
+                  <div
+                    className="relative w-10 h-6 rounded-full transition-all duration-300 cursor-pointer flex-shrink-0"
+                    style={{ background: on ? 'linear-gradient(135deg, #be185d, #ec4899)' : '#fce7f3' }}
+                  >
+                    <div
+                      className="absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-all duration-300"
+                      style={{ left: on ? 22 : 2 }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
