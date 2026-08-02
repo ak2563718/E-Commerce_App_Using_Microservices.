@@ -225,6 +225,7 @@ export const authLogin = asyncHandler(async(req, res, next) =>{
         },
         include:{
             role:true,
+            seller:true,
         }
     })
     if(!user){
@@ -363,6 +364,8 @@ export const auth_CheckSession = asyncHandler(async(req, res, next)=>{
     if(!token){
         return next(new AppError('User not logged in', 401))
     }
+    const decode = await jwt.verify(token,process.env.SECRET_KEY)
+    console.log("decode data is",decode)
     const r_token = await prisma.refreshToken.findUnique({
         where:{
             token
@@ -376,11 +379,12 @@ export const auth_CheckSession = asyncHandler(async(req, res, next)=>{
             id:r_token.userId,
         }
     })
-    const accessToken = await encryptAccessToken(user);
+    const accessToken = await encryptAccessToken(user,decode.role);
     res.status(200).json({
         message:"User logged in ",
         success:true,
-        accessToken
+        accessToken,
+        data:decode,
     })
 })
 

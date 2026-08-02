@@ -1,11 +1,14 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Sidebar from './Sidebar'
 import Overview from './Overview'
 import Orders from './Orders'
 import Products from './Products'
 import Analytics from './Analytics'
 import Payouts from './Payouts'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import { authCheckSession } from '@/redux/auth/auth.Action'
+import { useRouter } from 'next/navigation'
 
 export type NavItem = 'overview' | 'orders' | 'products' | 'analytics' | 'payouts'
 
@@ -14,6 +17,13 @@ export type NavItem = 'overview' | 'orders' | 'products' | 'analytics' | 'payout
 export default function SellerDashboard() {
   const [active, setActive] = useState<NavItem>('overview')
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const dispatch = useAppDispatch()
+  const router = useRouter()
+  const { user, loading } = useAppSelector((state)=>state.auth)
+
+  useEffect(()=>{
+    dispatch(authCheckSession())
+  },[loading])
 
   const pages: Record<NavItem, React.ReactElement> = {
     overview: <Overview />,
@@ -21,6 +31,10 @@ export default function SellerDashboard() {
     products: <Products />,
     analytics: <Analytics />,
     payouts: <Payouts />,
+  }
+ 
+  if(!user){
+    return router.replace('/seller/login')
   }
 
   return (

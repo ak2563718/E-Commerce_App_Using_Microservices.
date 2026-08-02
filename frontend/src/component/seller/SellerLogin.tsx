@@ -27,6 +27,7 @@ export default function SellerLogin() {
       const res = await dispatch(authLogin(data)).unwrap();
       toast.success(res.message)
       await new Promise(r => setTimeout(r, 1800))
+      router.replace('/seller/dashboard')
     } catch (error:any) {
       toast.error(error)
     }
