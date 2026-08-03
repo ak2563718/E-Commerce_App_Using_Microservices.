@@ -1,11 +1,13 @@
 "use client";
 import { useAppSelector } from "@/redux/hooks";
 import { ArrowDown, ArrowUp, Bell, ChevronDown, ChevronUp, Heart, Home, LogOut, Package, User, User2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 export default function ProfileDropdown() {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const router = useRouter()
   const { user } = useAppSelector((state)=>state.auth)
 
   useEffect(() => {
@@ -42,7 +44,7 @@ export default function ProfileDropdown() {
         <div className="absolute right-0 mt-2 w-56 rounded-lg border bg-white shadow-xl" 
         style={{ boxShadow: '0 12px 40px rgba(233,30,140,0.14)', border: '1px solid rgba(233,30,140,0.08)' }}
         >
-          <button className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-pink-50 hover:text-pink-600 transition-colors duration-100 group">
+          <button onClick={()=>router.push("/user/userdashboard")} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-pink-50 hover:text-pink-600 transition-colors duration-100 group">
             <User className="w-4 h-4"/>
             My Profile
           </button>
