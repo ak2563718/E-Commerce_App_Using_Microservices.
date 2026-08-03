@@ -3,6 +3,10 @@ import axios, {
   AxiosRequestConfig,
   InternalAxiosRequestConfig,
 } from "axios";
+import store from "@/redux/store";
+import { setAuthAccessToken } from "@/redux/auth/auth.Slice";
+
+const authURL = process.env.NEXT_PUBLIC_AUTH_URI;
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -13,6 +17,7 @@ let accessToken: string | null = null;
 
 export const setAccessToken = (token: string | null) => {
   accessToken = token;
+  store.dispatch(setAuthAccessToken(token));
 };
 
 api.interceptors.request.use(
@@ -83,7 +88,7 @@ api.interceptors.response.use(
 
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh-token`,
+          `${authURL}/refresh-token`,
           {
             withCredentials: true,
           }
@@ -91,7 +96,7 @@ api.interceptors.response.use(
 
         const newToken = response.data.accessToken;
 
-        accessToken = newToken;
+        setAccessToken(newToken);
 
         processQueue(null, newToken);
 
@@ -104,9 +109,11 @@ api.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null);
 
-        accessToken = null;
+        setAccessToken(null);
 
-        window.location.href = "/auth/login";
+        if (typeof window !== "undefined") {
+          window.location.href = "/auth/login";
+        }
 
         return Promise.reject(refreshError);
       } finally {

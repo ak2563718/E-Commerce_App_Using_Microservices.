@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { auth_ForgotPassword, auth_ResetPassword, authCheckSession, authLogin, authLogout, authSignup, authVerifyEmail, sellerSignup } from "./auth.Action";
 
 interface state {
@@ -24,7 +24,11 @@ const initialState:state={
 const authSlice = createSlice({
     name:"auth",
     initialState,
-    reducers:{},
+    reducers:{
+        setAuthAccessToken:(state, action: PayloadAction<string | null>)=>{
+            state.accessToken = action.payload;
+        },
+    },
     extraReducers:(builder)=>{
         // 1. authSignup extra-reducer
         builder.addCase(authSignup.pending,(state)=>{
@@ -141,4 +145,5 @@ const authSlice = createSlice({
     }
 })
 
+export const { setAuthAccessToken } = authSlice.actions;
 export default authSlice.reducer;
