@@ -35,6 +35,13 @@ app.use("/auth", async (req, res) => {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
     }
+    if(req.path==="/logout"){
+      res.clearCookie("refresh_token",{
+        httpOnly:true,
+        secure:false,
+        sameSite:"lax",
+      })
+    }
     return res.status(response.status).json(response.data);
   } catch (error) {
     // Auth service returned an HTTP error (400, 401, 404, etc.)

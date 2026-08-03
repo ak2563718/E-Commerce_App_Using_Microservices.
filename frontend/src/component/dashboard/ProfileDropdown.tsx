@@ -1,5 +1,6 @@
 "use client";
-import { useAppSelector } from "@/redux/hooks";
+import { authLogout } from "@/redux/auth/auth.Action";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { ArrowDown, ArrowUp, Bell, ChevronDown, ChevronUp, Heart, Home, LogOut, Package, User, User2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -9,6 +10,7 @@ export default function ProfileDropdown() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter()
   const { user } = useAppSelector((state)=>state.auth)
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -66,7 +68,7 @@ export default function ProfileDropdown() {
 
           <hr />
 
-          <button className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-pink-50 hover:text-pink-600 transition-colors duration-100 group">
+          <button onClick={()=>dispatch(authLogout())} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-pink-50 hover:text-pink-600 transition-colors duration-100 group">
             <LogOut className="w-4 h-4"/>
             Logout
           </button>
