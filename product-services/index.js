@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended:false}));
 app.use(cookieParser());
 app.use(cors({
-    origin:'http://localhost:6003',
+    origin:['http://localhost:6003','http://localhost:3000'],
     credentials:true,
 }))
 app.use(helmet())

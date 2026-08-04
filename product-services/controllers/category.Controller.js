@@ -48,7 +48,11 @@ export const createCategories = asyncHandler(async(req, res, next)=>{
 
 // 2. Get all categories
 export const getCategory = asyncHandler(async(req, res, next)=>{
-    const category = await prisma.category.findMany({include:{parent:true,children:true}})
+    const category = await prisma.category.findMany({
+        where:{
+            parentId:null,
+        },
+    include:{children:true}})
     if(!category){
         return next(new AppError("Category not Found", 404))
     }

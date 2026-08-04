@@ -25,7 +25,6 @@ export default function Navbar({
   const notifRef = useRef<HTMLDivElement>(null)
   const { islogin } = useAppSelector((state)=>state.auth)
   const dispatch = useAppDispatch()
-  console.log("islogin is ", islogin)
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (moreRef.current && !moreRef.current.contains(e.target as Node)) setMoreOpen(false)
@@ -49,9 +48,6 @@ export default function Navbar({
     router.replace('/seller/information')
   }
 
-  useEffect(()=>{
-    dispatch(authCheckSession())
-  },[])
 
   return (
     <nav

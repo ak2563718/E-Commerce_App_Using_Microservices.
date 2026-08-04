@@ -2,6 +2,7 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts'
 import { Wallet, ArrowDownToLine, Clock, CheckCircle2, AlertCircle } from 'lucide-react'
 
+
 const payoutHistory = [
   { id: 'PAY-2251', amount: 42500, date: 'Jul 28, 2025', status: 'completed', method: 'NEFT · HDFC ••4421' },
   { id: 'PAY-2239', amount: 38100, date: 'Jul 21, 2025', status: 'completed', method: 'NEFT · HDFC ••4421' },

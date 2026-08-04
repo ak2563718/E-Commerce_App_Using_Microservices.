@@ -45,8 +45,6 @@ export default function SellerSignup({ onGoLogin }: Props) {
   const router = useRouter()
   const dispatch = useAppDispatch()
   const { loading, accessToken } = useAppSelector((state)=>state.auth)
-  console.log('accessToken is',accessToken)
-
   const [form, setForm] = useState({
     businessName: '',
     businessEmail: '',

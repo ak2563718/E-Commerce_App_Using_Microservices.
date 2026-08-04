@@ -1,10 +1,15 @@
 'use client'
-import React from 'react'
+import { authCheckSession } from '@/redux/auth/auth.Action'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { Store, ChevronRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 function SellNavbar() {
   const router = useRouter()
+  const { user, islogin } = useAppSelector((state)=>state.auth);
+
+  
   return (
     <div>
         <nav
@@ -49,6 +54,7 @@ function SellNavbar() {
         </div>
 
         {/* CTA buttons */}
+        {!islogin &&
         <div className="flex items-center gap-3">
           <button
             onClick={()=>router.push('/seller/login')}
@@ -67,7 +73,7 @@ function SellNavbar() {
           >
             Create Account <ChevronRight className="w-4 h-4" />
           </button>
-        </div>
+        </div>}
       </nav>
     </div>
   )

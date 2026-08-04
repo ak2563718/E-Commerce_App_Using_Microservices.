@@ -1,7 +1,9 @@
 'use client'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Search, Plus, Edit2, Trash2, Eye, Upload, X, ChevronRight, ChevronDown, ImagePlus, Layers } from 'lucide-react'
 import { topProducts } from './data'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import { getAllCategories } from '@/redux/category/category.Action'
 
 const EXTENDED = [
   ...topProducts,
@@ -10,12 +12,7 @@ const EXTENDED = [
   { name: 'Running Shoes Men', sku: 'SPRT-RSM-014', stock: 23, sold: 211, revenue: 84989, trend: '+9%' },
 ]
 
-const CATEGORIES = [
-  'Electronics', 'Fashion', 'Home & Garden', 'Sports & Fitness',
-  'Books & Stationery', 'Beauty & Personal Care', 'Toys & Games',
-  'Food & Grocery', 'Automotive', 'Health & Wellness', 'Other',
-]
-
+  
 // ── Field helpers ────────────────────────────────────────────────────────────
 function Label({ children }: { children: React.ReactNode }) {
   return <label className="text-xs font-semibold text-gray-600 tracking-wide">{children}</label>
@@ -133,6 +130,18 @@ function StepDetails({ onContinue, onClose }: { onContinue: () => void; onClose:
   const [desc, setDesc] = useState('')
   const [catOpen, setCatOpen] = useState(false)
 
+  const dispatch = useAppDispatch();
+  const { categories } = useAppSelector((state)=>state.category)
+
+  useEffect(()=>{
+    dispatch(getAllCategories())
+  },[])
+  
+  const categoryname = categories?.filter((c)=>c.parentId === null)
+
+  const CATEGORIES = categoryname;
+  console.log(category)
+
   return (
     <div className="flex flex-col gap-5">
       <div className="flex items-center justify-between">
@@ -181,14 +190,14 @@ function StepDetails({ onContinue, onClose }: { onContinue: () => void; onClose:
             className="absolute top-full left-0 right-0 mt-1 rounded-xl overflow-hidden z-20 flex flex-col"
             style={{ background: '#fff', border: '1.5px solid #e9d5ff', boxShadow: '0 8px 24px rgba(124,58,237,0.15)', maxHeight: 200, overflowY: 'auto' }}
           >
-            {CATEGORIES.map(cat => (
+            {Array.isArray(CATEGORIES) && CATEGORIES.map(cat => (
               <button
-                key={cat}
-                onClick={() => { setCategory(cat); setCatOpen(false) }}
+                key={cat.id}
+                onClick={() => { setCategory(cat.name); setCatOpen(false) }}
                 className="px-4 py-2.5 text-sm text-left transition-colors hover:bg-purple-50"
                 style={{ color: category === cat ? '#7c3aed' : '#374151', fontWeight: category === cat ? 600 : 400 }}
               >
-                {cat}
+                {cat.name}
               </button>
             ))}
           </div>
@@ -329,7 +338,7 @@ function StepMedia({ onBack, onClose }: { onBack: () => void; onClose: () => voi
 // ── Modal shell ──────────────────────────────────────────────────────────────
 function AddProductModal({ onClose }: { onClose: () => void }) {
   const [step, setStep] = useState<1 | 2>(1)
-
+  
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(26,5,51,0.55)', backdropFilter: 'blur(4px)' }}>
       <div

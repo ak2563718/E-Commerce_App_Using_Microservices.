@@ -20,11 +20,6 @@ export default function SellerDashboard() {
   const dispatch = useAppDispatch()
   const router = useRouter()
   const { user, loading } = useAppSelector((state)=>state.auth)
-
-  useEffect(()=>{
-    dispatch(authCheckSession())
-  },[loading])
-
   const pages: Record<NavItem, React.ReactElement> = {
     overview: <Overview />,
     orders: <Orders />,

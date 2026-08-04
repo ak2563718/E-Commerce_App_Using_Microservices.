@@ -18,12 +18,10 @@ export default function ForgotPassword() {
     if (!email || status !== 'idle') return
     try {
        setStatus('sending')
-       console.log(email)
        const res = await dispatch(auth_ForgotPassword(email)).unwrap()
        setStatus('sent')
     } catch (err:any) {
       setStatus("idle")
-      console.log(err)
     }
   }
 

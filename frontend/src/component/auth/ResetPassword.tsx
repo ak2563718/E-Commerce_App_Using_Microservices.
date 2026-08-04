@@ -28,10 +28,8 @@ export default function ResetPassword() {
     try {
       setStatus("submitting")
       const res = await dispatch(auth_ResetPassword({token,password})).unwrap()
-      console.log("res is",res)
       setStatus('success')
     } catch (error) {
-      console.log('error is',error)
       setStatus("idle")
     }
   }
