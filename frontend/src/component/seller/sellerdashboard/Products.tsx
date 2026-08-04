@@ -5,6 +5,7 @@ import { topProducts } from './data'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { getAllCategories } from '@/redux/category/category.Action'
 import { createProduct } from '@/redux/product/product.Action'
+import { uploadProductImage } from '@/redux/product/product.Type.Action'
 
 const EXTENDED = [
   ...topProducts,
@@ -38,7 +39,7 @@ function Input({ placeholder, value, onChange, type = 'text' }: {
 
 // ── Image uploader ───────────────────────────────────────────────────────────
 function ImageUploader({ images, onAdd, onRemove, label = 'Product Images' }: {
-  images: string[]; onAdd: (url: string) => void; onRemove: (i: number) => void; label?: string
+  images: File[]; onAdd: (file: File) => void; onRemove: (i: number) => void; label?: string
 }) {
   const ref = useRef<HTMLInputElement>(null)
 
@@ -46,7 +47,7 @@ function ImageUploader({ images, onAdd, onRemove, label = 'Product Images' }: {
     const file = e.target.files?.[0]
     if (!file) return
     const url = URL.createObjectURL(file)
-    onAdd(url)
+    onAdd(file)
     e.target.value = ''
   }
 
@@ -54,9 +55,9 @@ function ImageUploader({ images, onAdd, onRemove, label = 'Product Images' }: {
     <div className="flex flex-col gap-2">
       <Label>{label}</Label>
       <div className="flex flex-wrap gap-2">
-        {images.map((src, i) => (
+        {images.map((file, i) => (
           <div key={i} className="relative w-20 h-20 rounded-xl overflow-hidden group" style={{ border: '1.5px solid #e9d5ff' }}>
-            <img src={src} alt="" className="w-full h-full object-cover" />
+            <img src={URL.createObjectURL(file)} alt="" className="w-full h-full object-cover" />
             <button
               onClick={() => onRemove(i)}
               className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
@@ -85,7 +86,7 @@ function ImageUploader({ images, onAdd, onRemove, label = 'Product Images' }: {
 
 // ── Variant form ─────────────────────────────────────────────────────────────
 interface Variant {
-  sku: string; price: string; stock: string; images: string[]
+  sku: string; price: string; stock: string; images: File[]
 }
 
 function VariantCard({ index, variant, onChange, onRemove }: {
@@ -300,12 +301,14 @@ function StepDetails({ onNext, onClose }: { onNext: () => void; onClose: () => v
 
 // ── Step 2: Images, Pricing & Variants ──────────────────────────────────────
 function StepMedia({ onBack, onClose }: { onBack: () => void; onClose: () => void }) {
-  const [images, setImages] = useState<string[]>([])
+  const [images, setImages] = useState<File[]>([])
   const [price, setPrice] = useState('')
   const [stock, setStock] = useState('')
   const [variants, setVariants] = useState<Variant[]>([])
   const [showVariants, setShowVariants] = useState(false)
-
+  const { product } = useAppSelector((state)=>state.product) 
+  const dispatch = useAppDispatch();
+  console.log(product.id)
   const addVariant = () => {
     setVariants(v => [...v, { sku: '', price: '', stock: '', images: [] }])
     setShowVariants(true)
@@ -316,6 +319,18 @@ function StepMedia({ onBack, onClose }: { onBack: () => void; onClose: () => voi
     const next = variants.filter((_, idx) => idx !== i)
     setVariants(next)
     if (next.length === 0) setShowVariants(false)
+  }
+
+  const handleSubmit=async()=>{
+    const formData = new FormData;
+    
+    images.forEach((img)=>{
+      formData.append('images',img)
+    })
+    console.log(images)
+    const res = await dispatch(uploadProductImage({id:product.id,formData})).unwrap()
+    console.log(res.data)
+    onClose()
   }
 
   return (
@@ -388,7 +403,7 @@ function StepMedia({ onBack, onClose }: { onBack: () => void; onClose: () => voi
         </button>
 
         <button
-          onClick={onClose}
+          onClick={handleSubmit}
           className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
           style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)' }}
         >

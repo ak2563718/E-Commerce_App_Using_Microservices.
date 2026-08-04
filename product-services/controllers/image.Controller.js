@@ -6,16 +6,14 @@ import fs from 'fs'
 // 1. Upload an image
 export const uploadProductImages = asyncHandler(async (req, res, next) => {
     const productId = req.params.id;
-
+    console.log(req.files)
     // Check product exists
     const product = await prisma.product.findUnique({
         where: { id: productId }
     });
-
     if (!product) {
         return next(new AppError("Product not found", 404));
     }
-
     // Check files
     if (!req.files || req.files.length === 0) {
         return next(new AppError("Please upload at least one image", 400));
@@ -52,7 +50,9 @@ export const uploadProductImages = asyncHandler(async (req, res, next) => {
             order: "asc"
         }
     });
-    fs.unlinkSync(req.files)
+    for (const file of req.files) {
+        fs.unlinkSync(file.path);
+    }
     res.status(201).json({
         success: true,
         message: "Images uploaded successfully",

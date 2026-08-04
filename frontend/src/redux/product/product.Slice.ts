@@ -31,7 +31,7 @@ const productSlice = createSlice({
             state.loading = false;
             state.message = action.payload.message;
             state.product = action.payload.data;
-            state.products?.push(...action.payload.data);
+            state.products?.push(action.payload.data);
         }).addCase(createProduct.rejected,(state,action)=>{
             state.loading = false;
             state.error = action.payload??"failed";
