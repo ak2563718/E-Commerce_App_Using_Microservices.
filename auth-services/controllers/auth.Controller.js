@@ -7,6 +7,8 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { encryptAccessToken, encryptRefreshToken } from '../utils/tokenCreation.js';
 import crypto from 'crypto'
+import axios from 'axios'
+
 // 1. auth register
 export const authRegister = asyncHandler(async(req, res, next)=>{
     const {email, password } = req.body;
@@ -93,6 +95,12 @@ export const authRegister = asyncHandler(async(req, res, next)=>{
         subject:"demo-message",
         html:`just a checking message. Please click <a href="${verificationLink}">here</a> to verify your email.`
 
+    })
+    const userDetails = await axios.post('http://localhost:6005/profile/users',{
+        email:normalizedEmail,
+        id:user.id,
+    },{
+        headers:{'Content-Type':'application/json',}
     })
     res.status(201).json({
         success:true,

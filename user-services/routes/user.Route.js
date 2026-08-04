@@ -3,7 +3,7 @@ import { createAddress, createInfo, deleteaddress, getaddressbyId, getAddresswit
 import { authMiddleware } from '../middlewares/auth.Middleware.js';
 const router = express.Router();
 // 1. user information
-router.post('/users',authMiddleware,createInfo)
+router.post('/users',createInfo)
 router.get('/users/me',authMiddleware,getUser)
 router.patch('/users/me',authMiddleware,updateUser)
 

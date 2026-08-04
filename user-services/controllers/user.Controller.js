@@ -5,8 +5,7 @@ import validator from 'validator'
 
 // 1. create user information
 export const createInfo = asyncHandler(async(req, res, next)=>{
-    const email = req.body;
-    const id = req.user.id;
+    const {id,email} = req.body;
     if(!id || !email){
         return next(new AppError("Please Provide both id and email", 400))
     }

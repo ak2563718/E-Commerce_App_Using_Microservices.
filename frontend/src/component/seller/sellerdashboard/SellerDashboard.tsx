@@ -32,6 +32,10 @@ export default function SellerDashboard() {
     return router.replace('/seller/login')
   }
 
+  useEffect(()=>{
+    dispatch(authCheckSession())
+  },[])
+  console.log("user details",user)
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: '#f8f5ff', fontFamily: 'DM Sans, sans-serif' }}>
       <Sidebar
