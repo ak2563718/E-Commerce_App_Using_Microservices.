@@ -7,7 +7,7 @@ export const createProduct = createAsyncThunk<any,any,{rejectValue:string}>(
     'post/product',
     async(form, { rejectWithValue })=>{
         try {
-            const { data } = await axios.post(`${product_uri}/products`,{form},{
+            const { data } = await axios.post(`${product_uri}/products`,form,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })

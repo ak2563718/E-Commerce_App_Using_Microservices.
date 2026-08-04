@@ -4,6 +4,7 @@ import { Search, Plus, Edit2, Trash2, Eye, Upload, X, ChevronRight, ChevronDown,
 import { topProducts } from './data'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { getAllCategories } from '@/redux/category/category.Action'
+import { createProduct } from '@/redux/product/product.Action'
 
 const EXTENDED = [
   ...topProducts,
@@ -123,7 +124,7 @@ function VariantCard({ index, variant, onChange, onRemove }: {
 }
 
 // ── Step 1: Details ──────────────────────────────────────────────────────────
-function StepDetails({ onContinue, onClose }: { onContinue: () => void; onClose: () => void }) {
+function StepDetails({ onNext, onClose }: { onNext: () => void; onClose: () => void }) {
   const [name, setName] = useState('')
   const [sku, setSku] = useState('')
   const [category, setCategory] = useState('')
@@ -143,7 +144,6 @@ function StepDetails({ onContinue, onClose }: { onContinue: () => void; onClose:
 
   // Derived values — computed on every render, no side effects needed
   const topLevelCategories = categories?.filter((c) => c.parentId === null) ?? []
-  console.log(topLevelCategories)
   const subCategories = categoryId
     ? categories?.filter((c) => c.id === categoryId) ?? []
     : []
@@ -164,7 +164,11 @@ function StepDetails({ onContinue, onClose }: { onContinue: () => void; onClose:
     setSubCategoryId(cat.id)
     setSubCatOpen(false)
   }
-  console.log(subCategoryId)
+  const handleContinue=async()=>{
+    const res = await dispatch(createProduct({name,sku,description:desc,categoryId:subCategoryId?subCategoryId:categoryId})).unwrap()
+    console.log(res.data)
+    onNext()
+  }
 
   return (
     <div className="flex flex-col gap-5">
@@ -283,7 +287,7 @@ function StepDetails({ onContinue, onClose }: { onContinue: () => void; onClose:
           Cancel
         </button>
         <button
-          onClick={onContinue}
+          onClick={handleContinue}
           className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
           style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)' }}
         >
@@ -406,7 +410,7 @@ function AddProductModal({ onClose }: { onClose: () => void }) {
         style={{ maxWidth: 500, maxHeight: '90vh', boxShadow: '0 24px 64px rgba(124,58,237,0.28)', padding: '28px' }}
       >
         {step === 1
-          ? <StepDetails onContinue={() => setStep(2)} onClose={onClose} />
+          ? <StepDetails onNext={() => setStep(2)} onClose={onClose} />
           : <StepMedia onBack={() => setStep(1)} onClose={onClose} />
         }
       </div>
