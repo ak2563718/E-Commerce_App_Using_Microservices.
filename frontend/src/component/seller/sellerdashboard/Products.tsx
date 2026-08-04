@@ -127,20 +127,44 @@ function StepDetails({ onContinue, onClose }: { onContinue: () => void; onClose:
   const [name, setName] = useState('')
   const [sku, setSku] = useState('')
   const [category, setCategory] = useState('')
+  const [categoryId, setCategoryId] = useState('')
+  const [subCategoryName, setSubCategoryName] = useState('')
+  const [subCategoryId, setSubCategoryId] = useState('')
   const [desc, setDesc] = useState('')
   const [catOpen, setCatOpen] = useState(false)
+  const [subCatOpen, setSubCatOpen] = useState(false)
 
   const dispatch = useAppDispatch();
-  const { categories } = useAppSelector((state)=>state.category)
+  const { categories } = useAppSelector((state) => state.category)
 
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(getAllCategories())
-  },[])
-  
-  const categoryname = categories?.filter((c)=>c.parentId === null)
+  }, [dispatch])
 
-  const CATEGORIES = categoryname;
-  console.log(category)
+  // Derived values — computed on every render, no side effects needed
+  const topLevelCategories = categories?.filter((c) => c.parentId === null) ?? []
+  console.log(topLevelCategories)
+  const subCategories = categoryId
+    ? categories?.filter((c) => c.id === categoryId) ?? []
+    : []
+  const hasSubCategories = subCategories[0]?.children.length > 0
+
+
+  const handleSelectCategory = (cat: { id: string; name: string }) => {
+    setCategory(cat.name)
+    setCategoryId(cat.id)
+    setCatOpen(false)
+    // reset subcategory whenever the parent category changes
+    setSubCategoryName('')
+    setSubCategoryId('')
+  }
+
+  const handleSelectSubCategory = (cat: { id: string; name: string }) => {
+    setSubCategoryName(cat.name)
+    setSubCategoryId(cat.id)
+    setSubCatOpen(false)
+  }
+  console.log(subCategoryId)
 
   return (
     <div className="flex flex-col gap-5">
@@ -190,12 +214,12 @@ function StepDetails({ onContinue, onClose }: { onContinue: () => void; onClose:
             className="absolute top-full left-0 right-0 mt-1 rounded-xl overflow-hidden z-20 flex flex-col"
             style={{ background: '#fff', border: '1.5px solid #e9d5ff', boxShadow: '0 8px 24px rgba(124,58,237,0.15)', maxHeight: 200, overflowY: 'auto' }}
           >
-            {Array.isArray(CATEGORIES) && CATEGORIES.map(cat => (
+            {topLevelCategories.map(cat => (
               <button
                 key={cat.id}
-                onClick={() => { setCategory(cat.name); setCatOpen(false) }}
+                onClick={() => handleSelectCategory(cat)}
                 className="px-4 py-2.5 text-sm text-left transition-colors hover:bg-purple-50"
-                style={{ color: category === cat ? '#7c3aed' : '#374151', fontWeight: category === cat ? 600 : 400 }}
+                style={{ color: categoryId === cat.id ? '#7c3aed' : '#374151', fontWeight: categoryId === cat.id ? 600 : 400 }}
               >
                 {cat.name}
               </button>
@@ -203,6 +227,42 @@ function StepDetails({ onContinue, onClose }: { onContinue: () => void; onClose:
           </div>
         )}
       </div>
+
+      {/* Sub-category dropdown — only shown when the selected category has children */}
+      {hasSubCategories && (
+        <div className="flex flex-col gap-1 relative">
+          <Label>Sub-Category</Label>
+          <button
+            onClick={() => setSubCatOpen(o => !o)}
+            className="w-full px-3 py-2.5 rounded-xl text-sm text-left flex items-center justify-between transition-all"
+            style={{
+              border: subCatOpen ? '1.5px solid #7c3aed' : '1.5px solid #e9d5ff',
+              background: subCatOpen ? '#fff' : '#faf5ff',
+              color: subCategoryName ? '#111' : '#9ca3af',
+            }}
+          >
+            {subCategoryName || 'Select a sub-category'}
+            <ChevronDown className="w-4 h-4 text-gray-400 transition-transform" style={{ transform: subCatOpen ? 'rotate(180deg)' : 'none' }} />
+          </button>
+          {subCatOpen && (
+            <div
+              className="absolute top-full left-0 right-0 mt-1 rounded-xl overflow-hidden z-20 flex flex-col"
+              style={{ background: '#fff', border: '1.5px solid #e9d5ff', boxShadow: '0 8px 24px rgba(124,58,237,0.15)', maxHeight: 200, overflowY: 'auto' }}
+            >
+              {Array.isArray(subCategories[0]?.children) && subCategories[0]?.children.map((cat:any) => (
+                <button
+                  key={cat.id}
+                  onClick={() => handleSelectSubCategory(cat)}
+                  className="px-4 py-2.5 text-sm text-left transition-colors hover:bg-purple-50"
+                  style={{ color: subCategoryId === cat.id ? '#7c3aed' : '#374151', fontWeight: subCategoryId === cat.id ? 600 : 400 }}
+                >
+                  {cat.name}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="flex flex-col gap-1">
         <Label>Description</Label>
