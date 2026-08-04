@@ -6,9 +6,13 @@ const variant_uri = process.env.NEXT_PUBLIC_PRODUCT_URI;
 // 1. create product variants
 export const createVariants = createAsyncThunk<any, any, {rejectValue:string}>(
     'post/variants',
-    async({id, form}, { rejectWithValue })=>{
+    async({id, sku, price, stock}, { rejectWithValue })=>{
         try {
-            const { data } = await axios.post(`${variant_uri}/products/${id}/variants`,{form},{
+            const { data } = await axios.post(`${variant_uri}/products/${id}/variants`,{
+                sku,
+                price,
+                stock,
+            },{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })

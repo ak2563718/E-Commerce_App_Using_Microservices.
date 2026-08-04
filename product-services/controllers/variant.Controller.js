@@ -6,6 +6,7 @@ import { AppError } from "../utils/AppError.js";
 // 1. Create a variant 
 export const createVariant = asyncHandler(async(req, res, next)=>{
     const id = req.params.id;
+    console.log(req.body);
     const {sku, price, stock} = req.body;
     const found = await prisma.productVariant.findUnique({where:{sku}})
     if(found){

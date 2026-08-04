@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createProduct, deleteProductbyId, getAllProducts, getProductbyId, getProductWithSlug, updateProductbyId } from "./product.Action";
+import { uploadProductImage } from "./product.Type.Action";
 
 interface data{
     product:any|undefined,
@@ -106,6 +107,19 @@ const productSlice = createSlice({
         }).addCase(deleteProductbyId.rejected,(state,action)=>{
             state.loading = false;
             state.error = action.payload??"failed";
+        });
+
+        // 7. uploading images 
+        builder.addCase(uploadProductImage.pending,(state)=>{
+            state.loading = true;
+            state.error = null;
+            state.message = null;
+        }).addCase(uploadProductImage.fulfilled,(state,action)=>{
+            state.loading = false;
+            state.message = action.payload.message;
+        }).addCase(uploadProductImage.rejected,(state,action)=>{
+            state.loading = false;
+            state.error = action.payload??"Upload failed";
         })
     }
 });

@@ -1,11 +1,13 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
-import { Search, Plus, Edit2, Trash2, Eye, Upload, X, ChevronRight, ChevronDown, ImagePlus, Layers } from 'lucide-react'
+import { Search, Plus, Edit2, Trash2, Eye, Upload, X, ChevronRight, ChevronDown, ImagePlus, Layers, Loader2, Loader } from 'lucide-react'
 import { topProducts } from './data'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { getAllCategories } from '@/redux/category/category.Action'
 import { createProduct } from '@/redux/product/product.Action'
 import { uploadProductImage } from '@/redux/product/product.Type.Action'
+import { toast } from 'sonner'
+import { createVariants } from '@/redux/productvariants/variants.Action'
 
 const EXTENDED = [
   ...topProducts,
@@ -138,6 +140,7 @@ function StepDetails({ onNext, onClose }: { onNext: () => void; onClose: () => v
 
   const dispatch = useAppDispatch();
   const { categories } = useAppSelector((state) => state.category)
+  const { loading } = useAppSelector((state)=>state.product)
 
   useEffect(() => {
     dispatch(getAllCategories())
@@ -166,9 +169,13 @@ function StepDetails({ onNext, onClose }: { onNext: () => void; onClose: () => v
     setSubCatOpen(false)
   }
   const handleContinue=async()=>{
-    const res = await dispatch(createProduct({name,sku,description:desc,categoryId:subCategoryId?subCategoryId:categoryId})).unwrap()
-    console.log(res.data)
-    onNext()
+    try {
+      const res = await dispatch(createProduct({name,sku,description:desc,categoryId:subCategoryId?subCategoryId:categoryId})).unwrap()
+      toast.success(res.message)
+      onNext()
+    } catch (error:any) { 
+      toast.error(error)
+    } 
   }
 
   return (
@@ -287,12 +294,12 @@ function StepDetails({ onNext, onClose }: { onNext: () => void; onClose: () => v
         <button onClick={onClose} className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-gray-500 transition-all hover:bg-gray-50" style={{ border: '1.5px solid #e9d5ff' }}>
           Cancel
         </button>
-        <button
+       <button
           onClick={handleContinue}
           className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
           style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)' }}
         >
-          Continue <ChevronRight className="w-4 h-4" />
+         {loading ? <Loader className='w-4 h-4'/> : (<>Continue <ChevronRight className="w-4 h-4" /></>)}
         </button>
       </div>
     </div>
@@ -306,9 +313,8 @@ function StepMedia({ onBack, onClose }: { onBack: () => void; onClose: () => voi
   const [stock, setStock] = useState('')
   const [variants, setVariants] = useState<Variant[]>([])
   const [showVariants, setShowVariants] = useState(false)
-  const { product } = useAppSelector((state)=>state.product) 
+  const { product, loading } = useAppSelector((state)=>state.product) 
   const dispatch = useAppDispatch();
-  console.log(product.id)
   const addVariant = () => {
     setVariants(v => [...v, { sku: '', price: '', stock: '', images: [] }])
     setShowVariants(true)
@@ -323,14 +329,24 @@ function StepMedia({ onBack, onClose }: { onBack: () => void; onClose: () => voi
 
   const handleSubmit=async()=>{
     const formData = new FormData;
-    
     images.forEach((img)=>{
       formData.append('images',img)
     })
-    console.log(images)
-    const res = await dispatch(uploadProductImage({id:product.id,formData})).unwrap()
-    console.log(res.data)
-    onClose()
+
+  for( const variant of variants){
+    const response = await dispatch(createVariants({id:product.id,sku:variant.sku,price:variant.price,stock:variant.stock})).unwrap()
+    console.log(response)
+  }
+    
+    try {
+      // const res = await dispatch(uploadProductImage({id:product.id,formData})).unwrap()
+      // const response = await dispatch(createVariants({id:product.id,form:{sku:product.sku,price,stock}}))
+      // toast.success(res.message)
+      onClose()
+    } catch (error:any) {
+      toast.error(error)
+    }
+    
   }
 
   return (
@@ -407,7 +423,7 @@ function StepMedia({ onBack, onClose }: { onBack: () => void; onClose: () => voi
           className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
           style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)' }}
         >
-          <Upload className="w-4 h-4" /> Add Product
+          {loading?<Loader className='w-4 h-4'/> :(<><Upload className="w-4 h-4" /> Add Product</>)}
         </button>
       </div>
     </div>
