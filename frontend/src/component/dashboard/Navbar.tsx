@@ -68,7 +68,6 @@ export default function Navbar({
     fetchUserdetails();
   },[])
   
-  console.log(user,accessToken)
 
   if(loading){
     return <LoadingSkeleton />

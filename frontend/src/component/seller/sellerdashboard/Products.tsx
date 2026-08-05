@@ -335,7 +335,6 @@ function StepMedia({ onBack, onClose }: { onBack: () => void; onClose: () => voi
 
   for( const variant of variants){
     const response = await dispatch(createVariants({id:product.id,sku:variant.sku,price:variant.price,stock:variant.stock})).unwrap()
-    console.log(response)
   }
     
     try {

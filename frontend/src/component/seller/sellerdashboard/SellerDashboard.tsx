@@ -35,7 +35,6 @@ export default function SellerDashboard() {
   useEffect(()=>{
     dispatch(authCheckSession())
   },[])
-  console.log("user details",user)
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: '#f8f5ff', fontFamily: 'DM Sans, sans-serif' }}>
       <Sidebar

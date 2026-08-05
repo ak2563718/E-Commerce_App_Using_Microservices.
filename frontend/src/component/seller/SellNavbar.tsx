@@ -9,8 +9,6 @@ function SellNavbar() {
   const router = useRouter()
   const { user, islogin } = useAppSelector((state)=>state.auth);
   const dispatch = useAppDispatch()
-  console.log('user data is ', user)
-  
   useEffect(()=>{
     dispatch(authCheckSession())
   },[])
