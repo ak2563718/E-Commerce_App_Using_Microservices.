@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import api from "@/lib/axios";
 
 const user_uri = process.env.NEXT_PUBLIC_USER_URI;
 
@@ -25,10 +26,12 @@ export const createProfile = createAsyncThunk<any, any,{rejectValue:string}>(
 // 2. get user profile 
 export const getProfile = createAsyncThunk<any, string, {rejectValue:string} >(
     'get/profile',
-    async( _, {rejectWithValue})=>{
+    async( token, {rejectWithValue})=>{
         try {
             const { data } = await axios.get(`${user_uri}/users/me`,{
-                headers:{'Content-Type':'application/json'},
+                headers:{'Content-Type':'application/json',
+                'Authorization':`Bearer ${token}`
+                },
                 withCredentials:true,
             })
             return data;

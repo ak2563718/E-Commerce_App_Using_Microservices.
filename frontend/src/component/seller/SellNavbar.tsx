@@ -8,7 +8,12 @@ import { useEffect } from 'react'
 function SellNavbar() {
   const router = useRouter()
   const { user, islogin } = useAppSelector((state)=>state.auth);
-
+  const dispatch = useAppDispatch()
+  console.log('user data is ', user)
+  
+  useEffect(()=>{
+    dispatch(authCheckSession())
+  },[])
   
   return (
     <div>
@@ -54,7 +59,7 @@ function SellNavbar() {
         </div>
 
         {/* CTA buttons */}
-        {!islogin &&
+        {user.role !== 'SELLER' &&
         <div className="flex items-center gap-3">
           <button
             onClick={()=>router.push('/seller/login')}

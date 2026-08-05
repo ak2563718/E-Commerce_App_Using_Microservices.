@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
 import ProfileDropdown from './ProfileDropdown'
 import { authCheckSession } from '@/redux/auth/auth.Action'
+import LoadingSkeleton from './LoadingSkeleton'
 
 interface NavbarProps {
   onLoginClick?: () => void
@@ -23,8 +24,16 @@ export default function Navbar({
   const [notifOpen, setNotifOpen] = useState(false)
   const moreRef = useRef<HTMLDivElement>(null)
   const notifRef = useRef<HTMLDivElement>(null)
-  const { islogin } = useAppSelector((state)=>state.auth)
+  const [ loading, setLoading ] = useState(true)
+  const { user, islogin, accessToken } = useAppSelector((state)=>state.auth)
   const dispatch = useAppDispatch()
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "instant", // or "smooth"
+    });
+  }, []);
+
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (moreRef.current && !moreRef.current.contains(e.target as Node)) setMoreOpen(false)
@@ -48,6 +57,22 @@ export default function Navbar({
     router.replace('/seller/information')
   }
 
+  useEffect(()=>{
+    const fetchUserdetails = async()=>{
+      try {
+        const response = await dispatch(authCheckSession()).unwrap()
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchUserdetails();
+  },[])
+  
+  console.log(user,accessToken)
+
+  if(loading){
+    return <LoadingSkeleton />
+  }
 
   return (
     <nav

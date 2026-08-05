@@ -1,5 +1,7 @@
 'use client'
-import { useState } from 'react'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import { getProfile } from '@/redux/user/user.Action'
+import { useEffect, useState } from 'react'
 
 interface ProfileData {
   firstName: string
@@ -91,7 +93,15 @@ export default function Profile() {
   const [editing, setEditing] = useState(false)
   const [saved, setSaved] = useState<ProfileData>(initial)
   const [draft, setDraft] = useState<ProfileData>(initial)
-
+  const dispatch = useAppDispatch();
+  const { user } = useAppSelector((state)=>state.user)
+  const { accessToken } = useAppSelector((state)=>state.auth)
+  useEffect(()=>{
+     if (accessToken) {
+        dispatch(getProfile(accessToken));
+      }
+  },[])
+  console.log("user profile is", user)
   const set = (key: keyof ProfileData) => (v: string) => setDraft((d) => ({ ...d, [key]: v }))
 
   const handleSave = () => { setSaved(draft); setEditing(false) }
