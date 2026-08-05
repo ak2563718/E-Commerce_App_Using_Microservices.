@@ -52,7 +52,9 @@ export const getCategory = asyncHandler(async(req, res, next)=>{
         where:{
             parentId:null,
         },
-    include:{children:true}})
+    include:{
+        children:true
+    }})
     if(!category){
         return next(new AppError("Category not Found", 404))
     }

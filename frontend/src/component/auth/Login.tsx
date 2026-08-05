@@ -11,7 +11,7 @@ export default function Login() {
   const router = useRouter()
   const [data, setData] = useState({ email: '', password: '' })
   const [showPass, setShowPass] = useState(false)
-  const { user, loading, error, message } = useAppSelector((state)=>state.auth)
+  const { islogin, loading, error, message } = useAppSelector((state)=>state.auth)
   const dispatch = useAppDispatch()
   const handleClick =async()=>{
     try {
@@ -21,12 +21,18 @@ export default function Login() {
         email:'',
         password:'',
       })
-      setTimeout(()=>{
-        router.replace('/')
-      },2000)
+      router.replace('/')
     } catch (err:any) {
+      setData({
+        email:'',
+        password:'',
+      })
       toast.error(err)
     }
+  }
+ 
+  if(islogin){
+    return router.replace("/")
   }
   return (
     <div className="flex rounded-2xl overflow-hidden shadow-2xl " style={{ boxShadow: '0 16px 48px rgba(233,30,140,0.18)', maxWidth: 740 }}>

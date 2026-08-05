@@ -101,7 +101,9 @@ export const uploadVariantImages = asyncHandler(async (req, res, next) => {
             variantId: id,
         },
     });
-    fs.unlinkSync(req.files)
+    for (const file of req.files) {
+        fs.unlinkSync(file.path);
+    }
     res.status(201).json({
         success: true,
         message: "Variant images uploaded successfully",

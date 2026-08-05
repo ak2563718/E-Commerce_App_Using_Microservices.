@@ -48,5 +48,5 @@ router.delete('/values/:id',deleteAttributesvalue)
 router.post('/products/:id/images',upload.array('images',10),uploadProductImages)
 
 // 8. upload product variant images
-router.post('/variants/:id/images',upload.array('variants',10),uploadVariantImages)
+router.post('/variants/:id/images',upload.array('images',10),uploadVariantImages)
 export default router;

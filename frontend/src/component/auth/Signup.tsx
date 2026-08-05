@@ -51,8 +51,13 @@ export default function Signup() {
       })
       setTimeout(()=>{
         setSuccess(true);
-      },2000)
+      },1000)
     } catch (err:any) {
+      setData({
+        email:'',
+        password:'',
+        confirm:'',
+      })
       toast.error(err)
     }
   }

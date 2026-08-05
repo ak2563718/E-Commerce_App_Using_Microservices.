@@ -5,7 +5,7 @@ import { topProducts } from './data'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { getAllCategories } from '@/redux/category/category.Action'
 import { createProduct } from '@/redux/product/product.Action'
-import { uploadProductImage } from '@/redux/product/product.Type.Action'
+import { uploadProductImage, uploadProductVariantImages } from '@/redux/product/product.Type.Action'
 import { toast } from 'sonner'
 import { createVariants } from '@/redux/productvariants/variants.Action'
 
@@ -31,6 +31,7 @@ function Input({ placeholder, value, onChange, type = 'text' }: {
       placeholder={placeholder}
       value={value}
       onChange={e => onChange(e.target.value)}
+      required
       className="w-full px-3 py-2.5 rounded-xl text-sm outline-none transition-all"
       style={{ border: '1.5px solid #e9d5ff', background: '#faf5ff', color: '#111' }}
       onFocus={e => { e.currentTarget.style.border = '1.5px solid #7c3aed'; e.currentTarget.style.background = '#fff' }}
@@ -328,24 +329,38 @@ function StepMedia({ onBack, onClose }: { onBack: () => void; onClose: () => voi
   }
 
   const handleSubmit=async()=>{
-    const formData = new FormData;
+    try {
+    const formData = new FormData();
     images.forEach((img)=>{
       formData.append('images',img)
     })
+    const uploadPIRes = await dispatch(uploadProductImage({id:product.id,formData})).unwrap() 
+    const response = await dispatch(createVariants({id:product.id,sku:product.sku,price,stock})).unwrap()
 
-  for( const variant of variants){
-    const response = await dispatch(createVariants({id:product.id,sku:variant.sku,price:variant.price,stock:variant.stock})).unwrap()
+    if(variants.length >0){
+    for (const variant of variants) {
+    const response = await dispatch(
+      createVariants({
+        id: product.id,
+        sku: variant.sku,
+        price: variant.price,
+        stock: variant.stock,
+      })
+    ).unwrap();
+    console.log(response)
+      const formData = new FormData();
+      variant.images.forEach((img) => {
+        formData.append("images", img);
+      });
+      await dispatch(uploadProductVariantImages({id: response.data.id, formData})).unwrap();
+    }
   }
-    
-    try {
-      // const res = await dispatch(uploadProductImage({id:product.id,formData})).unwrap()
-      // const response = await dispatch(createVariants({id:product.id,form:{sku:product.sku,price,stock}}))
-      // toast.success(res.message)
+    toast.success("Product add Successfully")
       onClose()
     } catch (error:any) {
+      console.log(error)
       toast.error(error)
     }
-    
   }
 
   return (

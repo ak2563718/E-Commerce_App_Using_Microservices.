@@ -32,7 +32,7 @@ const variantSlice = createSlice({
             state.loading = false;
             state.message = action.payload.message;
             state.variant = action.payload.data;
-            state.variants?.push(...action.payload.data);
+            state.variants?.push(action.payload.data);
         }).addCase(createVariants.rejected,(state,action)=>{
             state.loading = false;
             state.error = action.payload?? "failed";
