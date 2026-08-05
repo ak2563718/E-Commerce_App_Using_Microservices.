@@ -15,5 +15,5 @@ export const encryptAccessToken = (user,rolename) =>{
         id:user.id,
         email:user.email,
         role:rolename,
-    },key,{expiresIn:'15m'})
+    },key,{expiresIn:'2m'})
 }

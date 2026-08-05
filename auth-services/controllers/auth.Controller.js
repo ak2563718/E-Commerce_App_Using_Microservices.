@@ -320,6 +320,7 @@ export const authLogout = asyncHandler(async(req, res, next)=>{
 // 5. refresh access-token
 export const auth_refresh_AccessToken = asyncHandler(async(req, res, next)=>{
     const token = req.cookies?.refresh_token;
+    console.log(token)
     if(!token){
         return next(new AppError("User not Logged in", 401))
     }
@@ -340,10 +341,23 @@ export const auth_refresh_AccessToken = asyncHandler(async(req, res, next)=>{
    const user = await prisma.user.findUnique({
     where:{
         id:decoded.id
+    },
+    include:{
+        role:true
     }
    })
-   const refreshToken = await encryptRefreshToken(user);
-   const accessToken = await encryptAccessToken(user);
+   console.log("user is",user)
+    const roleId = user.role[0].roleId;
+    const userRole = await prisma.role.findFirst({
+        where:{
+            id:roleId
+        }
+    })
+    if(!userRole){
+        return next(new AppError("user role not found", 404))
+    }
+   const refreshToken = await encryptRefreshToken(user,userRole.name);
+   const accessToken = await encryptAccessToken(user,userRole.name);
    await prisma.refreshToken.create({
     data: {
         token: refreshToken,

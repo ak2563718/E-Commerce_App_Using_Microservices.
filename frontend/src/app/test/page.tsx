@@ -1,10 +1,10 @@
-import ProductListing from '@/component/dashboard/ProductListing'
+import Text from '@/component/Text'
 import React from 'react'
 
 function page() {
   return (
     <div>
-        <ProductListing/>
+        <Text/>
     </div>
   )
 }

@@ -24,13 +24,12 @@ export const createProfile = createAsyncThunk<any, any,{rejectValue:string}>(
 );
 
 // 2. get user profile 
-export const getProfile = createAsyncThunk<any, string, {rejectValue:string} >(
+export const getProfile = createAsyncThunk<any, void, {rejectValue:string} >(
     'get/profile',
-    async( token, {rejectWithValue})=>{
+    async( _, {rejectWithValue})=>{
         try {
-            const { data } = await axios.get(`${user_uri}/users/me`,{
+            const { data } = await api.get(`${user_uri}/users/me`,{
                 headers:{'Content-Type':'application/json',
-                'Authorization':`Bearer ${token}`
                 },
                 withCredentials:true,
             })
