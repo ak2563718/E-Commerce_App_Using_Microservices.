@@ -91,6 +91,8 @@ function GenderField({ value, editing, onChange }: { value: string; editing: boo
 
 export default function Profile() {
   const [editing, setEditing] = useState(false)
+  const [saved, setSaved] = useState<any>(null)
+  const [draft, setDraft] = useState<any>(null)
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state)=>state.user)
   const { accessToken } = useAppSelector((state)=>state.auth)
@@ -104,10 +106,13 @@ export default function Profile() {
      }
      userProfile();
   },[])
-  console.log('user info', user)
-  const [saved, setSaved] = useState<any>({user})
-  const [draft, setDraft] = useState<any>({user})
-  console.log('saved infor',user)
+  
+  useEffect(()=>{
+    if(user){
+      setSaved(user)
+      setDraft(user)
+    }
+  },[user])
   const set = (key: keyof ProfileData) => (v: string) => setDraft((d:any) => ({ ...d, [key]: v }))
 
   const handleSave = () => { setSaved(draft); setEditing(false) }
