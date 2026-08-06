@@ -48,7 +48,7 @@ export const updateProfile = createAsyncThunk<any, any , {rejectValue:string}>(
     'patch/profile',
     async(info, { rejectWithValue })=>{
         try {
-            const { data } = await axios.patch(`${user_uri}/users/me`,info,{
+            const { data } = await api.patch(`${user_uri}/users/me`,info,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })

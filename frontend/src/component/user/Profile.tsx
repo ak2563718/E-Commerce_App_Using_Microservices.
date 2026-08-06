@@ -1,7 +1,8 @@
 'use client'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
-import { getProfile } from '@/redux/user/user.Action'
+import { getProfile, updateProfile } from '@/redux/user/user.Action'
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 interface ProfileData {
   firstName: string
@@ -71,10 +72,9 @@ function GenderField({ value, editing, onChange }: { value: string; editing: boo
             className="w-full pl-10 pr-4 py-3 rounded-xl text-sm outline-none transition-all duration-200 appearance-none"
             style={{ border: '1.5px solid #f9a8d4', background: '#fdf2f8', color: '#831843', fontFamily: 'Outfit, sans-serif' }}
           >
-            <option>Female</option>
-            <option>Male</option>
-            <option>Non-binary</option>
-            <option>Prefer not to say</option>
+            <option>FEMALE</option>
+            <option>MALE</option>
+            <option>OTHERS</option>
           </select>
         ) : (
           <input
@@ -111,11 +111,20 @@ export default function Profile() {
   console.log(' draft user', draft)
   const set = (key: keyof ProfileData) => (v: string) => setDraft((d:any) => ({ ...d, [key]: v }))
 
-  const handleSave = () => { setSaved(draft); setEditing(false) }
+  const handleSave = async() => { 
+    try {
+       setSaved(draft); 
+       const res = await dispatch(updateProfile(draft)).unwrap()
+       toast.success(res?.message)
+       setEditing(false) 
+    } catch (error:any) {
+       toast.error(error)
+    }
+  }
   const handleCancel = () => { setDraft(saved); setEditing(false) }
 
   const current = editing ? draft : saved
-
+  console.log("current value", current)
   return (
     <div className="h-full flex flex-col" style={{ background: 'linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%)' }}>
       {/* Top bar */}
@@ -213,7 +222,7 @@ export default function Profile() {
               <Field label="Email Address" type="email" value={current?.email} editing={editing} onChange={set('email')} icon="✉️" />
               <Field label="Phone Number" type="tel" value={current?.phone} editing={editing} onChange={set('phone')} icon="📱" />
               <GenderField value={current?.gender} editing={editing} onChange={set('gender')} />
-              <Field label="Date of Birth" type="date" value={current?.dob} editing={editing} onChange={set('dob')} icon="🎂" />
+              <Field label="Date of Birth" type="date" value={current?.dob?.split("T")[0]} editing={editing} onChange={set('dob')} icon="🎂" />
             </div>
 
             {editing && (
