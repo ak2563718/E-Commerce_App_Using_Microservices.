@@ -3,12 +3,15 @@ import { useState } from 'react'
 import {
   User, ShoppingBag, Heart, Bell, LogOut,
   ChevronLeft, ChevronRight, Settings, Star, ShoppingCart,
+  MapPin,
 } from 'lucide-react'
 import type { NavItem } from './UserDashboard'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 
 const NAV: { id: NavItem; label: string; icon: typeof User }[] = [
   { id: 'profile',       label: 'My Profile',     icon: User },
   { id: 'orders',        label: 'My Orders',       icon: ShoppingBag },
+  { id: 'address',        label:"My Address",       icon:MapPin},
   { id: 'wishlist',      label: 'Wishlist',        icon: Heart },
   { id: 'notifications', label: 'Notifications',   icon: Bell },
 ]
@@ -25,9 +28,11 @@ interface Props {
 }
 
 export default function Sidebar({ active, setActive }: Props) {
+  const dispatch = useAppDispatch()
+  const { user } = useAppSelector((state)=>state.user)
   const [open, setOpen] = useState(true)
   const unread = NOTIFS.length
-
+  console.log(typeof user.firstName)
   return (
     <aside
       className="flex flex-col shrink-0 h-full relative transition-all duration-300"
@@ -71,10 +76,10 @@ export default function Sidebar({ active, setActive }: Props) {
               className="text-white font-black text-base leading-tight"
               style={{ fontFamily: 'Outfit, sans-serif' }}
             >
-              Blushop
+              ShopHub
             </div>
             <div
-              className="text-xs font-700 tracking-widest uppercase"
+              className="text-xs font-700 tracking-widest uppercase text-sm"
               style={{ color: '#f9a8d4', letterSpacing: '0.15em', fontFamily: 'Outfit, sans-serif' }}
             >
               My Account
@@ -96,20 +101,14 @@ export default function Sidebar({ active, setActive }: Props) {
             className="w-9 h-9 rounded-full flex items-center justify-center text-white font-black text-sm shrink-0"
             style={{ background: 'linear-gradient(135deg, #fb7185, #ec4899)' }}
           >
-            PS
+            {user?.firstName?.[0]}{user?.lastName?.[0]}
           </div>
           <div className="overflow-hidden">
             <div
               className="text-white text-xs font-700 truncate"
               style={{ fontFamily: 'Outfit, sans-serif' }}
             >
-              Priya Sharma
-            </div>
-            <div className="flex items-center gap-1 mt-0.5">
-              <Star className="w-2.5 h-2.5" style={{ color: '#fbbf24', fill: '#fbbf24' }} />
-              <span className="text-xs" style={{ color: 'rgba(255,255,255,0.45)', fontFamily: 'Outfit, sans-serif' }}>
-                Premium Member
-              </span>
+              {user?.firstName+" "+user?.lastName}
             </div>
           </div>
         </div>
@@ -119,7 +118,7 @@ export default function Sidebar({ active, setActive }: Props) {
             className="w-9 h-9 rounded-full flex items-center justify-center text-white font-black text-sm"
             style={{ background: 'linear-gradient(135deg, #fb7185, #ec4899)' }}
           >
-            PS
+            {user?.firstName?.[0]}{user?.lastName?.[0]}
           </div>
         </div>
       )}

@@ -1,84 +1,155 @@
 'use client'
 import { useState } from 'react'
-import { Plus, Pencil, Trash2, MapPin, Star } from 'lucide-react'
-import { ADDRESSES } from './userData'
+import AddressCard from './AddressCard'
+import AddressForm from './AddressForm'
 
-export default function Addresses() {
-  const [addresses, setAddresses] = useState(ADDRESSES)
+export interface Address {
+  id: string
+  label: string
+  fullName: string
+  line1: string
+  line2: string
+  city: string
+  state: string
+  zip: string
+  country: string
+  phone: string
+  isDefault: boolean
+}
 
-  const setDefault = (id: number) =>
-    setAddresses(a => a.map(x => ({ ...x, isDefault: x.id === id })))
+const INITIAL: Address[] = [
+  {
+    id: '1',
+    label: 'Home',
+    fullName: 'Eleanor Voss',
+    line1: '47 Birchwood Lane',
+    line2: 'Apt 3B',
+    city: 'Portland',
+    state: 'OR',
+    zip: '97201',
+    country: 'United States',
+    phone: '+1 (503) 555-0142',
+    isDefault: true,
+  },
+]
 
-  const remove = (id: number) =>
-    setAddresses(a => a.filter(x => x.id !== id))
+export default function Addressess() {
+  const [addresses, setAddresses] = useState<Address[]>(INITIAL)
+  const [showForm, setShowForm] = useState(false)
+  const [editing, setEditing] = useState<Address | null>(null)
+
+  const handleAdd = (data: Omit<Address, 'id' | 'isDefault'>) => {
+    const newAddr: Address = {
+      ...data,
+      id: Date.now().toString(),
+      isDefault: addresses.length === 0,
+    }
+    setAddresses((prev) => [...prev, newAddr])
+    setShowForm(false)
+  }
+
+  const handleUpdate = (data: Omit<Address, 'id' | 'isDefault'>) => {
+    if (!editing) return
+    setAddresses((prev) =>
+      prev.map((a) => (a.id === editing.id ? { ...a, ...data } : a))
+    )
+    setEditing(null)
+  }
+
+  const handleDelete = (id: string) => {
+    setAddresses((prev) => {
+      const filtered = prev.filter((a) => a.id !== id)
+      if (filtered.length > 0 && !filtered.some((a) => a.isDefault)) {
+        filtered[0].isDefault = true
+      }
+      return filtered
+    })
+  }
+
+  const handleSetDefault = (id: string) => {
+    setAddresses((prev) =>
+      prev.map((a) => ({ ...a, isDefault: a.id === id }))
+    )
+  }
+
+  const closeForm = () => {
+    setShowForm(false)
+    setEditing(null)
+  }
 
   return (
-    <div className="max-w-2xl flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-black text-gray-900" style={{ fontFamily: 'Outfit, sans-serif' }}>Addresses</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Manage your delivery addresses</p>
+    <div className="max-w-3xl mx-auto px-4 py-12">
+      {/* Header */}
+      <div className="mb-10">
+        <p className="text-xs tracking-[0.18em] uppercase text-stone-400 mb-1 font-medium">
+          Account Settings
+        </p>
+        <div className="flex items-end justify-between">
+          <div>
+            <h1
+              className="text-3xl font-bold text-stone-800 leading-tight"
+              style={{ fontFamily: "'Lora', serif" }}
+            >
+              Saved Addresses
+            </h1>
+            <p className="text-stone-500 text-sm mt-1">
+              Manage your delivery and billing addresses.
+            </p>
+          </div>
+          <button
+            onClick={() => { setEditing(null); setShowForm(true) }}
+            className="flex items-center gap-2 px-4 py-2.5 bg-stone-800 text-stone-50 text-sm font-medium rounded-lg hover:bg-stone-700 active:scale-95 transition-all duration-150"
+          >
+            <span className="text-lg leading-none">+</span>
+            Add Address
+          </button>
         </div>
-        <button
-          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white"
-          style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)' }}
-        >
-          <Plus className="w-4 h-4" /> Add Address
-        </button>
       </div>
 
-      <div className="flex flex-col gap-4">
-        {addresses.map(addr => (
+      {/* Form overlay */}
+      {(showForm || editing) && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center p-4">
           <div
-            key={addr.id}
-            className="rounded-2xl p-5 flex flex-col gap-3 transition-all"
-            style={{
-              background: '#fff',
-              border: addr.isDefault ? '1.5px solid #7c3aed' : '1px solid #f0ebff',
-              boxShadow: addr.isDefault ? '0 4px 16px rgba(124,58,237,0.12)' : '0 2px 8px rgba(124,58,237,0.05)',
-            }}
-          >
-            <div className="flex items-start justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#f3e8ff' }}>
-                  <MapPin className="w-4 h-4" style={{ color: '#7c3aed' }} />
-                </div>
-                <span className="text-sm font-black text-gray-800">{addr.label}</span>
-                {addr.isDefault && (
-                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold" style={{ background: '#f3e8ff', color: '#7c3aed' }}>
-                    <Star className="w-2.5 h-2.5" style={{ fill: '#7c3aed' }} /> Default
-                  </span>
-                )}
-              </div>
-              <div className="flex gap-1">
-                <button className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-purple-50 transition-colors">
-                  <Pencil className="w-3.5 h-3.5" style={{ color: '#7c3aed' }} />
-                </button>
-                <button onClick={() => remove(addr.id)} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-red-50 transition-colors">
-                  <Trash2 className="w-3.5 h-3.5 text-red-400" />
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <p className="text-sm font-semibold text-gray-800">{addr.name}</p>
-              <p className="text-sm text-gray-500 mt-0.5">{addr.line1}</p>
-              <p className="text-sm text-gray-500">{addr.city}, {addr.state} — {addr.pin}</p>
-              <p className="text-xs text-gray-400 mt-1">{addr.phone}</p>
-            </div>
-
-            {!addr.isDefault && (
-              <button
-                onClick={() => setDefault(addr.id)}
-                className="self-start text-xs font-bold px-3 py-1.5 rounded-lg transition-colors hover:bg-purple-50"
-                style={{ color: '#7c3aed', border: '1px solid #e9d5ff' }}
-              >
-                Set as Default
-              </button>
-            )}
+            className="absolute inset-0 bg-stone-900/40 backdrop-blur-sm"
+            onClick={closeForm}
+          />
+          <div className="relative z-50 w-full max-w-lg">
+            <AddressForm
+              initial={editing ?? undefined}
+              onSubmit={editing ? handleUpdate : handleAdd}
+              onCancel={closeForm}
+            />
           </div>
+        </div>
+      )}
+
+      {/* Empty state */}
+      {addresses.length === 0 && (
+        <div className="text-center py-20 border-2 border-dashed border-stone-300 rounded-2xl">
+          <div className="text-4xl mb-3">📭</div>
+          <p className="text-stone-500 font-medium">No addresses saved yet.</p>
+          <p className="text-stone-400 text-sm mt-1">
+            Click "Add Address" to get started.
+          </p>
+        </div>
+      )}
+
+      {/* Address list */}
+      <div className="grid gap-4">
+        {addresses.map((addr) => (
+          <AddressCard
+            key={addr.id}
+            address={addr}
+            onEdit={() => { setShowForm(false); setEditing(addr) }}
+            onDelete={() => handleDelete(addr.id)}
+            onSetDefault={() => handleSetDefault(addr.id)}
+          />
         ))}
       </div>
+
+      <p className="text-center text-xs text-stone-400 mt-10">
+        {addresses.length} address{addresses.length !== 1 ? 'es' : ''} saved
+      </p>
     </div>
   )
 }

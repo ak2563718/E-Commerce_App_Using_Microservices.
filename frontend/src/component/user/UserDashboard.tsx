@@ -5,8 +5,9 @@ import Orders from './MyOrders'
 import Wishlist from './Wishlist'
 import Notifications from './Notifications'
 import Sidebar from './Sidebar'
+import Addresses from './Addressess'
 
-export type NavItem = 'profile' | 'orders' | 'wishlist' | 'notifications'
+export type NavItem = 'profile' | 'orders' | 'wishlist' | 'notifications' | 'address'
 
 export default function App() {
   const [active, setActive] = useState<NavItem>('profile')
@@ -19,6 +20,7 @@ export default function App() {
         {active === 'orders' && <Orders />}
         {active === 'wishlist' && <Wishlist />}
         {active === 'notifications' && <Notifications />}
+        {active === 'address' && <Addresses/>}
       </main>
     </div>
   )

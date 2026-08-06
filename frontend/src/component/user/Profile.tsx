@@ -108,7 +108,6 @@ export default function Profile() {
       setDraft(user)
     }
   },[user])
-  console.log(' draft user', draft)
   const set = (key: keyof ProfileData) => (v: string) => setDraft((d:any) => ({ ...d, [key]: v }))
 
   const handleSave = async() => { 
@@ -124,15 +123,14 @@ export default function Profile() {
   const handleCancel = () => { setDraft(saved); setEditing(false) }
 
   const current = editing ? draft : saved
-  console.log("current value", current)
   return (
-    <div className="h-full flex flex-col" style={{ background: 'linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%)' }}>
+    <div className="h-full flex flex-col " style={{ background: 'linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%)' }}>
       {/* Top bar */}
       <div
-        className="flex items-center justify-between px-8 py-5 flex-shrink-0"
+        className="flex items-center justify-between px-8 py-5 flex-shrink-0 relative bottom-5 rounded-xl"
         style={{ background: '#fff', borderBottom: '1px solid #fbcfe8', boxShadow: '0 1px 8px rgba(190,24,93,0.05)' }}
       >
-        <div>
+        <div >
           <h1 className="text-2xl font-900 text-pink-900" style={{ fontFamily: 'Outfit, sans-serif' }}>My Profile</h1>
           <p className="text-sm font-500 mt-0.5" style={{ color: '#f472b6' }}>Manage your personal information</p>
         </div>
@@ -177,7 +175,7 @@ export default function Profile() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-8">
+      <div className="flex-1 overflow-y-auto p-8 relative bottom-10">
         <div className="max-w-4xl mx-auto flex flex-col gap-6">
           {/* Avatar card */}
           <div
@@ -200,7 +198,7 @@ export default function Profile() {
 
           {/* Form card */}
           <div
-            className="rounded-2xl p-8"
+            className="rounded-2xl p-8 relative bottom-3"
             style={{ background: '#fff', border: '1px solid #fbcfe8', boxShadow: '0 2px 16px rgba(190,24,93,0.07)' }}
           >
             <div className="flex items-center gap-2 mb-6">
