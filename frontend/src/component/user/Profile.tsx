@@ -95,24 +95,20 @@ export default function Profile() {
   const [draft, setDraft] = useState<any>(null)
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state)=>state.user)
-  const { accessToken } = useAppSelector((state)=>state.auth)
   
   useEffect(()=>{
      const userProfile = async()=>{
-      if (accessToken) {
-      const res = await dispatch(getProfile(accessToken));
-      console.log("response from userProfile",res)
-      }
+      const res = await dispatch(getProfile());
      }
      userProfile();
   },[])
-  
   useEffect(()=>{
     if(user){
       setSaved(user)
       setDraft(user)
     }
   },[user])
+  console.log(' draft user', draft)
   const set = (key: keyof ProfileData) => (v: string) => setDraft((d:any) => ({ ...d, [key]: v }))
 
   const handleSave = () => { setSaved(draft); setEditing(false) }
@@ -187,32 +183,9 @@ export default function Profile() {
             </div>
             <div className="flex-1">
               <h2 className="text-xl font-800 text-pink-900" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                {saved.firstName} {saved.lastName}
+                {saved?.firstName} {saved?.lastName}
               </h2>
-              <p className="text-sm mt-1" style={{ color: '#f472b6' }}>{saved.email}</p>
-              <div className="flex items-center gap-3 mt-3">
-                <span
-                  className="text-xs font-700 px-3 py-1.5 rounded-full"
-                  style={{ background: 'linear-gradient(135deg, #be185d, #ec4899)', color: '#fff', fontFamily: 'Outfit, sans-serif' }}
-                >
-                  ✨ Premium Member
-                </span>
-                <span
-                  className="text-xs font-600 px-3 py-1.5 rounded-full"
-                  style={{ background: '#fdf2f8', color: '#db2777', border: '1px solid #fbcfe8' }}
-                >
-                  Since Jan 2023
-                </span>
-              </div>
-            </div>
-            {/* Stats */}
-            <div className="flex gap-4 flex-shrink-0">
-              {[{ label: 'Orders', val: '24' }, { label: 'Wishlist', val: '12' }, { label: 'Reviews', val: '8' }].map(({ label, val }) => (
-                <div key={label} className="text-center rounded-xl px-4 py-3" style={{ background: '#fdf2f8', minWidth: 60 }}>
-                  <div className="text-lg font-900 text-pink-800" style={{ fontFamily: 'Outfit, sans-serif' }}>{val}</div>
-                  <div className="text-xs font-500 mt-0.5" style={{ color: '#f472b6' }}>{label}</div>
-                </div>
-              ))}
+              <p className="text-sm mt-1" style={{ color: '#f472b6' }}>{saved?.email}</p>
             </div>
           </div>
 
@@ -235,12 +208,12 @@ export default function Profile() {
             </div>
 
             <div className="grid grid-cols-2 gap-5">
-              <Field label="First Name" value={current.firstName} editing={editing} onChange={set('firstName')} icon="👤" />
-              <Field label="Last Name" value={current.lastName} editing={editing} onChange={set('lastName')} icon="👤" />
-              <Field label="Email Address" type="email" value={current.email} editing={editing} onChange={set('email')} icon="✉️" />
-              <Field label="Phone Number" type="tel" value={current.phone} editing={editing} onChange={set('phone')} icon="📱" />
-              <GenderField value={current.gender} editing={editing} onChange={set('gender')} />
-              <Field label="Date of Birth" type="date" value={current.dob} editing={editing} onChange={set('dob')} icon="🎂" />
+              <Field label="First Name" value={current?.firstName} editing={editing} onChange={set('firstName')} icon="👤" />
+              <Field label="Last Name" value={current?.lastName} editing={editing} onChange={set('lastName')} icon="👤" />
+              <Field label="Email Address" type="email" value={current?.email} editing={editing} onChange={set('email')} icon="✉️" />
+              <Field label="Phone Number" type="tel" value={current?.phone} editing={editing} onChange={set('phone')} icon="📱" />
+              <GenderField value={current?.gender} editing={editing} onChange={set('gender')} />
+              <Field label="Date of Birth" type="date" value={current?.dob} editing={editing} onChange={set('dob')} icon="🎂" />
             </div>
 
             {editing && (
@@ -248,40 +221,6 @@ export default function Profile() {
                 Fields are editable — make your changes and click <strong style={{ color: '#db2777' }}>Save Changes</strong> to update
               </p>
             )}
-          </div>
-
-          {/* Account preferences card */}
-          <div
-            className="rounded-2xl p-8"
-            style={{ background: '#fff', border: '1px solid #fbcfe8', boxShadow: '0 2px 16px rgba(190,24,93,0.07)' }}
-          >
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, #be185d, #ec4899)' }} />
-              <h3 className="font-800 text-pink-900 text-base" style={{ fontFamily: 'Outfit, sans-serif' }}>Account Preferences</h3>
-            </div>
-            <div className="flex flex-col gap-4">
-              {[
-                { label: 'Order Confirmations', desc: 'Get notified when an order is placed or updated', on: true },
-                { label: 'Promotional Emails', desc: 'Receive deals, offers and flash sale alerts', on: true },
-                { label: 'Wishlist Alerts', desc: 'Price drops for your saved items', on: false },
-              ].map(({ label, desc, on }) => (
-                <div key={label} className="flex items-center justify-between py-3" style={{ borderBottom: '1px solid #fdf2f8' }}>
-                  <div>
-                    <p className="text-sm font-700 text-pink-900" style={{ fontFamily: 'Outfit, sans-serif' }}>{label}</p>
-                    <p className="text-xs mt-0.5 font-400" style={{ color: '#f472b6' }}>{desc}</p>
-                  </div>
-                  <div
-                    className="relative w-10 h-6 rounded-full transition-all duration-300 cursor-pointer flex-shrink-0"
-                    style={{ background: on ? 'linear-gradient(135deg, #be185d, #ec4899)' : '#fce7f3' }}
-                  >
-                    <div
-                      className="absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-all duration-300"
-                      style={{ left: on ? 22 : 2 }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </div>

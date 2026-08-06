@@ -13,18 +13,18 @@ datasource db {
 }
 
 model User {
-  id          String     @id
-  firstName   String?
-  lastName    String?
-  phone       String?    @unique
-  email       String?    @unique
-  gender      Gender?
-  dateOfBirth DateTime?
-  avatar      String?
-  status      UserStatus @default(ACTIVE)
-  addresses   Address[]
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id        String     @id
+  firstName String?
+  lastName  String?
+  phone     String?    @unique
+  email     String?    @unique
+  gender    Gender?
+  dob       DateTime?
+  avatar    String?
+  status    UserStatus @default(ACTIVE)
+  addresses Address[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 
   @@index([phone])
   @@index([status])

@@ -20,7 +20,7 @@ model User {
   phone             String?       @unique
   email             String?       @unique
   gender            Gender?
-  dateOfBirth       DateTime?
+  dob               DateTime?
   avatar            String?
   status            UserStatus    @default(ACTIVE)
   addresses         Address[]

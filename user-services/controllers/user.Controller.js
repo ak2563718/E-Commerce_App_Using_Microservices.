@@ -43,8 +43,8 @@ export const getUser = asyncHandler(async(req, res, next)=>{
 // 3. Update user info
 export const updateUser = asyncHandler(async(req, res, next)=>{
     const id = req.user.id;
-    const {firstName, lastName, phone, gender, dateOfBirth } = req.body;
-    if(!firstName && !lastName && !phone && !gender && !dateOfBirth){
+    const {firstName, lastName, phone, gender, dob } = req.body;
+    if(!firstName && !lastName && !phone && !gender && !dob){
         return next(new AppError("Provide something to update", 400))
     } 
     const obj ={};
@@ -57,7 +57,7 @@ export const updateUser = asyncHandler(async(req, res, next)=>{
         obj.phone = phone;
     }
     if(gender) obj.gender = gender.trim();
-    if(dateOfBirth) obj.dateOfBirth =new Date(dateOfBirth);
+    if(dob) obj.dob =new Date(dob);
     const found = await prisma.user.findUnique({where:{id}})
     if(!found){
         return next(new AppError("Invalid user Id", 404))
