@@ -79,8 +79,8 @@ export const updateUser = asyncHandler(async(req, res, next)=>{
 // 4. create user address
 export const createAddress = asyncHandler(async(req, res, next)=>{
     const userId = req.user.id;
-    const { fullName, phone, add1, add2, city, state, country, pincode, landmark, type } = req.body;
-    if(!fullName || !phone || !add1 ||!city || !state ||!country || !pincode){
+    const { label, fullName, phone, line1, line2, city, state, country, zip, landmark } = req.body;
+    if(!fullName || !phone || !line1 ||!city || !state ||!country || !zip){
         return next(new AppError("Please provide all required field", 400))
     }
     if(!validator.isMobilePhone(phone,"en-IN")){
@@ -91,14 +91,14 @@ export const createAddress = asyncHandler(async(req, res, next)=>{
            userId,
            fullName:fullName.trim(),
            phone:phone.trim(),
-           addressLine1:add1.trim(),
-           addressLine2:add2?.trim() ?? '',
+           addressLine1:line1.trim(),
+           addressLine2:line2?.trim() ?? '',
            city:city.trim(),
            state:state.trim(),
            country:country.trim(),
-           postalCode:pincode.trim(),
+           postalCode:zip.trim(),
            landmark:landmark?.trim() ?? '',
-           type,
+           type:label,
         }
     });
     res.status(201).json({

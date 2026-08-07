@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import type { Address } from './Addressess'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 
 type FormData = Omit<Address, 'id' | 'isDefault'>
 
@@ -18,11 +19,11 @@ const EMPTY: FormData = {
   city: '',
   state: '',
   zip: '',
-  country: 'United States',
+  country: 'India',
   phone: '',
 }
 
-const LABEL_OPTIONS = ['Home', 'Work', 'Other']
+const LABEL_OPTIONS = ['HOME', 'WORK', 'OTHER']
 const COUNTRIES = ['United States', 'Canada', 'United Kingdom', 'Australia', 'Germany', 'France', 'India', 'Japan']
 
 export default function AddressForm({ initial, onSubmit, onCancel }: Props) {
@@ -34,7 +35,8 @@ export default function AddressForm({ initial, onSubmit, onCancel }: Props) {
       : EMPTY
   )
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({})
-
+  const dispatch = useAppDispatch();
+  const { user } = useAppSelector((state)=>state.user)
   const set = (key: keyof FormData, val: string) => {
     setForm((prev) => ({ ...prev, [key]: val }))
     setErrors((prev) => ({ ...prev, [key]: '' }))
@@ -52,6 +54,7 @@ export default function AddressForm({ initial, onSubmit, onCancel }: Props) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    console.log(form)
     const errs = validate()
     if (Object.keys(errs).length > 0) { setErrors(errs); return }
     onSubmit(form)
