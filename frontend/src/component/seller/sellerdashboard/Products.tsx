@@ -4,7 +4,7 @@ import { Search, Plus, Edit2, Trash2, Eye, Upload, X, ChevronRight, ChevronDown,
 import { topProducts } from './data'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { getAllCategories } from '@/redux/category/category.Action'
-import { createProduct } from '@/redux/product/product.Action'
+import { createProduct, getAllProducts } from '@/redux/product/product.Action'
 import { uploadProductImage, uploadProductVariantImages } from '@/redux/product/product.Type.Action'
 import { toast } from 'sonner'
 import { createVariants } from '@/redux/productvariants/variants.Action'
@@ -467,7 +467,16 @@ function AddProductModal({ onClose }: { onClose: () => void }) {
 export default function Products() {
   const [search, setSearch] = useState('')
   const [showModal, setShowModal] = useState(false)
+  const dispatch = useAppDispatch();
+  const { products } = useAppSelector((state)=>state.product)
 
+  useEffect(()=>{
+    const getProduct =async()=>{
+      const res = await dispatch(getAllProducts()).unwrap();
+      console.log(res)
+    }
+    getProduct()
+  },[])
   const filtered = EXTENDED.filter(p =>
     p.name.toLowerCase().includes(search.toLowerCase()) ||
     p.sku.toLowerCase().includes(search.toLowerCase())
