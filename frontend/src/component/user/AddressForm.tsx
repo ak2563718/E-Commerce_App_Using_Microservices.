@@ -1,3 +1,4 @@
+'use client'
 import { useState } from 'react'
 import type { Address } from './Addressess'
 
@@ -10,7 +11,7 @@ interface Props {
 }
 
 const EMPTY: FormData = {
-  label: '',
+  label: 'Home',
   fullName: '',
   line1: '',
   line2: '',
@@ -22,17 +23,7 @@ const EMPTY: FormData = {
 }
 
 const LABEL_OPTIONS = ['Home', 'Work', 'Other']
-
-const COUNTRIES = [
-  'United States',
-  'Canada',
-  'United Kingdom',
-  'Australia',
-  'Germany',
-  'France',
-  'India',
-  'Japan',
-]
+const COUNTRIES = ['United States', 'Canada', 'United Kingdom', 'Australia', 'Germany', 'France', 'India', 'Japan']
 
 export default function AddressForm({ initial, onSubmit, onCancel }: Props) {
   const [form, setForm] = useState<FormData>(
@@ -51,11 +42,11 @@ export default function AddressForm({ initial, onSubmit, onCancel }: Props) {
 
   const validate = () => {
     const e: Partial<Record<keyof FormData, string>> = {}
-    if (!form.fullName.trim()) e.fullName = 'Full name is required'
-    if (!form.line1.trim()) e.line1 = 'Street address is required'
-    if (!form.city.trim()) e.city = 'City is required'
-    if (!form.state.trim()) e.state = 'State is required'
-    if (!form.zip.trim()) e.zip = 'ZIP code is required'
+    if (!form.fullName.trim()) e.fullName = 'Required'
+    if (!form.line1.trim()) e.line1 = 'Required'
+    if (!form.city.trim()) e.city = 'Required'
+    if (!form.state.trim()) e.state = 'Required'
+    if (!form.zip.trim()) e.zip = 'Required'
     return e
   }
 
@@ -66,128 +57,118 @@ export default function AddressForm({ initial, onSubmit, onCancel }: Props) {
     onSubmit(form)
   }
 
-  const Field = ({
-    label, field, placeholder, required, half
-  }: {
-    label: string
-    field: keyof FormData
-    placeholder?: string
-    required?: boolean
-    half?: boolean
-  }) => (
-    <div className={half ? 'col-span-1' : 'col-span-2'}>
-      <label className="block text-xs font-semibold text-stone-500 mb-1 tracking-wide uppercase">
-        {label}{required && <span className="text-red-400 ml-0.5">*</span>}
-      </label>
-      <input
-        type="text"
-        value={form[field] as string}
-        onChange={(e) => set(field, e.target.value)}
-        placeholder={placeholder}
-        className={`w-full px-3 py-2.5 rounded-lg border text-sm text-stone-800 bg-stone-50 outline-none transition-all duration-150
-          focus:bg-white focus:border-stone-600 focus:ring-2 focus:ring-stone-200
-          ${errors[field] ? 'border-red-400 bg-red-50' : 'border-stone-200'}`}
-      />
-      {errors[field] && (
-        <p className="text-xs text-red-500 mt-1">{errors[field]}</p>
-      )}
-    </div>
-  )
+  const inputCls = (field: keyof FormData) =>
+    `w-full px-3 py-2 rounded-lg border text-sm text-gray-800 outline-none transition-all duration-150
+    focus:ring-2 focus:ring-pink-200 focus:border-pink-400
+    ${errors[field] ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50 focus:bg-white'}`
 
   return (
-    <div
-      className="bg-white rounded-2xl shadow-2xl border border-stone-100 overflow-hidden"
-      style={{ fontFamily: "'Outfit', sans-serif" }}
-    >
-      {/* Form header */}
-      <div className="px-6 pt-6 pb-4 border-b border-stone-100 flex items-center justify-between">
+    <div className="bg-white rounded-2xl shadow-xl overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif" }}>
+      {/* Pink gradient header */}
+      <div
+        className="px-5 py-4 flex items-center justify-between"
+        style={{ background: 'linear-gradient(135deg, #111111 0%, #ec4899 100%)' }}
+      >
         <div>
-          <h2
-            className="text-xl font-bold text-stone-800"
-            style={{ fontFamily: "'Lora', serif" }}
-          >
+          <h2 className="text-base font-bold text-white" style={{ fontFamily: "'Lora', serif" }}>
             {initial ? 'Edit Address' : 'Add New Address'}
           </h2>
-          <p className="text-stone-400 text-xs mt-0.5">
-            {initial ? 'Update the details below.' : 'Fill in your address details.'}
+          <p className="text-pink-200 text-xs mt-0.5">
+            {initial ? 'Update your details' : 'Enter your address details'}
           </p>
         </div>
         <button
           onClick={onCancel}
-          className="w-8 h-8 flex items-center justify-center rounded-full text-stone-400 hover:bg-stone-100 hover:text-stone-600 transition-colors text-lg"
+          className="w-7 h-7 flex items-center justify-center rounded-full text-pink-200 hover:bg-white/20 transition-colors text-xl leading-none"
         >
           ×
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="p-6 space-y-5">
-        {/* Label selector */}
-        <div>
-          <label className="block text-xs font-semibold text-stone-500 mb-2 tracking-wide uppercase">
-            Address Label
-          </label>
-          <div className="flex gap-2">
-            {LABEL_OPTIONS.map((opt) => (
-              <button
-                type="button"
-                key={opt}
-                onClick={() => set('label', opt)}
-                className={`px-4 py-1.5 rounded-full text-xs font-semibold border transition-all ${
-                  form.label === opt
-                    ? 'bg-stone-800 text-stone-50 border-stone-800'
-                    : 'bg-stone-50 text-stone-500 border-stone-200 hover:border-stone-400'
-                }`}
-              >
-                {opt}
-              </button>
-            ))}
-            {!LABEL_OPTIONS.includes(form.label) && form.label && (
-              <span className="px-4 py-1.5 rounded-full text-xs font-semibold bg-stone-800 text-stone-50 border border-stone-800">
-                {form.label}
-              </span>
-            )}
+      <form onSubmit={handleSubmit} className="p-5 space-y-4">
+        {/* Label pills */}
+        <div className="flex gap-2">
+          {LABEL_OPTIONS.map((opt) => (
+            <button
+              type="button"
+              key={opt}
+              onClick={() => set('label', opt)}
+              className="px-3 py-1 rounded-full text-xs font-semibold border transition-all"
+              style={
+                form.label === opt
+                  ? { background: 'linear-gradient(135deg, #111 0%, #ec4899 100%)', color: '#fff', borderColor: 'transparent' }
+                  : { background: '#fff', color: '#9ca3af', borderColor: '#fce7f3' }
+              }
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+
+        {/* Row: Full Name + Phone */}
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-xs font-semibold text-gray-400 mb-1">Full Name *</label>
+            <input className={inputCls('fullName')} value={form.fullName} onChange={(e) => set('fullName', e.target.value)} placeholder="Jane Smith" />
+            {errors.fullName && <p className="text-xs text-red-400 mt-0.5">{errors.fullName}</p>}
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-400 mb-1">Phone</label>
+            <input className={inputCls('phone')} value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="+1 (555) 000-0000" />
           </div>
         </div>
 
-        {/* Grid fields */}
-        <div className="grid grid-cols-2 gap-4">
-          <Field label="Full Name" field="fullName" placeholder="Jane Smith" required />
-          <Field label="Phone" field="phone" placeholder="+1 (555) 000-0000" half />
-          <Field label="Address Line 1" field="line1" placeholder="123 Main St" required />
-          <Field label="Address Line 2" field="line2" placeholder="Apt, Suite, etc." />
-          <Field label="City" field="city" placeholder="Portland" required half />
-          <Field label="State / Province" field="state" placeholder="OR" required half />
-          <Field label="ZIP / Postal Code" field="zip" placeholder="97201" required half />
+        {/* Address Line 1 */}
+        <div>
+          <label className="block text-xs font-semibold text-gray-400 mb-1">Street Address *</label>
+          <input className={inputCls('line1')} value={form.line1} onChange={(e) => set('line1', e.target.value)} placeholder="123 Main St" />
+          {errors.line1 && <p className="text-xs text-red-400 mt-0.5">{errors.line1}</p>}
+        </div>
 
-          {/* Country dropdown */}
-          <div className="col-span-1">
-            <label className="block text-xs font-semibold text-stone-500 mb-1 tracking-wide uppercase">
-              Country
-            </label>
-            <select
-              value={form.country}
-              onChange={(e) => set('country', e.target.value)}
-              className="w-full px-3 py-2.5 rounded-lg border border-stone-200 text-sm text-stone-800 bg-stone-50 outline-none focus:bg-white focus:border-stone-600 focus:ring-2 focus:ring-stone-200 transition-all duration-150"
-            >
-              {COUNTRIES.map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
+        {/* Row: City + State + ZIP */}
+        <div className="grid grid-cols-3 gap-3">
+          <div>
+            <label className="block text-xs font-semibold text-gray-400 mb-1">City *</label>
+            <input className={inputCls('city')} value={form.city} onChange={(e) => set('city', e.target.value)} placeholder="Portland" />
+            {errors.city && <p className="text-xs text-red-400 mt-0.5">{errors.city}</p>}
           </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-400 mb-1">State *</label>
+            <input className={inputCls('state')} value={form.state} onChange={(e) => set('state', e.target.value)} placeholder="OR" />
+            {errors.state && <p className="text-xs text-red-400 mt-0.5">{errors.state}</p>}
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-400 mb-1">ZIP *</label>
+            <input className={inputCls('zip')} value={form.zip} onChange={(e) => set('zip', e.target.value)} placeholder="97201" />
+            {errors.zip && <p className="text-xs text-red-400 mt-0.5">{errors.zip}</p>}
+          </div>
+        </div>
+
+        {/* Country */}
+        <div>
+          <label className="block text-xs font-semibold text-gray-400 mb-1">Country</label>
+          <select
+            value={form.country}
+            onChange={(e) => set('country', e.target.value)}
+            className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-800 bg-gray-50 outline-none focus:ring-2 focus:ring-pink-200 focus:border-pink-400 focus:bg-white transition-all"
+          >
+            {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
+          </select>
         </div>
 
         {/* Actions */}
-        <div className="flex gap-3 pt-1">
+        <div className="flex gap-2 pt-1">
           <button
             type="submit"
-            className="flex-1 py-2.5 bg-stone-800 text-stone-50 text-sm font-semibold rounded-lg hover:bg-stone-700 active:scale-95 transition-all duration-150"
+            className="flex-1 py-2.5 text-white text-sm font-bold rounded-xl active:scale-95 transition-all shadow-sm hover:shadow-md"
+            style={{ background: 'linear-gradient(135deg, #111111 0%, #ec4899 100%)' }}
           >
             {initial ? 'Save Changes' : 'Add Address'}
           </button>
           <button
             type="button"
             onClick={onCancel}
-            className="px-5 py-2.5 bg-stone-100 text-stone-600 text-sm font-semibold rounded-lg hover:bg-stone-200 active:scale-95 transition-all duration-150"
+            className="px-5 py-2.5 bg-gray-100 text-gray-500 text-sm font-semibold rounded-xl hover:bg-gray-200 active:scale-95 transition-all"
           >
             Cancel
           </button>
