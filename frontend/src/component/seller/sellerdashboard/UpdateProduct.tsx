@@ -1,0 +1,652 @@
+'use client'
+import { useState, useRef } from 'react'
+
+const PLACEHOLDER_IMAGES = [
+  'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&h=600&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=600&h=600&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1434056886845-dac89ffe9b56?w=600&h=600&fit=crop&auto=format',
+]
+
+interface ProductData {
+  name: string
+  sku: string
+  category: string
+  subCategory: string
+  description: string
+  price: string
+  stock: string
+}
+
+const CATEGORIES = ['Electronics', 'Clothing', 'Home & Garden', 'Sports', 'Books', 'Toys', 'Beauty', 'Automotive']
+const SUB_CATEGORIES: Record<string, string[]> = {
+  Electronics: ['Mobile Phones', 'Laptops', 'Cameras', 'Audio', 'Wearables'],
+  Clothing: ["Men's", "Women's", 'Kids', 'Footwear', 'Accessories'],
+  'Home & Garden': ['Furniture', 'Decor', 'Kitchen', 'Garden', 'Bedding'],
+  Sports: ['Fitness', 'Outdoor', 'Team Sports', 'Water Sports', 'Cycling'],
+  Books: ['Fiction', 'Non-Fiction', 'Science', 'Arts', 'Children'],
+  Toys: ['Action Figures', 'Board Games', 'Educational', 'Outdoor', 'Dolls'],
+  Beauty: ['Skincare', 'Makeup', 'Haircare', 'Fragrance', 'Tools'],
+  Automotive: ['Parts', 'Accessories', 'Tools', 'Electronics', 'Care'],
+}
+
+// ─── icons ───────────────────────────────────────────────────────────────────
+
+function PencilIcon({ size = 14 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+    </svg>
+  )
+}
+
+function CheckIcon({ size = 14 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  )
+}
+
+function XIcon({ size = 14 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  )
+}
+
+function PlusIcon({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19" />
+      <line x1="5" y1="12" x2="19" y2="12" />
+    </svg>
+  )
+}
+
+function TrashIcon({ size = 14 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="3 6 5 6 21 6" />
+      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+      <path d="M10 11v6M14 11v6" />
+      <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+    </svg>
+  )
+}
+
+function UploadIcon({ size = 14 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="16 16 12 12 8 16" />
+      <line x1="12" y1="12" x2="12" y2="21" />
+      <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
+    </svg>
+  )
+}
+
+function ChevronIcon({ size = 12 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="9 18 15 12 9 6" />
+    </svg>
+  )
+}
+
+// ─── theme tokens ─────────────────────────────────────────────────────────────
+
+const t = {
+  pageBg: 'linear-gradient(135deg, #0f0220 0%, #1a0533 50%, #0d021a 100%)',
+  cardBg: 'rgba(255,255,255,0.04)',
+  cardBorder: 'rgba(255,255,255,0.08)',
+  cardBorderHover: 'rgba(168,85,247,0.4)',
+  inputBg: 'rgba(255,255,255,0.05)',
+  inputBorder: 'rgba(255,255,255,0.1)',
+  inputBorderFocus: '#7c3aed',
+  readonlyBg: 'rgba(255,255,255,0.03)',
+  readonlyBorder: 'rgba(255,255,255,0.07)',
+  textPrimary: 'rgba(255,255,255,0.92)',
+  textSecondary: 'rgba(255,255,255,0.55)',
+  textMuted: 'rgba(255,255,255,0.3)',
+  accent: '#7c3aed',
+  accentLight: '#a855f7',
+  accentPink: '#e91e8c',
+  accentGlow: 'rgba(124,58,237,0.2)',
+  successBg: 'rgba(16,185,129,0.12)',
+  successBorder: 'rgba(16,185,129,0.25)',
+  successText: '#34d399',
+  dangerBg: 'rgba(239,68,68,0.15)',
+  dangerBorder: 'rgba(239,68,68,0.3)',
+  dangerText: '#f87171',
+}
+
+// ─── image card ───────────────────────────────────────────────────────────────
+
+function ImageCard({
+  src, index, isMain, editMode, onSetMain, onRemove, onReplace,
+}: {
+  src: string; index: number; isMain: boolean; editMode: boolean
+  onSetMain: () => void; onRemove: () => void; onReplace: (f: File) => void
+}) {
+  const inputRef = useRef<HTMLInputElement>(null)
+  return (
+    <div
+      onClick={() => !editMode && onSetMain()}
+      className="relative group rounded-xl overflow-hidden cursor-pointer transition-all duration-200"
+      style={{
+        aspectRatio: '1/1',
+        border: `2px solid ${isMain ? '#a855f7' : 'rgba(255,255,255,0.07)'}`,
+        boxShadow: isMain ? '0 0 0 3px rgba(168,85,247,0.2)' : 'none',
+        background: 'rgba(255,255,255,0.04)',
+      }}
+    >
+      <img src={src} alt={`Product image ${index + 1}`} className="w-full h-full object-cover" />
+
+      {isMain && (
+        <span
+          className="absolute top-2 left-2 text-white text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full"
+          style={{ background: 'linear-gradient(90deg, #7c3aed, #a855f7)' }}
+        >
+          Main
+        </span>
+      )}
+
+      {editMode && (
+        <div
+          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 flex-col"
+          style={{ background: 'rgba(10,2,20,0.75)' }}
+        >
+          <button
+            onClick={(e) => { e.stopPropagation(); inputRef.current?.click() }}
+            className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all"
+            style={{ background: 'rgba(124,58,237,0.9)', color: '#fff', border: '1px solid rgba(168,85,247,0.5)' }}
+          >
+            <UploadIcon size={11} /> Replace
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); onRemove() }}
+            className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all"
+            style={{ background: t.dangerBg, color: t.dangerText, border: `1px solid ${t.dangerBorder}` }}
+          >
+            <TrashIcon size={11} /> Remove
+          </button>
+          <input ref={inputRef} type="file" accept="image/*" className="hidden"
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) onReplace(f) }} />
+        </div>
+      )}
+    </div>
+  )
+}
+
+function AddImageSlot({ onAdd }: { onAdd: (f: File) => void }) {
+  const inputRef = useRef<HTMLInputElement>(null)
+  return (
+    <div
+      onClick={() => inputRef.current?.click()}
+      className="relative rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer transition-all duration-200 group"
+      style={{
+        aspectRatio: '1/1',
+        border: '2px dashed rgba(124,58,237,0.35)',
+        background: 'rgba(124,58,237,0.05)',
+      }}
+    >
+      <div
+        className="w-8 h-8 rounded-full flex items-center justify-center transition-all group-hover:scale-110"
+        style={{ background: 'rgba(124,58,237,0.2)', color: '#a855f7' }}
+      >
+        <PlusIcon size={16} />
+      </div>
+      <span className="text-xs font-medium" style={{ color: 'rgba(168,85,247,0.7)' }}>Add image</span>
+      <input ref={inputRef} type="file" accept="image/*" className="hidden"
+        onChange={(e) => { const f = e.target.files?.[0]; if (f) onAdd(f) }} />
+    </div>
+  )
+}
+
+// ─── section header ───────────────────────────────────────────────────────────
+
+function SectionHeader({
+  title, subtitle, editMode, saving, onEdit, onSave, onCancel,
+}: {
+  title: string; subtitle: string; editMode: boolean; saving?: boolean
+  onEdit: () => void; onSave: () => void; onCancel: () => void
+}) {
+  return (
+    <div className="flex items-start justify-between mb-5">
+      <div>
+        <h2 className="text-sm font-bold" style={{ color: t.textPrimary }}>{title}</h2>
+        <p className="text-xs mt-0.5" style={{ color: t.textMuted }}>{subtitle}</p>
+      </div>
+      {!editMode ? (
+        <button
+          onClick={onEdit}
+          className="flex items-center gap-1.5 text-xs font-semibold rounded-lg px-3 py-1.5 transition-all"
+          style={{
+            color: '#a855f7',
+            background: 'rgba(124,58,237,0.12)',
+            border: '1px solid rgba(124,58,237,0.25)',
+          }}
+        >
+          <PencilIcon /> Edit
+        </button>
+      ) : (
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onCancel}
+            className="flex items-center gap-1.5 text-xs font-semibold rounded-lg px-3 py-1.5 transition-all"
+            style={{ color: t.textSecondary, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}
+          >
+            <XIcon /> Cancel
+          </button>
+          <button
+            onClick={onSave}
+            disabled={saving}
+            className="flex items-center gap-1.5 text-xs font-bold rounded-lg px-3 py-1.5 transition-all disabled:opacity-60"
+            style={{ color: '#fff', background: 'linear-gradient(90deg, #7c3aed, #a855f7)', border: '1px solid rgba(168,85,247,0.4)' }}
+          >
+            {saving ? (
+              <>
+                <svg className="animate-spin" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                </svg>
+                Saving…
+              </>
+            ) : (
+              <><CheckIcon /> Save changes</>
+            )}
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ─── field components ─────────────────────────────────────────────────────────
+
+function ReadonlyField({ label, value, mono, prefix }: { label: string; value: string; mono?: boolean; prefix?: string }) {
+  return (
+    <div>
+      <label className="block text-[11px] font-bold tracking-widest uppercase mb-1.5" style={{ color: t.textMuted }}>
+        {label}
+      </label>
+      <div
+        className={`w-full rounded-lg px-3.5 py-2.5 text-sm min-h-[42px] ${mono ? 'font-mono text-xs tracking-wide' : ''}`}
+        style={{ background: t.readonlyBg, border: `1px solid ${t.readonlyBorder}`, color: value ? t.textPrimary : t.textMuted }}
+      >
+        {value ? `${prefix ?? ''}${value}` : <span style={{ color: t.textMuted, fontStyle: 'italic' }}>—</span>}
+      </div>
+    </div>
+  )
+}
+
+function EditField({
+  label, value, onChange, type = 'text', placeholder, mono, prefix,
+}: {
+  label: string; value: string; onChange: (v: string) => void
+  type?: string; placeholder?: string; mono?: boolean; prefix?: string
+}) {
+  return (
+    <div>
+      <label className="block text-[11px] font-bold tracking-widest uppercase mb-1.5" style={{ color: t.textMuted }}>
+        {label}
+      </label>
+      <div className="relative">
+        {prefix && (
+          <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-medium" style={{ color: t.textSecondary }}>{prefix}</span>
+        )}
+        <input
+          type={type}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          className={`w-full rounded-lg py-2.5 text-sm outline-none transition-all placeholder:opacity-25 ${mono ? 'font-mono text-xs tracking-wide' : ''}`}
+          style={{
+            background: t.inputBg,
+            border: `1px solid ${t.inputBorder}`,
+            color: t.textPrimary,
+            paddingLeft: prefix ? '2rem' : '0.875rem',
+            paddingRight: '0.875rem',
+          }}
+          onFocus={(e) => { e.currentTarget.style.borderColor = t.inputBorderFocus; e.currentTarget.style.boxShadow = `0 0 0 3px ${t.accentGlow}` }}
+          onBlur={(e) => { e.currentTarget.style.borderColor = t.inputBorder; e.currentTarget.style.boxShadow = 'none' }}
+        />
+      </div>
+    </div>
+  )
+}
+
+function EditTextarea({ label, value, onChange, placeholder, rows = 4 }: {
+  label: string; value: string; onChange: (v: string) => void; placeholder?: string; rows?: number
+}) {
+  return (
+    <div>
+      <label className="block text-[11px] font-bold tracking-widest uppercase mb-1.5" style={{ color: t.textMuted }}>
+        {label}
+      </label>
+      <textarea
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        rows={rows}
+        className="w-full rounded-lg px-3.5 py-2.5 text-sm outline-none transition-all placeholder:opacity-25 resize-none"
+        style={{ background: t.inputBg, border: `1px solid ${t.inputBorder}`, color: t.textPrimary }}
+        onFocus={(e) => { e.currentTarget.style.borderColor = t.inputBorderFocus; e.currentTarget.style.boxShadow = `0 0 0 3px ${t.accentGlow}` }}
+        onBlur={(e) => { e.currentTarget.style.borderColor = t.inputBorder; e.currentTarget.style.boxShadow = 'none' }}
+      />
+    </div>
+  )
+}
+
+function EditSelect({ label, value, onChange, options, optional }: {
+  label: string; value: string; onChange: (v: string) => void; options: string[]; optional?: boolean
+}) {
+  return (
+    <div>
+      <label className="block text-[11px] font-bold tracking-widest uppercase mb-1.5" style={{ color: t.textMuted }}>
+        {label} {optional && <span className="normal-case font-normal" style={{ color: t.textMuted, opacity: 0.6 }}>(optional)</span>}
+      </label>
+      <div className="relative">
+        <select
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full appearance-none rounded-lg px-3.5 py-2.5 text-sm outline-none transition-all"
+          style={{ background: t.inputBg, border: `1px solid ${t.inputBorder}`, color: t.textPrimary }}
+          onFocus={(e) => { e.currentTarget.style.borderColor = t.inputBorderFocus; e.currentTarget.style.boxShadow = `0 0 0 3px ${t.accentGlow}` }}
+          onBlur={(e) => { e.currentTarget.style.borderColor = t.inputBorder; e.currentTarget.style.boxShadow = 'none' }}
+        >
+          {optional && <option value="">None</option>}
+          {options.map((o) => <option key={o} value={o} style={{ background: '#1a0533' }}>{o}</option>)}
+        </select>
+        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2" style={{ color: t.textMuted }}>
+          <ChevronIcon />
+        </span>
+      </div>
+    </div>
+  )
+}
+
+// ─── toast ────────────────────────────────────────────────────────────────────
+
+function Toast({ message, type }: { message: string; type: 'success' | 'error' }) {
+  return (
+    <div
+      className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl text-sm font-semibold"
+      style={{
+        background: type === 'success' ? 'linear-gradient(90deg, #1a0533, #2d0a5e)' : t.dangerBg,
+        border: `1px solid ${type === 'success' ? 'rgba(168,85,247,0.4)' : t.dangerBorder}`,
+        color: type === 'success' ? '#fff' : t.dangerText,
+        boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+        animation: 'fadeSlideUp 0.3s ease-out',
+      }}
+    >
+      {type === 'success' ? <CheckIcon size={15} /> : <XIcon size={15} />}
+      {message}
+    </div>
+  )
+}
+
+// ─── main component ───────────────────────────────────────────────────────────
+type props={
+ onClose:()=>void
+}
+export default function UpdateProduct({onClose}:props) {
+  const [images, setImages] = useState<string[]>(PLACEHOLDER_IMAGES)
+  const [mainImageIndex, setMainImageIndex] = useState(0)
+  const [imageEditMode, setImageEditMode] = useState(false)
+  const [imageSaving, setImageSaving] = useState(false)
+  const [pendingImages, setPendingImages] = useState<string[]>([])
+  const [pendingMain, setPendingMain] = useState(0)
+
+  const [product, setProduct] = useState<ProductData>({
+    name: 'Seiko SRPD55K1 Automatic Watch',
+    sku: 'SKU-SEIKO-SRPD55K1',
+    category: 'Electronics',
+    subCategory: 'Wearables',
+    description: "The Seiko SRPD55K1 features a robust stainless steel case with a deep blue sunburst dial. A 42mm diameter and 100m water resistance make it a versatile everyday timepiece. Powered by Seiko's 4R36 automatic movement with 41-hour power reserve.",
+    price: '20999',
+    stock: '142',
+  })
+  const [detailEditMode, setDetailEditMode] = useState(false)
+  const [detailSaving, setDetailSaving] = useState(false)
+  const [draft, setDraft] = useState<ProductData>(product)
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
+
+  const showToast = (message: string, type: 'success' | 'error') => {
+    setToast({ message, type })
+    setTimeout(() => setToast(null), 3000)
+  }
+
+  const handleImageEditStart = () => { setPendingImages([...images]); setPendingMain(mainImageIndex); setImageEditMode(true) }
+  const handleImageEditCancel = () => { setImageEditMode(false); setPendingImages([]) }
+  const handleImageSave = async () => {
+    setImageSaving(true)
+    await new Promise((r) => setTimeout(r, 1200))
+    setImages(pendingImages); setMainImageIndex(pendingMain)
+    setImageSaving(false); setImageEditMode(false)
+    showToast('Images updated successfully', 'success')
+  }
+
+  const activeImages = imageEditMode ? pendingImages : images
+  const activeMain = imageEditMode ? pendingMain : mainImageIndex
+
+  const handleAddImage = (file: File) => { const url = URL.createObjectURL(file); setPendingImages((p) => [...p, url]) }
+  const handleRemoveImage = (i: number) => {
+    setPendingImages((prev) => {
+      const next = prev.filter((_, idx) => idx !== i)
+      if (pendingMain >= next.length) setPendingMain(Math.max(0, next.length - 1))
+      return next
+    })
+  }
+  const handleReplaceImage = (i: number, file: File) => {
+    const url = URL.createObjectURL(file)
+    setPendingImages((p) => p.map((img, idx) => (idx === i ? url : img)))
+  }
+
+  const handleDetailEditStart = () => { setDraft({ ...product }); setDetailEditMode(true) }
+  const handleDetailEditCancel = () => { setDetailEditMode(false); setDraft(product) }
+  const handleDetailSave = async () => {
+    setDetailSaving(true)
+    await new Promise((r) => setTimeout(r, 1000))
+    setProduct({ ...draft }); setDetailSaving(false); setDetailEditMode(false)
+    showToast('Product details saved', 'success')
+  }
+
+  const subCategories = SUB_CATEGORIES[detailEditMode ? draft.category : product.category] || []
+
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto"
+    style={{
+      background: t.pageBg,
+      fontFamily: "'Outfit', sans-serif",
+    }}>
+      {toast && <Toast message={toast.message} type={toast.type} />}
+
+      <div className="max-w-3xl mx-auto px-4 py-8 sm:px-6">
+
+        {/* breadcrumb */}
+        <div className="flex items-center gap-1.5 text-xs mb-6" style={{ color: t.textMuted }}>
+          <span style={{ color: t.textSecondary }}>Products</span>
+          <ChevronIcon size={10} />
+          <span style={{ color: '#a855f7' }}>{product.name}</span>
+        </div>
+
+        {/* page header */}
+        <div
+          className="rounded-2xl p-5 mb-4"
+          style={{ background: t.cardBg, border: `1px solid ${t.cardBorder}` }}
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <h1 className="text-xl font-bold leading-tight truncate" style={{ color: t.textPrimary }}>
+                {product.name}
+              </h1>
+              <div className="flex flex-wrap items-center gap-2 mt-2.5">
+                <span
+                  className="font-mono text-[11px] tracking-widest px-2.5 py-1 rounded-md"
+                  style={{ background: 'rgba(124,58,237,0.15)', border: '1px solid rgba(124,58,237,0.25)', color: '#a855f7' }}
+                >
+                  {product.sku}
+                </span>
+                <span
+                  className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full"
+                  style={{ background: t.successBg, border: `1px solid ${t.successBorder}`, color: t.successText }}
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
+                  In Stock
+                </span>
+                <span
+                  className="text-xs px-2.5 py-1 rounded-full"
+                  style={{ background: 'rgba(255,255,255,0.05)', border: `1px solid ${t.cardBorder}`, color: t.textSecondary }}
+                >
+                  {product.category}{product.subCategory ? ` · ${product.subCategory}` : ''}
+                </span>
+              </div>
+            </div>
+            <div className="text-right shrink-0">
+              <div
+                className="text-2xl font-black"
+                style={{ background: 'linear-gradient(90deg, #a855f7, #e91e8c)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
+              >
+                ₹{Number(product.price).toLocaleString('en-IN')}
+              </div>
+              <div className="text-xs mt-1" style={{ color: t.textMuted }}>{product.stock} units available</div>
+            </div>
+          </div>
+        </div>
+
+        {/* images section */}
+        <div
+          className="rounded-2xl p-5 mb-4"
+          style={{ background: t.cardBg, border: `1px solid ${imageEditMode ? 'rgba(124,58,237,0.3)' : t.cardBorder}`, transition: 'border-color 0.2s' }}
+        >
+          <SectionHeader
+            title="Product Images"
+            subtitle={
+              imageEditMode
+                ? `Editing · ${activeImages.length}/5 images · hover to replace or remove`
+                : `${images.length} image${images.length !== 1 ? 's' : ''} · click to set as main`
+            }
+            editMode={imageEditMode}
+            saving={imageSaving}
+            onEdit={handleImageEditStart}
+            onSave={handleImageSave}
+            onCancel={handleImageEditCancel}
+          />
+
+          <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))' }}>
+            {activeImages.map((src, i) => (
+              <ImageCard
+                key={src + i}
+                src={src}
+                index={i}
+                isMain={i === activeMain}
+                editMode={imageEditMode}
+                onSetMain={() => imageEditMode ? setPendingMain(i) : setMainImageIndex(i)}
+                onRemove={() => handleRemoveImage(i)}
+                onReplace={(f) => handleReplaceImage(i, f)}
+              />
+            ))}
+            {imageEditMode && activeImages.length < 5 && <AddImageSlot onAdd={handleAddImage} />}
+          </div>
+        </div>
+
+        {/* details section */}
+        <div
+          className="rounded-2xl p-5"
+          style={{ background: t.cardBg, border: `1px solid ${detailEditMode ? 'rgba(124,58,237,0.3)' : t.cardBorder}`, transition: 'border-color 0.2s' }}
+        >
+          <SectionHeader
+            title="Product Details"
+            subtitle={detailEditMode ? 'Edit the fields below then save to update' : 'Name, pricing, inventory, and categorization'}
+            editMode={detailEditMode}
+            saving={detailSaving}
+            onEdit={handleDetailEditStart}
+            onSave={handleDetailSave}
+            onCancel={handleDetailEditCancel}
+          />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="sm:col-span-2">
+              {detailEditMode
+                ? <EditField label="Product Name" value={draft.name} onChange={(v) => setDraft({ ...draft, name: v })} placeholder="Enter product name" />
+                : <ReadonlyField label="Product Name" value={product.name} />}
+            </div>
+
+            <div>
+              {detailEditMode
+                ? <EditField label="SKU" value={draft.sku} onChange={(v) => setDraft({ ...draft, sku: v })} placeholder="e.g. SKU-001" mono />
+                : <ReadonlyField label="SKU" value={product.sku} mono />}
+            </div>
+
+            <div>
+              {detailEditMode
+                ? <EditSelect label="Category" value={draft.category} onChange={(v) => setDraft({ ...draft, category: v, subCategory: '' })} options={CATEGORIES} />
+                : <ReadonlyField label="Category" value={product.category} />}
+            </div>
+
+            <div>
+              {detailEditMode
+                ? <EditSelect label="Sub-category" value={draft.subCategory} onChange={(v) => setDraft({ ...draft, subCategory: v })} options={subCategories} optional />
+                : <ReadonlyField label="Sub-category" value={product.subCategory} />}
+            </div>
+
+            <div>
+              {detailEditMode
+                ? <EditField label="Price (₹)" value={draft.price} onChange={(v) => setDraft({ ...draft, price: v })} type="number" placeholder="0" prefix="₹" />
+                : <ReadonlyField label="Price" value={`₹${Number(product.price).toLocaleString('en-IN')}`} />}
+            </div>
+
+            <div>
+              {detailEditMode
+                ? <EditField label="Stock Quantity" value={draft.stock} onChange={(v) => setDraft({ ...draft, stock: v })} type="number" placeholder="0" />
+                : <ReadonlyField label="Stock Quantity" value={`${product.stock} units`} />}
+            </div>
+
+            <div className="sm:col-span-2">
+              {detailEditMode
+                ? <EditTextarea label="Description" value={draft.description} onChange={(v) => setDraft({ ...draft, description: v })} placeholder="Describe the product..." rows={5} />
+                : (
+                  <div>
+                    <label className="block text-[11px] font-bold tracking-widest uppercase mb-1.5" style={{ color: t.textMuted }}>Description</label>
+                    <div className="rounded-lg px-3.5 py-2.5 text-sm leading-relaxed" style={{ background: t.readonlyBg, border: `1px solid ${t.readonlyBorder}`, color: product.description ? t.textPrimary : t.textMuted }}>
+                      {product.description || <span style={{ fontStyle: 'italic' }}>—</span>}
+                    </div>
+                  </div>
+                )}
+            </div>
+          </div>
+        </div>
+
+        <p className="text-center text-xs mt-5" style={{ color: 'rgba(255,255,255,0.12)' }}>
+          Images and product details are saved via separate API calls
+        </p>
+      </div>
+
+       <style>{`
+      @keyframes fadeSlideUp {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      input[type=number]::-webkit-inner-spin-button,
+      input[type=number]::-webkit-outer-spin-button {
+        opacity: 0.3;
+      }
+
+      option {
+        background: #1a0533;
+        color: #fff;
+      }
+    `}</style>
+      <button onClick={onClose}>Cancel</button>
+    </div>
+  )
+}

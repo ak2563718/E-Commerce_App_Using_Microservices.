@@ -8,6 +8,7 @@ import { createProduct, getAllProducts } from '@/redux/product/product.Action'
 import { uploadProductImage, uploadProductVariantImages } from '@/redux/product/product.Type.Action'
 import { toast } from 'sonner'
 import { createVariants } from '@/redux/productvariants/variants.Action'
+import UpdateProduct from './UpdateProduct'
 
 const EXTENDED = [
   ...topProducts,
@@ -467,86 +468,219 @@ function AddProductModal({ onClose }: { onClose: () => void }) {
 export default function Products() {
   const [search, setSearch] = useState('')
   const [showModal, setShowModal] = useState(false)
+  const [edit, setEdit] = useState(false)
   const dispatch = useAppDispatch();
   const { products } = useAppSelector((state)=>state.product)
 
   useEffect(()=>{
     const getProduct =async()=>{
       const res = await dispatch(getAllProducts()).unwrap();
-      console.log(res)
     }
     getProduct()
   },[])
-  const filtered = EXTENDED.filter(p =>
-    p.name.toLowerCase().includes(search.toLowerCase()) ||
-    p.sku.toLowerCase().includes(search.toLowerCase())
-  )
+
+   
+const filtered = products?.filter((p) => {
+  const searchTerm = search.toLowerCase();
 
   return (
-    <div className="p-6 flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-black text-gray-900" style={{ fontFamily: 'Outfit, sans-serif' }}>Products</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{EXTENDED.length} products · {EXTENDED.filter(p => p.stock < 20).length} low stock</p>
-        </div>
-        <button
-          onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white"
-          style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)' }}
+    p.name.toLowerCase().includes(searchTerm) ||
+    p.sku.toLowerCase().includes(searchTerm)
+  );
+});
+
+return (
+  <div className="space-y-6 p-4">
+    {/* Header */}
+    <div className="flex items-center justify-between">
+      <div>
+        <h1
+          className="text-2xl font-black text-gray-900"
+          style={{ fontFamily: "Outfit, sans-serif" }}
         >
-          <Plus className="w-4 h-4" /> Add Product
-        </button>
+          Products
+        </h1>
+
+        <p className="text-sm text-gray-500 mt-1">
+          {products?.length} products ·{" "}
+          {
+            products?.filter((p) => (p.variants?.[0]?.stock ?? 0) < 20)
+              .length
+          }{" "}
+          low stock
+        </p>
       </div>
 
-      {/* Search */}
-      <div className="flex items-center gap-2 px-3 py-2 rounded-xl max-w-sm" style={{ background: '#fff', border: '1px solid #e9d5ff' }}>
-        <Search className="w-4 h-4 text-gray-400" />
-        <input
-          className="flex-1 text-sm outline-none bg-transparent text-gray-700"
-          placeholder="Search products or SKU..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-        />
-      </div>
+      <button
+        onClick={() => setShowModal(true)}
+        className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white"
+        style={{
+          background: "linear-gradient(135deg, #7c3aed, #a855f7)",
+        }}
+      >
+        Add Product
+      </button>
+    </div>
 
-      {/* Product grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {filtered.map(p => (
-          <div key={p.sku} className="rounded-2xl p-5 flex flex-col gap-3 group transition-all hover:-translate-y-0.5" style={{ background: '#fff', border: '1px solid #f0ebff', boxShadow: '0 1px 8px rgba(124,58,237,0.06)' }}>
-            <div className="w-full h-28 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #f3e8ff, #ede9fe)' }}>
-              <span className="text-3xl">
-                {p.sku.startsWith('ELEC') ? '📱' : p.sku.startsWith('FASH') ? '👜' : p.sku.startsWith('HOME') ? '🏠' : '🏃'}
-              </span>
-            </div>
-            <div>
-              <h3 className="font-bold text-gray-800 text-sm leading-snug" style={{ fontFamily: 'Outfit, sans-serif' }}>{p.name}</h3>
-              <p className="text-xs text-gray-400 font-mono mt-0.5">{p.sku}</p>
-            </div>
-            <div className="grid grid-cols-3 gap-2">
-              {[
-                { label: 'Stock', value: p.stock, warn: p.stock < 20 },
-                { label: 'Sold', value: p.sold, warn: false },
-                { label: 'Trend', value: p.trend, warn: p.trend.startsWith('-') },
-              ].map(({ label, value, warn }) => (
-                <div key={label} className="rounded-lg p-2 text-center" style={{ background: '#faf5ff' }}>
-                  <div className="text-xs font-bold" style={{ color: warn ? '#dc2626' : '#7c3aed' }}>{value}</div>
-                  <div className="text-xs text-gray-400 mt-0.5">{label}</div>
+    {/* Search */}
+    <div
+      className="flex items-center gap-2 px-3 py-2 rounded-xl max-w-sm"
+      style={{
+        background: "#fff",
+        border: "1px solid #e9d5ff",
+      }}
+    >
+      <Search className="w-4 h-4 text-gray-400" />
+
+      <input
+        className="flex-1 text-sm outline-none bg-transparent text-gray-700"
+        placeholder="Search products or SKU..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+    </div>
+
+    {/* Product grid */}
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      {filtered?.map((p) => {
+        const variant = p.variants?.[0];
+
+        const price = Number(variant?.price ?? 0);
+        const stock = variant?.stock ?? 0;
+
+        const image = p.images?.[0]?.url;
+
+        return (
+          <div
+            key={p.id}
+            className="rounded-2xl p-5 flex flex-col gap-3 group transition-all hover:-translate-y-0.5"
+            style={{
+              background: "#fff",
+              border: "1px solid #f0ebff",
+              boxShadow: "0 1px 8px rgba(124,58,237,0.06)",
+            }}
+          >
+            {/* Product Image */}
+            <div
+              className="w-full h-40 rounded-xl overflow-hidden flex items-center justify-center"
+              style={{
+                background:
+                  "linear-gradient(135deg, #f3e8ff, #ede9fe)",
+              }}
+            >
+              {image ? (
+                <img
+                  src={image}
+                  alt={p.name}
+                  className="w-full h-full object-contain"
+                />
+              ) : (
+                <div className="text-gray-400 text-sm">
+                  No image
                 </div>
-              ))}
+              )}
             </div>
-            <div className="flex items-center justify-between pt-1 border-t" style={{ borderColor: '#f3e8ff' }}>
-              <span className="text-sm font-black text-gray-800">₹{p.revenue.toLocaleString('en-IN')}</span>
+
+            {/* Product information */}
+            <div>
+              <h3
+                className="font-bold text-gray-800 text-sm leading-snug"
+                style={{ fontFamily: "Outfit, sans-serif" }}
+              >
+                {p.name}
+              </h3>
+
+              <p className="text-xs text-gray-400 font-mono mt-0.5">
+                {p.sku}
+              </p>
+            </div>
+
+            {/* Price + Stock */}
+            <div className="grid grid-cols-2 gap-2">
+              {/* Price */}
+              <div
+                className="rounded-lg p-3"
+                style={{ background: "#faf5ff" }}
+              >
+                <div
+                  className="text-sm font-black"
+                  style={{ color: "#7c3aed" }}
+                >
+                  ₹{price.toLocaleString("en-IN")}
+                </div>
+
+                <div className="text-xs text-gray-400 mt-0.5">
+                  Price
+                </div>
+              </div>
+
+              {/* Stock */}
+              <div
+                className="rounded-lg p-3"
+                style={{ background: "#faf5ff" }}
+              >
+                <div
+                  className="text-sm font-black"
+                  style={{
+                    color: stock < 20 ? "#dc2626" : "#7c3aed",
+                  }}
+                >
+                  {stock}
+                </div>
+
+                <div className="text-xs text-gray-400 mt-0.5">
+                  Stock
+                </div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div
+              className="flex items-center justify-between pt-2 border-t"
+              style={{ borderColor: "#f3e8ff" }}
+            >
+              <span
+                className="text-xs text-gray-400"
+              >
+                {p.images?.length ?? 0} images
+              </span>
+
               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-purple-50 transition-colors"><Eye className="w-3.5 h-3.5 text-gray-500" /></button>
-                <button className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-purple-50 transition-colors"><Edit2 className="w-3.5 h-3.5 text-purple-600" /></button>
-                <button className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-red-50 transition-colors"><Trash2 className="w-3.5 h-3.5 text-red-400" /></button>
+                <button
+                  className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-purple-50 transition-colors"
+                >
+                  <Eye className="w-3.5 h-3.5 text-gray-500" />
+                </button>
+
+                <button onClick={()=>{
+                  setEdit(true)
+                  console.log('button is clicked')
+                }}
+                  className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-purple-50 transition-colors"
+                >
+                  <Edit2 className="w-3.5 h-3.5 text-purple-600" />
+                </button>
+
+                <button
+                  className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-red-50 transition-colors"
+                >
+                  <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                </button>
               </div>
             </div>
           </div>
-        ))}
-      </div>
-
-      {showModal && <AddProductModal onClose={() => setShowModal(false)} />}
+        );
+      })}
     </div>
-  )
+    {edit && (
+      <UpdateProduct onClose={()=>setEdit(false)}/>
+    )}
+
+    {showModal && (
+      <AddProductModal
+        onClose={() => setShowModal(false)}
+      />
+    )}
+  </div>
+)
 }
