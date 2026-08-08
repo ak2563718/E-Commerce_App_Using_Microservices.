@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import type { Address } from './Addressess'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import { createAddress } from '@/redux/user/address.type'
 
 type FormData = Omit<Address, 'id' | 'isDefault'>
 
@@ -52,9 +53,9 @@ export default function AddressForm({ initial, onSubmit, onCancel }: Props) {
     return e
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault()
-    console.log(form)
+    const res = await dispatch(createAddress(form)).unwrap()
     const errs = validate()
     if (Object.keys(errs).length > 0) { setErrors(errs); return }
     onSubmit(form)
