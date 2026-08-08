@@ -388,10 +388,8 @@ function Toast({ message, type }: { message: string; type: 'success' | 'error' }
 }
 
 // ─── main component ───────────────────────────────────────────────────────────
-type props={
- onClose:()=>void
-}
-export default function UpdateProduct({onClose}:props) {
+
+export default function UpdateProduct() {
   const [images, setImages] = useState<string[]>(PLACEHOLDER_IMAGES)
   const [mainImageIndex, setMainImageIndex] = useState(0)
   const [imageEditMode, setImageEditMode] = useState(false)
@@ -646,7 +644,7 @@ export default function UpdateProduct({onClose}:props) {
         color: #fff;
       }
     `}</style>
-      <button onClick={onClose}>Cancel</button>
+      <button >Cancel</button>
     </div>
   )
 }

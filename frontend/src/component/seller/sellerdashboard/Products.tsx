@@ -9,6 +9,7 @@ import { uploadProductImage, uploadProductVariantImages } from '@/redux/product/
 import { toast } from 'sonner'
 import { createVariants } from '@/redux/productvariants/variants.Action'
 import UpdateProduct from './UpdateProduct'
+import { useRouter } from 'next/navigation'
 
 const EXTENDED = [
   ...topProducts,
@@ -468,9 +469,9 @@ function AddProductModal({ onClose }: { onClose: () => void }) {
 export default function Products() {
   const [search, setSearch] = useState('')
   const [showModal, setShowModal] = useState(false)
-  const [edit, setEdit] = useState(false)
   const dispatch = useAppDispatch();
   const { products } = useAppSelector((state)=>state.product)
+  const router = useRouter()
 
   useEffect(()=>{
     const getProduct =async()=>{
@@ -653,8 +654,8 @@ return (
                 </button>
 
                 <button onClick={()=>{
-                  setEdit(true)
                   console.log('button is clicked')
+                  router.push(`/seller/product/${p.id}`)
                 }}
                   className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-purple-50 transition-colors"
                 >
@@ -672,9 +673,6 @@ return (
         );
       })}
     </div>
-    {edit && (
-      <UpdateProduct onClose={()=>setEdit(false)}/>
-    )}
 
     {showModal && (
       <AddProductModal
