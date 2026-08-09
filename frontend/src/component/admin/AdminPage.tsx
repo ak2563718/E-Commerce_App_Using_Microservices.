@@ -1,3 +1,4 @@
+'use client'
 import { useState, useRef, useCallback, useEffect } from 'react'
 import Sidebar from './Sidebar'
 import Topbar from './Topbar'
