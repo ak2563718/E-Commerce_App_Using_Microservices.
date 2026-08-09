@@ -1,14 +1,15 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import api from "@/lib/axios";
 
 const user_uri = process.env.NEXT_PUBLIC_USER_URI;
 
 // 1. create user address 
-export const createAddress = createAsyncThunk<any, void, {rejectValue:string}>(
+export const createAddress = createAsyncThunk<any, any, {rejectValue:string}>(
     'post/address',
     async( info, { rejectWithValue })=>{
         try {
-            const { data } = await axios.post(`${user_uri}/address`,info,{
+            const { data } = await api.post(`${user_uri}/address`,info,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })

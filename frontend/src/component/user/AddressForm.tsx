@@ -56,6 +56,7 @@ export default function AddressForm({ initial, onSubmit, onCancel }: Props) {
   const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault()
     const res = await dispatch(createAddress(form)).unwrap()
+    console.log(form)
     const errs = validate()
     if (Object.keys(errs).length > 0) { setErrors(errs); return }
     onSubmit(form)

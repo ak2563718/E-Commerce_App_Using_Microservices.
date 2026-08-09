@@ -1,7 +1,8 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import AddressCard from './AddressCard'
 import AddressForm from './AddressForm'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 
 export interface Address {
   id: string
@@ -34,14 +35,19 @@ const INITIAL: Address[] = [
 ]
 
 export default function Addressess() {
-  const [addresses, setAddresses] = useState<Address[]>(INITIAL)
+  const [addresses, setAddresses] = useState<any[]>()
   const [showForm, setShowForm] = useState(false)
   const [editing, setEditing] = useState<Address | null>(null)
-
-  const handleAdd = (data: Omit<Address, 'id' | 'isDefault'>) => {
-    const newAddr: Address = { ...data, id: Date.now().toString(), isDefault: addresses.length === 0 }
-    setAddresses((prev) => [...prev, newAddr])
-    setShowForm(false)
+  const { user } = useAppSelector((state)=>state.user)
+  const dispatch = useAppDispatch()
+  
+  useEffect(()=>{
+    setAddresses(user?.addresses)
+  },[])
+  
+  console.log('user data from addressess',user)
+  const handleAdd = () => {
+    setAddresses(user?.addresses)
   }
 
   const handleUpdate = (data: Omit<Address, 'id' | 'isDefault'>) => {
