@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createProduct, deleteProductbyId, getAllProducts, getProductbyId, getProductWithSlug, updateProductbyId } from "./product.Action";
+import { createProduct, deleteProductbyId, getAllProducts, getProductbyId, getProductWithSlug, sellerProduct, updateProductbyId } from "./product.Action";
 import { uploadProductImage } from "./product.Type.Action";
 
 interface data{
@@ -38,7 +38,22 @@ const productSlice = createSlice({
             state.error = action.payload??"failed";
         });
 
-        // 2. get all products extra -reducer
+        // 2. get Seller Product
+        builder.addCase(sellerProduct.pending,(state)=>{
+            state.loading = true;
+            state.error = null;
+            state.message = null;
+            state.products = [];
+        }).addCase(sellerProduct.fulfilled,(state,action)=>{
+            state.loading = false;
+            state.message = action.payload.message;
+            state.products = action.payload.data;
+        }).addCase(sellerProduct.rejected,(state,action)=>{
+            state.loading = false;
+            state.error = action.payload?? 'failed';
+        })
+
+        // 2.1 get all products extra -reducer
         builder.addCase(getAllProducts.pending,(state)=>{
             state.loading = true;
             state.error = null;

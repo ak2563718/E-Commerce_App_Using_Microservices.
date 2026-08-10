@@ -4,7 +4,7 @@ import { Search, Plus, Edit2, Trash2, Eye, Upload, X, ChevronRight, ChevronDown,
 import { topProducts } from './data'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { getAllCategories } from '@/redux/category/category.Action'
-import { createProduct, getAllProducts } from '@/redux/product/product.Action'
+import { createProduct, getAllProducts, sellerProduct } from '@/redux/product/product.Action'
 import { uploadProductImage, uploadProductVariantImages } from '@/redux/product/product.Type.Action'
 import { toast } from 'sonner'
 import { createVariants } from '@/redux/productvariants/variants.Action'
@@ -475,7 +475,7 @@ export default function Products() {
 
   useEffect(()=>{
     const getProduct =async()=>{
-      const res = await dispatch(getAllProducts()).unwrap();
+      const res = await dispatch(sellerProduct()).unwrap();
     }
     getProduct()
   },[])

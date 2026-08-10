@@ -78,8 +78,16 @@ export const categorybyId = asyncHandler(async(req, res, next)=>{
             id
         },
         include:{
-            parent:true,
-            children:true,
+            children:{
+                include:{
+                    children:true,
+                }
+            },
+            parent:{
+               include:{
+                parent:true,
+               } 
+            }
         }
     })
     if(!category){

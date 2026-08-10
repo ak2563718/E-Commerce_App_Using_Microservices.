@@ -1,3 +1,4 @@
+import api from "@/lib/axios";
 import { asyncThunkCreator, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -21,9 +22,26 @@ export const createProduct = createAsyncThunk<any,any,{rejectValue:string}>(
     }
 );
 
+// 2. get Product by sellerId
+export const sellerProduct = createAsyncThunk<any, void, {rejectValue:string}>(
+    'get/sellerProduct',
+    async(_, { rejectWithValue})=>{
+        try {
+            const { data } = await api.get(`${product_uri}/products/seller`,{
+                headers:{'Content-Type':'application/json'},
+                withCredentials:true,
+            })
+            return data;
+        } catch (error) {
+            if(axios.isAxiosError(error)){
+                return rejectWithValue(error.response?.data.message)
+            }
+            return rejectWithValue("something went wrong")
+        }
+    }
+)
 
-
-// 2. get all products
+// 2.1. get all products
 export const getAllProducts = createAsyncThunk<any,void,{rejectValue:string}>(
     'get/Allproduct',
     async(_, { rejectWithValue })=>{

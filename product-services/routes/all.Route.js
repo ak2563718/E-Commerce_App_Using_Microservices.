@@ -24,7 +24,7 @@ router.delete('/brands/:id',deleteBrand)
 // 3. Product Routes
 router.post('/products',authMiddleware,sellerMiddleware,createProduct)
 router.get('/products',getProduct)
-router.get('/product/seller',authMiddleware,sellerMiddleware,getProductofSeller)
+router.get('/products/seller',authMiddleware,sellerMiddleware,getProductofSeller)
 router.get('/products/:id',getProdctbyId)
 router.get('/products/slug/:slug',getProductbySlug)
 router.patch('/products/:id',authMiddleware,sellerMiddleware,updateProduct)
