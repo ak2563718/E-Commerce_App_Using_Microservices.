@@ -4,7 +4,7 @@ import { Search, Plus, Edit2, Trash2, Eye, Upload, X, ChevronRight, ChevronDown,
 import { topProducts } from './data'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { getAllCategories } from '@/redux/category/category.Action'
-import { createProduct, getAllProducts, sellerProduct } from '@/redux/product/product.Action'
+import { createProduct, deleteProductbyId, getAllProducts, sellerProduct } from '@/redux/product/product.Action'
 import { uploadProductImage, uploadProductVariantImages } from '@/redux/product/product.Type.Action'
 import { toast } from 'sonner'
 import { createVariants } from '@/redux/productvariants/variants.Action'
@@ -470,18 +470,19 @@ export default function Products() {
   const [search, setSearch] = useState('')
   const [showModal, setShowModal] = useState(false)
   const dispatch = useAppDispatch();
-  const { products } = useAppSelector((state)=>state.product)
+  const { products , message, error} = useAppSelector((state)=>state.product)
   const router = useRouter()
 
   useEffect(()=>{
     const getProduct =async()=>{
       const res = await dispatch(sellerProduct()).unwrap();
+      console.log(res)
     }
     getProduct()
-  },[])
+  },[dispatch])
+ 
 
-   
-const filtered = products?.filter((p) => {
+ const filtered =  products?.filter((p) => {
   const searchTerm = search.toLowerCase();
 
   return (
@@ -505,7 +506,7 @@ return (
         <p className="text-sm text-gray-500 mt-1">
           {products?.length} products ·{" "}
           {
-            products?.filter((p) => (p.variants?.[0]?.stock ?? 0) < 20)
+           Array.isArray(products) && products?.filter((p) => (p.variants?.[0]?.stock ?? 0) < 20)
               .length
           }{" "}
           low stock
@@ -543,7 +544,7 @@ return (
 
     {/* Product grid */}
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-      {filtered?.map((p) => {
+      {Array.isArray(filtered) && filtered?.map((p) => {
         const variant = p.variants?.[0];
 
         const price = Number(variant?.price ?? 0);
@@ -662,7 +663,14 @@ return (
                   <Edit2 className="w-3.5 h-3.5 text-purple-600" />
                 </button>
 
-                <button
+                <button 
+                onClick={()=>{
+                  try {
+                    dispatch(deleteProductbyId(p.id));
+                    toast.success(message)
+                  } catch (err) {
+                    toast.error(error)
+                  }}}
                   className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-red-50 transition-colors"
                 >
                   <Trash2 className="w-3.5 h-3.5 text-red-400" />

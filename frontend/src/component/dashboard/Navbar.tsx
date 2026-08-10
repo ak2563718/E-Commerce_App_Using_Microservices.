@@ -33,7 +33,6 @@ export default function Navbar({
       behavior: "instant", // or "smooth"
     });
   }, []);
-
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (moreRef.current && !moreRef.current.contains(e.target as Node)) setMoreOpen(false)

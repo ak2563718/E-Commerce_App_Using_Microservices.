@@ -1,5 +1,5 @@
 import api from "@/lib/axios";
-import { asyncThunkCreator, createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const product_uri = process.env.NEXT_PUBLIC_PRODUCT_URI;
@@ -8,7 +8,7 @@ export const createProduct = createAsyncThunk<any,any,{rejectValue:string}>(
     'post/product',
     async(form, { rejectWithValue })=>{
         try {
-            const { data } = await axios.post(`${product_uri}/products`,form,{
+            const { data } = await api.post(`${product_uri}/products`,form,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -122,7 +122,7 @@ export const deleteProductbyId = createAsyncThunk<any,string,{rejectValue:string
     'delete/products',
     async(id, {rejectWithValue})=>{
         try {
-           const { data } = await axios.delete(`${product_uri}/proudcts/${id}`,{
+           const { data } = await api.delete(`${product_uri}/products/${id}`,{
             headers:{'Content-Type':'application/json'},
             withCredentials:true,
            }) 

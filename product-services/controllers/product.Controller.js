@@ -4,6 +4,7 @@ import { AppError } from '../utils/AppError.js';
 import slugify from 'slugify'
 // 1. Add Product (protected controller)
 export const createProduct = asyncHandler(async(req, res, next)=>{
+    const sellerId = req.user.id;
     const { name, description, sku, categoryId } = req.body;
     if(!name || !name.trim()){
         return next(new AppError('Name is Required', 400))
@@ -38,6 +39,7 @@ export const createProduct = asyncHandler(async(req, res, next)=>{
     }
     const product = await prisma.product.create({
         data:{
+            sellerId,
             name:name.trim(),
             description:description?.trim(),
             sku:sku.trim(),
@@ -76,7 +78,7 @@ export const getProduct = asyncHandler(async(req, res, next)=>{
 // 2.1. Get all Product of Seller (protected controller)
 export const getProductofSeller = asyncHandler(async(req, res, next)=>{
     const sellerId = req.user.id;
-    const product = await prisma.product.findUnique({
+    const product = await prisma.product.findMany({
         where:{
             sellerId,
         },
@@ -151,13 +153,13 @@ export const deleteProductbyId = asyncHandler(async(req, res, next)=>{
     const id = req.params.id;
     const product = await prisma.product.findUnique({
         where:{
-            id
+            id,
         }
     })
     if(!product){
         return next(new AppError("Product not found", 404))
     }
-    await prisma.product.delete({
+    const data=await prisma.product.delete({
         where:{
             id
         }
@@ -165,6 +167,7 @@ export const deleteProductbyId = asyncHandler(async(req, res, next)=>{
     res.status(200).json({
         message:"Product Deleted Successfully",
         success:true,
+        data, 
     })
 })
 
