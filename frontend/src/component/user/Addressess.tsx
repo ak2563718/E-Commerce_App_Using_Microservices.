@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import AddressCard from './AddressCard'
 import AddressForm, { type AddressFormData } from './AddressForm'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
-import { createAddress, deleteAddress, getAddresswithUserId, updateAddress } from '@/redux/user/address.type'
+import { createAddress, deleteAddress, getAddresswithUserId, updateAddress, updateDefaultAddress } from '@/redux/user/address.type'
 import { toast } from 'sonner'
 
 interface Address {
@@ -89,7 +89,17 @@ export default function Addressess() {
     }
   }
 
-  const handleSetDefault = () => {
+  const handleSetDefault = async(id:string) => {
+    try {
+      const res = await dispatch(updateDefaultAddress({
+        id,
+        value: { value: true },
+      })).unwrap()
+
+      toast.success(res.message)
+    } catch (error:unknown) {
+      showError(error)
+    }
   }
 
   const closeForm = () => { setShowForm(false); setEditing(null) }
@@ -150,7 +160,7 @@ export default function Addressess() {
             address={addr}
             onEdit={() => { setShowForm(false); setEditing(addr) }}
             onDelete={() => handleDelete(addr.id)}
-            onSetDefault={() => handleSetDefault()}
+            onSetDefault={() => handleSetDefault(addr.id)}
           />
         ))}
       </div>

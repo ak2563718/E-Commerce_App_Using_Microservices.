@@ -204,27 +204,74 @@ export const deleteaddress = asyncHandler(async(req, res, next)=>{
 })
 
 // 9. update address default
-export const updatedefaultsetting = asyncHandler(async(req, res, next)=>{
+export const updateDefaultSetting = asyncHandler(
+  async (req, res, next) => {
     const { value } = req.body;
-    const id = req.params.id;
-    if(!value){
-        return next(new AppError("Value not given", 400))
+    const { id } = req.params;
+
+    if (typeof value !== "boolean") {
+      return next(
+        new AppError("Value must be a boolean", 400)
+      );
     }
-    const found = await prisma.address.findUnique({where:{id}})
-    if(!found){
-        return next(new AppError("address not found", 404))
+
+    const address = await prisma.address.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!address) {
+      return next(
+        new AppError("Address not found", 404)
+      );
     }
-    if(value){
-    const address = await prisma.address.update({
-        where:{id},
-        data:{
-            isDefault:true,
-        }
-    })
-    res.status(200).json({
-        message:"address updated successfully",
-        success:true,
-        data:address
-    })
-}
-})
+
+    // If the address is already in the requested state,
+    // there is nothing to update.
+    if (address.isDefault === value) {
+      return res.status(200).json({
+        success: true,
+        message: "Address default setting is already up to date",
+        data: address,
+      });
+    }
+
+    const updatedAddress = await prisma.$transaction(async (tx) => {
+
+      // If making this address default,
+      // remove default status from the user's other address.
+      if (value === true) {
+        await tx.address.updateMany({
+          where: {
+            userId: address.userId,
+            id: {
+              not: id,
+            },
+            isDefault: true,
+          },
+          data: {
+            isDefault: false,
+          },
+        });
+      }
+
+      return await tx.address.update({
+        where: {
+          id,
+        },
+        data: {
+          isDefault: value,
+        },
+      });
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: value
+        ? "Address set as default successfully"
+        : "Address removed from default",
+      data: updatedAddress,
+    });
+  }
+);

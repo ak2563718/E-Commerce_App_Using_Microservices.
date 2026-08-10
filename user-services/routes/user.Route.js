@@ -1,5 +1,5 @@
 import express from 'express';
-import { createAddress, createInfo, deleteaddress, getaddressbyId, getAddresswithUserId, getUser, updateaddress, updatedefaultsetting, updateUser } from '../controllers/user.Controller.js';
+import { createAddress, createInfo, deleteaddress, getaddressbyId, getAddresswithUserId, getUser, updateaddress, updateDefaultSetting , updateUser } from '../controllers/user.Controller.js';
 import { authMiddleware } from '../middlewares/auth.Middleware.js';
 const router = express.Router();
 // 1. user information
@@ -13,5 +13,5 @@ router.get('/address',authMiddleware,getAddresswithUserId)
 router.get('/address/:id',getaddressbyId)
 router.patch('/address/:id',updateaddress)
 router.delete('/address/:id',deleteaddress)
-router.patch('/address/:id/default',updatedefaultsetting)
+router.patch('/address/:id/default',updateDefaultSetting)
 export default router;

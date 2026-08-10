@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createProfile, getProfile, updateProfile } from "./user.Action";
-import { createAddress, deleteAddress, getAddresswithUserId, updateAddress } from "./address.type";
+import { createAddress, deleteAddress, getAddresswithUserId, updateAddress, updateDefaultAddress } from "./address.type";
 
 interface AddressData {
     id: string,
@@ -137,6 +137,23 @@ const userSlice = createSlice({
             state.message = action.payload.message;
             state.address = state.address?.map((a)=>a.id === action.payload.data.id ? action.payload.data : a);
         }).addCase(updateAddress.rejected,(state,action)=>{
+            state.loading = false;
+            state.error = action.payload??'failed';
+        });
+
+        // 8. update default address
+        builder.addCase(updateDefaultAddress.pending,(state)=>{
+            state.loading = true;
+            state.message = null;
+            state.error = null;
+        }).addCase(updateDefaultAddress.fulfilled,(state,action)=>{
+            state.loading = false;
+            state.message = action.payload.message;
+            state.address = state.address?.map((a)=>({
+                ...a,
+                isDefault: a.id === action.payload.data.id,
+            }));
+        }).addCase(updateDefaultAddress.rejected,(state,action)=>{
             state.loading = false;
             state.error = action.payload??'failed';
         })
