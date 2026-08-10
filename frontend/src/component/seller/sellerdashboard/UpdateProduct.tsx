@@ -1,4 +1,5 @@
 'use client'
+import { useParams, useRouter } from 'next/navigation'
 import { useState, useRef } from 'react'
 
 const PLACEHOLDER_IMAGES = [
@@ -397,6 +398,8 @@ export default function UpdateProduct() {
   const [pendingImages, setPendingImages] = useState<string[]>([])
   const [pendingMain, setPendingMain] = useState(0)
 
+  const params = useParams();
+  
   const [product, setProduct] = useState<ProductData>({
     name: 'Seiko SRPD55K1 Automatic Watch',
     sku: 'SKU-SEIKO-SRPD55K1',
@@ -410,6 +413,7 @@ export default function UpdateProduct() {
   const [detailSaving, setDetailSaving] = useState(false)
   const [draft, setDraft] = useState<ProductData>(product)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
+  const router = useRouter()
 
   const showToast = (message: string, type: 'success' | 'error') => {
     setToast({ message, type })
@@ -454,7 +458,7 @@ export default function UpdateProduct() {
   const subCategories = SUB_CATEGORIES[detailEditMode ? draft.category : product.category] || []
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto"
+    <div className="min-h-full overflow-y-auto"
     style={{
       background: t.pageBg,
       fontFamily: "'Outfit', sans-serif",
@@ -614,6 +618,7 @@ export default function UpdateProduct() {
                   </div>
                 )}
             </div>
+             <button onClick={()=>router.push('/seller/dashboard')} className='relative left-150 border border-white w-20 p-1 rounded-lg'>Cancel</button>
           </div>
         </div>
 
@@ -644,7 +649,7 @@ export default function UpdateProduct() {
         color: #fff;
       }
     `}</style>
-      <button >Cancel</button>
+      
     </div>
   )
 }

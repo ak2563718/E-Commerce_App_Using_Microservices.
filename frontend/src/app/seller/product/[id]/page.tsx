@@ -1,12 +1,7 @@
 import UpdateProduct from '@/component/seller/sellerdashboard/UpdateProduct'
-import React from 'react'
 
-function page() {
-  return (
-    <div>
-        <UpdateProduct/>
-    </div>
-  )
+function Page() {
+  return <UpdateProduct />
 }
 
-export default page
+export default Page

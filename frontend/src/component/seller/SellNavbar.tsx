@@ -11,7 +11,7 @@ function SellNavbar() {
   const dispatch = useAppDispatch()
   useEffect(()=>{
     dispatch(authCheckSession())
-  },[])
+  },[dispatch])
   
   return (
     <div>
@@ -57,7 +57,7 @@ function SellNavbar() {
         </div>
 
         {/* CTA buttons */}
-        {user.role !== 'SELLER' &&
+        {user?.role !== 'SELLER' &&
         <div className="flex items-center gap-3">
           <button
             onClick={()=>router.push('/seller/login')}

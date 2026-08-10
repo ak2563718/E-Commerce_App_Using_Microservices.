@@ -1,4 +1,6 @@
 'use client'
+import { useAppSelector } from '@/redux/hooks'
+import { Loader } from 'lucide-react'
 import { useState } from 'react'
 
 export type AddressFormData = {
@@ -53,6 +55,7 @@ export default function AddressForm({ initial, onSubmit, onCancel }: Props) {
       : EMPTY
   )
   const [errors, setErrors] = useState<Partial<Record<keyof AddressFormData, string>>>({})
+  const { loading } = useAppSelector((state)=>state.user)
 
   const set = (key: keyof AddressFormData, val: string) => {
     setForm((prev) => ({ ...prev, [key]: val }))
@@ -179,10 +182,10 @@ export default function AddressForm({ initial, onSubmit, onCancel }: Props) {
         <div className="flex gap-2 pt-1">
           <button
             type="submit"
-            className="flex-1 py-2.5 text-white text-sm font-bold rounded-xl active:scale-95 transition-all shadow-sm hover:shadow-md"
+            className="flex-1 flex justify-center  py-2.5 text-white text-sm font-bold rounded-xl active:scale-95 transition-all shadow-sm hover:shadow-md"
             style={{ background: 'linear-gradient(135deg, #111111 0%, #ec4899 100%)' }}
           >
-            {initial ? 'Save Changes' : 'Add Address'}
+          {loading ? <Loader className='w-4 h-4 '/> : initial ? 'Save Changes' : 'Add Address'}
           </button>
           <button
             type="button"
