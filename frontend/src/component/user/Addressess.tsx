@@ -1,71 +1,95 @@
 'use client'
 import { useEffect, useState } from 'react'
 import AddressCard from './AddressCard'
-import AddressForm from './AddressForm'
+import AddressForm, { type AddressFormData } from './AddressForm'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import { createAddress, deleteAddress, getAddresswithUserId, updateAddress } from '@/redux/user/address.type'
+import { toast } from 'sonner'
 
-export interface Address {
+interface Address {
   id: string
-  label: string
+  label?: string
+  type?: string
   fullName: string
-  line1: string
-  line2: string
+  line1?: string
+  addressLine1?: string
+  line2?: string
+  addressLine2?: string | null
   city: string
   state: string
-  zip: string
+  zip?: string
+  postalCode?: string
   country: string
   phone: string
+  landmark?: string | null
   isDefault: boolean
 }
 
-const INITIAL: Address[] = [
-  {
-    id: '1',
-    label: 'Home',
-    fullName: 'Eleanor Voss',
-    line1: '47 Birchwood Lane',
-    line2: 'Apt 3B',
-    city: 'Portland',
-    state: 'OR',
-    zip: '97201',
-    country: 'United States',
-    phone: '+1 (503) 555-0142',
-    isDefault: true,
-  },
-]
+const showError = (error: unknown) => {
+  toast.error(typeof error === 'string' ? error : 'something went wrong')
+}
 
 export default function Addressess() {
-  const [addresses, setAddresses] = useState<any[]>()
   const [showForm, setShowForm] = useState(false)
-  const [editing, setEditing] = useState<Address | null>(null)
-  const { user } = useAppSelector((state)=>state.user)
+  const [editing, setEditing] = useState<Address|null>(null)
+  const { address } = useAppSelector((state)=>state.user)
+  const addresses = address as Address[] | undefined
   const dispatch = useAppDispatch()
-  
+
   useEffect(()=>{
-    setAddresses(user?.addresses)
-  },[])
-  
-  console.log('user data from addressess',user)
-  const handleAdd = () => {
-    setAddresses(user?.addresses)
+    const getprofile =async()=>{
+     await dispatch(getAddresswithUserId())
+    }
+    getprofile()
+  },[dispatch, showForm])
+
+  const handleAdd = async(data:AddressFormData) => {
+    try {
+      const res = await dispatch(createAddress(data)).unwrap()
+      toast.success(res.message)
+      setShowForm(false)
+    } catch (error:unknown) {
+      showError(error)
+    }
   }
 
-  const handleUpdate = (data: Omit<Address, 'id' | 'isDefault'>) => {
-    if (!editing) return
-    setAddresses((prev) => prev.map((a) => (a.id === editing.id ? { ...a, ...data } : a)))
-    setEditing(null)
+  const handleUpdate = async(data:AddressFormData) => {
+    if (!editing?.id) return
+
+    try {
+      const res = await dispatch(updateAddress({
+        id: editing.id,
+        info: {
+          fullName: data.fullName,
+          phone: data.phone,
+          add1: data.line1,
+          add2: data.line2,
+          city: data.city,
+          state: data.state,
+          country: data.country,
+          pincode: data.zip,
+          landmark: data.landmark,
+        }
+      })).unwrap()
+
+      toast.success(res.message)
+      setEditing(null)
+      setShowForm(false)
+    } catch (error:unknown) {
+      showError(error)
+    }
   }
 
-  const handleDelete = (id: string) => {
-    setAddresses((prev) => {
-      const filtered = prev.filter((a) => a.id !== id)
-      if (filtered.length > 0 && !filtered.some((a) => a.isDefault)) filtered[0].isDefault = true
-      return filtered
-    })
+  const handleDelete = async(id:string) => {
+    try {
+      const res = await dispatch(deleteAddress(id)).unwrap();
+      toast.success(res.message)
+    } catch (error:unknown) {
+      showError(error)
+    }
   }
 
-  const handleSetDefault = (id: string) => {
-    setAddresses((prev) => prev.map((a) => ({ ...a, isDefault: a.id === id })))
+  const handleSetDefault = () => {
   }
 
   const closeForm = () => { setShowForm(false); setEditing(null) }
@@ -111,27 +135,27 @@ export default function Addressess() {
       )}
 
       {/* Empty state */}
-      {addresses.length === 0 && (
+      {addresses?.length === 0 && (
         <div className="text-center py-16 border-2 border-dashed border-pink-100 rounded-2xl bg-pink-50/30">
           <p className="text-gray-400 font-medium">No addresses saved yet.</p>
-          <p className="text-gray-300 text-sm mt-1">Click "Add Address" to get started.</p>
+          <p className="text-gray-300 text-sm mt-1">Click &quot;Add Address&quot; to get started.</p>
         </div>
       )}
 
       {/* Cards */}
       <div className="grid gap-3">
-        {addresses.map((addr) => (
+        {addresses?.map((addr) => (
           <AddressCard
             key={addr.id}
             address={addr}
             onEdit={() => { setShowForm(false); setEditing(addr) }}
             onDelete={() => handleDelete(addr.id)}
-            onSetDefault={() => handleSetDefault(addr.id)}
+            onSetDefault={() => handleSetDefault()}
           />
         ))}
       </div>
 
-      {addresses.length > 0 && (
+      {addresses && addresses.length > 0 && (
         <p className="text-center text-xs text-gray-300 mt-8">
           {addresses.length} address{addresses.length !== 1 ? 'es' : ''} saved
         </p>

@@ -180,7 +180,7 @@ exports.UserStatus = exports.$Enums.UserStatus = {
 
 exports.AddressType = exports.$Enums.AddressType = {
   HOME: 'HOME',
-  OFFICE: 'OFFICE',
+  WORK: 'WORK',
   OTHER: 'OTHER'
 };
 

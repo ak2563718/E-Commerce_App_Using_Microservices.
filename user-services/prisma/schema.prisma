@@ -65,6 +65,6 @@ enum Gender {
 
 enum AddressType {
   HOME
-  OFFICE
+  WORK
   OTHER
 }

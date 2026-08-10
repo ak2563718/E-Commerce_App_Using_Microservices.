@@ -1,18 +1,34 @@
 'use client'
 import { useState } from 'react'
-import type { Address } from './Addressess'
-import { useAppDispatch, useAppSelector } from '@/redux/hooks'
-import { createAddress } from '@/redux/user/address.type'
 
-type FormData = Omit<Address, 'id' | 'isDefault'>
+export type AddressFormData = {
+  label: string
+  fullName: string
+  line1: string
+  line2: string
+  city: string
+  state: string
+  zip: string
+  country: string
+  phone: string
+  landmark?: string
+}
+
+type InitialAddress = Omit<Partial<AddressFormData>, 'landmark'> & {
+  type?: string
+  addressLine1?: string
+  addressLine2?: string | null
+  postalCode?: string
+  landmark?: string | null
+}
 
 interface Props {
-  initial?: Address
-  onSubmit: (data: FormData) => void
+  initial?: InitialAddress
+  onSubmit: (data: AddressFormData) => void
   onCancel: () => void
 }
 
-const EMPTY: FormData = {
+const EMPTY: AddressFormData = {
   label: 'Home',
   fullName: '',
   line1: '',
@@ -28,23 +44,23 @@ const LABEL_OPTIONS = ['HOME', 'WORK', 'OTHER']
 const COUNTRIES = ['United States', 'Canada', 'United Kingdom', 'Australia', 'Germany', 'France', 'India', 'Japan']
 
 export default function AddressForm({ initial, onSubmit, onCancel }: Props) {
-  const [form, setForm] = useState<FormData>(
+  const [form, setForm] = useState<AddressFormData>(
     initial
-      ? { label: initial.label, fullName: initial.fullName, line1: initial.line1,
-          line2: initial.line2, city: initial.city, state: initial.state,
-          zip: initial.zip, country: initial.country, phone: initial.phone }
+      ? { label: initial.label ?? initial.type ?? EMPTY.label, fullName: initial.fullName ?? '',
+          line1: initial.line1 ?? initial.addressLine1 ?? '', line2: initial.line2 ?? initial.addressLine2 ?? '',
+          city: initial.city ?? '', state: initial.state ?? '', zip: initial.zip ?? initial.postalCode ?? '',
+          country: initial.country ?? EMPTY.country, phone: initial.phone ?? '' }
       : EMPTY
   )
-  const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({})
-  const dispatch = useAppDispatch();
-  const { user } = useAppSelector((state)=>state.user)
-  const set = (key: keyof FormData, val: string) => {
+  const [errors, setErrors] = useState<Partial<Record<keyof AddressFormData, string>>>({})
+
+  const set = (key: keyof AddressFormData, val: string) => {
     setForm((prev) => ({ ...prev, [key]: val }))
     setErrors((prev) => ({ ...prev, [key]: '' }))
   }
 
   const validate = () => {
-    const e: Partial<Record<keyof FormData, string>> = {}
+    const e: Partial<Record<keyof AddressFormData, string>> = {}
     if (!form.fullName.trim()) e.fullName = 'Required'
     if (!form.line1.trim()) e.line1 = 'Required'
     if (!form.city.trim()) e.city = 'Required'
@@ -55,14 +71,12 @@ export default function AddressForm({ initial, onSubmit, onCancel }: Props) {
 
   const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault()
-    const res = await dispatch(createAddress(form)).unwrap()
-    console.log(form)
     const errs = validate()
     if (Object.keys(errs).length > 0) { setErrors(errs); return }
     onSubmit(form)
   }
 
-  const inputCls = (field: keyof FormData) =>
+  const inputCls = (field: keyof AddressFormData) =>
     `w-full px-3 py-2 rounded-lg border text-sm text-gray-800 outline-none transition-all duration-150
     focus:ring-2 focus:ring-pink-200 focus:border-pink-400
     ${errors[field] ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50 focus:bg-white'}`
@@ -114,19 +128,19 @@ export default function AddressForm({ initial, onSubmit, onCancel }: Props) {
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="block text-xs font-semibold text-gray-400 mb-1">Full Name *</label>
-            <input className={inputCls('fullName')} value={form.fullName} onChange={(e) => set('fullName', e.target.value)} placeholder="Jane Smith" />
+            <input className={inputCls('fullName')} value={form.fullName} onChange={(e) => set('fullName', e.target.value)} placeholder="Enter your Name" />
             {errors.fullName && <p className="text-xs text-red-400 mt-0.5">{errors.fullName}</p>}
           </div>
           <div>
             <label className="block text-xs font-semibold text-gray-400 mb-1">Phone</label>
-            <input className={inputCls('phone')} value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="+1 (555) 000-0000" />
+            <input className={inputCls('phone')} value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="+91 9100000000" />
           </div>
         </div>
 
         {/* Address Line 1 */}
         <div>
           <label className="block text-xs font-semibold text-gray-400 mb-1">Street Address *</label>
-          <input className={inputCls('line1')} value={form.line1} onChange={(e) => set('line1', e.target.value)} placeholder="123 Main St" />
+          <input className={inputCls('line1')} value={form.line1} onChange={(e) => set('line1', e.target.value)} placeholder="Street Name" />
           {errors.line1 && <p className="text-xs text-red-400 mt-0.5">{errors.line1}</p>}
         </div>
 
@@ -134,17 +148,17 @@ export default function AddressForm({ initial, onSubmit, onCancel }: Props) {
         <div className="grid grid-cols-3 gap-3">
           <div>
             <label className="block text-xs font-semibold text-gray-400 mb-1">City *</label>
-            <input className={inputCls('city')} value={form.city} onChange={(e) => set('city', e.target.value)} placeholder="Portland" />
+            <input className={inputCls('city')} value={form.city} onChange={(e) => set('city', e.target.value)} placeholder="Delhi" />
             {errors.city && <p className="text-xs text-red-400 mt-0.5">{errors.city}</p>}
           </div>
           <div>
             <label className="block text-xs font-semibold text-gray-400 mb-1">State *</label>
-            <input className={inputCls('state')} value={form.state} onChange={(e) => set('state', e.target.value)} placeholder="OR" />
+            <input className={inputCls('state')} value={form.state} onChange={(e) => set('state', e.target.value)} placeholder="Jharkhand" />
             {errors.state && <p className="text-xs text-red-400 mt-0.5">{errors.state}</p>}
           </div>
           <div>
             <label className="block text-xs font-semibold text-gray-400 mb-1">ZIP *</label>
-            <input className={inputCls('zip')} value={form.zip} onChange={(e) => set('zip', e.target.value)} placeholder="97201" />
+            <input className={inputCls('zip')} value={form.zip} onChange={(e) => set('zip', e.target.value)} placeholder="110000" />
             {errors.zip && <p className="text-xs text-red-400 mt-0.5">{errors.zip}</p>}
           </div>
         </div>

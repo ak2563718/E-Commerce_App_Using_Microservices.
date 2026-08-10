@@ -48,7 +48,7 @@ export type Gender = (typeof Gender)[keyof typeof Gender]
 
 export const AddressType: {
   HOME: 'HOME',
-  OFFICE: 'OFFICE',
+  WORK: 'WORK',
   OTHER: 'OTHER'
 };
 

@@ -1,9 +1,9 @@
 'use client'
 import { useState } from 'react'
-import type { Address } from './Addressess'
+
 
 interface Props {
-  address: Address
+  address: any
   onEdit: () => void
   onDelete: () => void
   onSetDefault: () => void

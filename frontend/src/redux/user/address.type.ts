@@ -28,7 +28,7 @@ export const getAddresswithUserId = createAsyncThunk<any, void, {rejectValue:str
     'get/addresswithuserId',
     async( _ , {rejectWithValue} )=>{
         try {
-            const { data } = await axios.get(`${user_uri}/address`,{
+            const { data } = await api.get(`${user_uri}/address`,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })

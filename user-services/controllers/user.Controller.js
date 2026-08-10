@@ -179,7 +179,7 @@ export const updateaddress = asyncHandler(async(req, res, next)=>{
     })
     res.status(200).json({
         success:true,
-        message:"address updated",
+        message:"Address Updated Successfully",
         data:address
     })
 })
@@ -197,7 +197,7 @@ export const deleteaddress = asyncHandler(async(req, res, next)=>{
         }
     })
     res.status(200).json({
-        message:"address deleted successfully",
+        message:"Address Deleted Successfully",
         success:true,
         data:address,
     })
