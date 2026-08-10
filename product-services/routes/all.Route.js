@@ -1,11 +1,12 @@
 import express from 'express';
 import { categorybyId, createCategories, deleteCategory, getCategory } from '../controllers/category.Controller.js';
 import { createBrand, deleteBrand, getBrand, getbyId, updateBrand } from '../controllers/brand.Controller.js';
-import { createProduct, deleteProductbyId, getProdctbyId, getProduct, getProductbySlug, updateProduct } from '../controllers/product.Controller.js';
+import { createProduct, deleteProductbyId, getProdctbyId, getProduct, getProductbySlug, getProductofSeller, updateProduct } from '../controllers/product.Controller.js';
 import { createVariant, deleteVariant, getVariants, updateVariant } from '../controllers/variant.Controller.js';
 import { createAttributes, createAttributesvalue, deleteAttributes, deleteAttributesvalue, updateAttributes, updateAttributesValue } from '../controllers/attribute.Controller.js';
 import { uploadProductImages, uploadVariantImages } from '../controllers/image.Controller.js';
 import { upload } from '../config/multer.js';
+import { authMiddleware, sellerMiddleware } from '../middlewares/authMiddleware.js';
 const router = express.Router();
 // 1. category routes
 router.post('/categories',createCategories)
@@ -21,12 +22,13 @@ router.patch('/brands/:id',updateBrand)
 router.delete('/brands/:id',deleteBrand)
 
 // 3. Product Routes
-router.post('/products',createProduct)
+router.post('/products',authMiddleware,sellerMiddleware,createProduct)
 router.get('/products',getProduct)
+router.get('/product/seller',authMiddleware,sellerMiddleware,getProductofSeller)
 router.get('/products/:id',getProdctbyId)
 router.get('/products/slug/:slug',getProductbySlug)
-router.patch('/products/:id',updateProduct)
-router.delete('/products/:id',deleteProductbyId)
+router.patch('/products/:id',authMiddleware,sellerMiddleware,updateProduct)
+router.delete('/products/:id',authMiddleware,sellerMiddleware,deleteProductbyId)
 
 // 4.Product Variant
 router.post('/products/:id/variants',createVariant)

@@ -1,4 +1,4 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { asyncThunkCreator, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const product_uri = process.env.NEXT_PUBLIC_PRODUCT_URI;
@@ -20,6 +20,8 @@ export const createProduct = createAsyncThunk<any,any,{rejectValue:string}>(
         }
     }
 );
+
+
 
 // 2. get all products
 export const getAllProducts = createAsyncThunk<any,void,{rejectValue:string}>(

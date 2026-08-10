@@ -2,7 +2,7 @@ import { prisma } from "../src/db.js";
 import {asyncHandler} from '../utils/asyncHandler.js';
 import { AppError } from '../utils/AppError.js';
 import slugify from 'slugify'
-// 1. Add Product 
+// 1. Add Product (protected controller)
 export const createProduct = asyncHandler(async(req, res, next)=>{
     const { name, description, sku, categoryId } = req.body;
     if(!name || !name.trim()){
@@ -73,6 +73,29 @@ export const getProduct = asyncHandler(async(req, res, next)=>{
     })
 })
 
+// 2.1. Get all Product of Seller (protected controller)
+export const getProductofSeller = asyncHandler(async(req, res, next)=>{
+    const sellerId = req.user.id;
+    const product = await prisma.product.findUnique({
+        where:{
+            sellerId,
+        },
+        include:{
+            images:true,
+            variants:true,
+            attributes:true,
+        }
+    });
+    if(!product){
+        return next(new AppError("Prodct not found", 404))
+    }
+    res.status(200).json({
+        message:'Product found',
+        success:true,
+        data:product,
+    })
+})
+
 // 3. Get Product by Id:
 export const getProdctbyId = asyncHandler(async(req, res, next)=>{
     const id = req.params.id;
@@ -123,7 +146,7 @@ export const getProductbySlug = asyncHandler(async(req, res, next)=>{
     })
 })
 
-// 5. Delete Product by Id:
+// 5. Delete Product by Id: (protected controller)
 export const deleteProductbyId = asyncHandler(async(req, res, next)=>{
     const id = req.params.id;
     const product = await prisma.product.findUnique({
@@ -145,7 +168,7 @@ export const deleteProductbyId = asyncHandler(async(req, res, next)=>{
     })
 })
 
-// 6. update Product by Id:
+// 6. update Product by Id: (protected controller)
 export const updateProduct = asyncHandler(async(req, res, next)=>{
     const id = req. params.id;
     const { name, description, sku, categoryId } = req.body;

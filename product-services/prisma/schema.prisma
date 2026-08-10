@@ -19,6 +19,7 @@ model Product {
   slug            String      @unique
   description     String      @db.Text
   shortDescription String?
+  sellerId        String    @unique
 
   sku             String      @unique
 
