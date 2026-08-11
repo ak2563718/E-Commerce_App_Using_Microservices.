@@ -11,7 +11,6 @@ interface Props {
 
 export default function AddressCard({ address, onEdit, onDelete, onSetDefault }: Props) {
   const [confirmDelete, setConfirmDelete] = useState(false)
-
   return (
     <div
       className="relative rounded-2xl p-5 transition-all duration-200"

@@ -5,6 +5,7 @@ import AddressForm, { type AddressFormData } from './AddressForm'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { createAddress, deleteAddress, getAddresswithUserId, updateAddress, updateDefaultAddress } from '@/redux/user/address.type'
 import { toast } from 'sonner'
+import AddressSkeleton from './AddressSkeleton'
 
 interface Address {
   id: string
@@ -33,12 +34,14 @@ export default function Addressess() {
   const [showForm, setShowForm] = useState(false)
   const [editing, setEditing] = useState<Address|null>(null)
   const { address } = useAppSelector((state)=>state.user)
+  const [loading, setLoading] = useState<boolean>(true)
   const addresses = address as Address[] | undefined
   const dispatch = useAppDispatch()
 
   useEffect(()=>{
     const getprofile =async()=>{
      await dispatch(getAddresswithUserId())
+     setLoading(false)
     }
     getprofile()
   },[dispatch, showForm])
@@ -104,6 +107,9 @@ export default function Addressess() {
 
   const closeForm = () => { setShowForm(false); setEditing(null) }
 
+  if(loading){
+    return <AddressSkeleton/>
+  }
   return (
     <div className="max-w-2xl mx-auto px-4 py-12">
       {/* Header */}

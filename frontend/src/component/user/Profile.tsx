@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { getProfile, updateProfile } from '@/redux/user/user.Action'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import ProfileLoader from './ProfileLoader'
 
 interface ProfileData {
   firstName: string
@@ -93,12 +94,14 @@ export default function Profile() {
   const [editing, setEditing] = useState(false)
   const [saved, setSaved] = useState<any>(null)
   const [draft, setDraft] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state)=>state.user)
   
   useEffect(()=>{
      const userProfile = async()=>{
       const res = await dispatch(getProfile());
+      setLoading(false)
      }
      userProfile();
   },[])
@@ -122,7 +125,11 @@ export default function Profile() {
   }
   const handleCancel = () => { setDraft(saved); setEditing(false) }
 
-  const current = editing ? draft : saved
+  const current = editing ? draft : saved;
+
+  if(loading){
+    return <ProfileLoader/>
+  }
   return (
     <div className="h-full flex flex-col " style={{ background: 'linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%)' }}>
       {/* Top bar */}
