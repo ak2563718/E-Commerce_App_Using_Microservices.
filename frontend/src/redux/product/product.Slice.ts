@@ -3,7 +3,7 @@ import { createProduct, deleteProductbyId, getAllProducts, getProductbyId, getPr
 import { uploadProductImage } from "./product.Type.Action";
 
 interface data{
-    product:any|undefined,
+    aproduct:any|undefined,
     products:any[]|undefined,
     message:string|null,
     error:string|null,
@@ -11,7 +11,7 @@ interface data{
 }
 
 const initialState:data ={
-    product:{},
+    aproduct:{},
     products:[],
     message:null,
     error:null,
@@ -31,7 +31,7 @@ const productSlice = createSlice({
         }).addCase(createProduct.fulfilled,(state,action)=>{
             state.loading = false;
             state.message = action.payload.message;
-            state.product = action.payload.data;
+            state.aproduct = action.payload.data;
             state.products?.push(action.payload.data);
         }).addCase(createProduct.rejected,(state,action)=>{
             state.loading = false;
@@ -75,7 +75,7 @@ const productSlice = createSlice({
         }).addCase(getProductbyId.fulfilled,(state,action)=>{
             state.loading = false;
             state.message = action.payload.message;
-            state.product = action.payload.data;
+            state.aproduct = action.payload.data;
         }).addCase(getProductbyId.rejected,(state,action)=>{
             state.loading = false;
             state.error = action.payload??"failed";
@@ -89,7 +89,7 @@ const productSlice = createSlice({
         }).addCase(getProductWithSlug.fulfilled,(state,action)=>{
             state.loading = false;
             state.message = action.payload.message;
-            state.product = action.payload.data;
+            state.aproduct = action.payload.data;
         }).addCase(getProductWithSlug.rejected,(state,action)=>{
             state.loading = false;
             state.error = action.payload??"failed";

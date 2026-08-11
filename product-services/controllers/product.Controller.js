@@ -106,7 +106,11 @@ export const getProdctbyId = asyncHandler(async(req, res, next)=>{
             id
         },
         include:{
-            category:true,
+            category:{
+                include:{
+                    parent:true,
+                }
+            },
             brand:true,
             images:true,
             variants:true,

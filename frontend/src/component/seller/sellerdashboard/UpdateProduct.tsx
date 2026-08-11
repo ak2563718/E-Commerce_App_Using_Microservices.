@@ -1,6 +1,9 @@
 'use client'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import { getProductbyId } from '@/redux/product/product.Action'
 import { useParams, useRouter } from 'next/navigation'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
 const PLACEHOLDER_IMAGES = [
   'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&h=600&fit=crop&auto=format',
@@ -397,17 +400,29 @@ export default function UpdateProduct() {
   const [imageSaving, setImageSaving] = useState(false)
   const [pendingImages, setPendingImages] = useState<string[]>([])
   const [pendingMain, setPendingMain] = useState(0)
+  const dispatch = useAppDispatch()
+  const { aproduct } = useAppSelector((state)=>state.product)
 
-  const params = useParams();
+
+  const params = useParams<any>();
+
+  useEffect(()=>{
+    const getProduct =async()=>{
+      if(params){
+        const res = await dispatch(getProductbyId(params.id)).unwrap();
+      } 
+    }
+    getProduct()
+  },[params.id])
   
   const [product, setProduct] = useState<ProductData>({
-    name: 'Seiko SRPD55K1 Automatic Watch',
-    sku: 'SKU-SEIKO-SRPD55K1',
-    category: 'Electronics',
-    subCategory: 'Wearables',
+    name: aproduct?.name,
+    sku: aproduct?.sku,
+    category: aproduct?.category?.parent?.name,
+    subCategory: aproduct?.category?.name,
     description: "The Seiko SRPD55K1 features a robust stainless steel case with a deep blue sunburst dial. A 42mm diameter and 100m water resistance make it a versatile everyday timepiece. Powered by Seiko's 4R36 automatic movement with 41-hour power reserve.",
-    price: '20999',
-    stock: '142',
+    price: aproduct.variants?.[0]?.price,
+    stock: aproduct.variants?.[0]?.stock,
   })
   const [detailEditMode, setDetailEditMode] = useState(false)
   const [detailSaving, setDetailSaving] = useState(false)
@@ -618,7 +633,7 @@ export default function UpdateProduct() {
                   </div>
                 )}
             </div>
-             <button onClick={()=>router.push('/seller/dashboard')} className='relative left-150 border border-white w-20 p-1 rounded-lg'>Cancel</button>
+             <button onClick={()=>router.push('/seller/dashboard')} className='relative text-white left-150 border border-white w-20 p-1 rounded-lg'>Cancel</button>
           </div>
         </div>
 

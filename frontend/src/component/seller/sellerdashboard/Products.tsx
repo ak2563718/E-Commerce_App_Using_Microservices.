@@ -13,13 +13,6 @@ import { useRouter } from 'next/navigation'
 import { LoaderOne } from '@/components/ui/loader'
 import ProductLoading from '../skeleton&Loader/ProductLoading'
 
-const EXTENDED = [
-  ...topProducts,
-  { name: 'Yoga Mat Premium', sku: 'SPRT-YMP-002', stock: 89, sold: 143, revenue: 18557, trend: '+7%' },
-  { name: 'Coffee Grinder Manual', sku: 'HOME-CGM-008', stock: 44, sold: 97, revenue: 9603, trend: '+15%' },
-  { name: 'Running Shoes Men', sku: 'SPRT-RSM-014', stock: 23, sold: 211, revenue: 84989, trend: '+9%' },
-]
-
   
 // ── Field helpers ────────────────────────────────────────────────────────────
 function Label({ children }: { children: React.ReactNode }) {
@@ -326,7 +319,7 @@ function StepMedia({ onBack, onClose }: { onBack: () => void; onClose: () => voi
   const [stock, setStock] = useState('')
   const [variants, setVariants] = useState<Variant[]>([])
   const [showVariants, setShowVariants] = useState(false)
-  const { product, loading } = useAppSelector((state)=>state.product) 
+  const { aproduct, loading } = useAppSelector((state)=>state.product) 
   const dispatch = useAppDispatch();
   const addVariant = () => {
     setVariants(v => [...v, { sku: '', price: '', stock: '', images: [] }])
@@ -346,14 +339,14 @@ function StepMedia({ onBack, onClose }: { onBack: () => void; onClose: () => voi
     images.forEach((img)=>{
       formData.append('images',img)
     })
-    const uploadPIRes = await dispatch(uploadProductImage({id:product.id,formData})).unwrap() 
-    const response = await dispatch(createVariants({id:product.id,sku:product.sku,price,stock})).unwrap()
+    const uploadPIRes = await dispatch(uploadProductImage({id:aproduct.id,formData})).unwrap() 
+    const response = await dispatch(createVariants({id:aproduct.id,sku:aproduct.sku,price,stock})).unwrap()
 
     if(variants.length >0){
     for (const variant of variants) {
     const response = await dispatch(
       createVariants({
-        id: product.id,
+        id: aproduct.id,
         sku: variant.sku,
         price: variant.price,
         stock: variant.stock,
