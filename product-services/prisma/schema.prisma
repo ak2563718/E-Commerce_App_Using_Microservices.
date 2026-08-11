@@ -20,12 +20,9 @@ model Product {
   description     String      @db.Text
   shortDescription String?
   sellerId        String    
-
   sku             String      @unique
-
   brandId         String?
   brand           Brand?      @relation(fields: [brandId], references: [id])
-
   categoryId      String
   category        Category    @relation(fields: [categoryId], references: [id])
 

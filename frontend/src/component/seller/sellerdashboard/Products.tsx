@@ -10,6 +10,8 @@ import { toast } from 'sonner'
 import { createVariants } from '@/redux/productvariants/variants.Action'
 import UpdateProduct from './UpdateProduct'
 import { useRouter } from 'next/navigation'
+import { LoaderOne } from '@/components/ui/loader'
+import ProductLoading from '../skeleton&Loader/ProductLoading'
 
 const EXTENDED = [
   ...topProducts,
@@ -179,6 +181,14 @@ function StepDetails({ onNext, onClose }: { onNext: () => void; onClose: () => v
     } catch (error:any) { 
       toast.error(error)
     } 
+  }
+
+  if(loading){
+    return (
+      <div className='flex jutify-center'>
+    <LoaderOne />
+    </div>
+    )
   }
 
   return (
@@ -357,12 +367,22 @@ function StepMedia({ onBack, onClose }: { onBack: () => void; onClose: () => voi
       await dispatch(uploadProductVariantImages({id: response.data.id, formData})).unwrap();
     }
   }
+    await dispatch(sellerProduct());
     toast.success("Product add Successfully")
-      onClose()
+    onClose()
     } catch (error:any) {
       console.log(error)
       toast.error(error)
     }
+  }
+
+  
+  if(loading){
+    return (
+      <div className='flex jutify-center'>
+    <LoaderOne />
+    </div>
+    )
   }
 
   return (
@@ -471,12 +491,13 @@ export default function Products() {
   const [showModal, setShowModal] = useState(false)
   const dispatch = useAppDispatch();
   const { products , message, error} = useAppSelector((state)=>state.product)
+  const [loading, setLoading] = useState<boolean>(true)
   const router = useRouter()
 
   useEffect(()=>{
     const getProduct =async()=>{
       const res = await dispatch(sellerProduct()).unwrap();
-      console.log(res)
+      setLoading(false)
     }
     getProduct()
   },[dispatch])
@@ -490,6 +511,10 @@ export default function Products() {
     p.sku.toLowerCase().includes(searchTerm)
   );
 });
+
+if(loading){
+  return <ProductLoading/>
+}
 
 return (
   <div className="space-y-6 p-4">
