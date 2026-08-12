@@ -1,4 +1,5 @@
 'use client'
+import { getAllCategories } from '@/redux/category/category.Action'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { getProductbyId } from '@/redux/product/product.Action'
 import { useParams, useRouter } from 'next/navigation'
@@ -21,7 +22,7 @@ interface ProductData {
   stock: string
 }
 
-const CATEGORIES = ['Electronics', 'Clothing', 'Home & Garden', 'Sports', 'Books', 'Toys', 'Beauty', 'Automotive']
+// const CATEGORIES = ['Electronics', 'Clothing', 'Home & Garden', 'Sports', 'Books', 'Toys', 'Beauty', 'Automotive']
 const SUB_CATEGORIES: Record<string, string[]> = {
   Electronics: ['Mobile Phones', 'Laptops', 'Cameras', 'Audio', 'Wearables'],
   Clothing: ["Men's", "Women's", 'Kids', 'Footwear', 'Accessories'],
@@ -344,7 +345,7 @@ function EditTextarea({ label, value, onChange, placeholder, rows = 4 }: {
 }
 
 function EditSelect({ label, value, onChange, options, optional }: {
-  label: string; value: string; onChange: (v: string) => void; options: string[]; optional?: boolean
+  label: string; value: string; onChange: (v: string) => void; options: any[]; optional?: boolean
 }) {
   return (
     <div>
@@ -361,7 +362,7 @@ function EditSelect({ label, value, onChange, options, optional }: {
           onBlur={(e) => { e.currentTarget.style.borderColor = t.inputBorder; e.currentTarget.style.boxShadow = 'none' }}
         >
           {optional && <option value="">None</option>}
-          {options.map((o) => <option key={o} value={o} style={{ background: '#1a0533' }}>{o}</option>)}
+          {options.map((o) => <option key={o.id} value={o.name} style={{ background: '#1a0533' }}>{o?.name}</option>)}
         </select>
         <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2" style={{ color: t.textMuted }}>
           <ChevronIcon />
@@ -402,28 +403,46 @@ export default function UpdateProduct() {
   const [pendingMain, setPendingMain] = useState(0)
   const dispatch = useAppDispatch()
   const { aproduct } = useAppSelector((state)=>state.product)
+  const { categories } = useAppSelector((state)=>state.category)
 
 
   const params = useParams<any>();
-
-  useEffect(()=>{
+  const [product, setProduct] = useState<ProductData>({
+    name: '',
+    sku: '',
+    category: '',
+    subCategory: '',
+    description: '',
+    price: '',
+    stock: '',
+  })
+   useEffect(()=>{
     const getProduct =async()=>{
       if(params){
         const res = await dispatch(getProductbyId(params.id)).unwrap();
+        setProduct({
+            name: res.data?.name,
+            sku: res.data?.sku,
+            category: res.data?.category?.parent?.name,
+            subCategory: res.data?.category?.name,
+            description: "The Seiko SRPD55K1 features a robust stainless steel case with a deep blue sunburst dial. A 42mm diameter and 100m water resistance make it a versatile everyday timepiece. Powered by Seiko's 4R36 automatic movement with 41-hour power reserve.",
+            price: res.data?.variants?.[0]?.price,
+            stock: res.data?.variants?.[0]?.stock,
+        })
       } 
     }
     getProduct()
   },[params.id])
-  
-  const [product, setProduct] = useState<ProductData>({
-    name: aproduct?.name,
-    sku: aproduct?.sku,
-    category: aproduct?.category?.parent?.name,
-    subCategory: aproduct?.category?.name,
-    description: "The Seiko SRPD55K1 features a robust stainless steel case with a deep blue sunburst dial. A 42mm diameter and 100m water resistance make it a versatile everyday timepiece. Powered by Seiko's 4R36 automatic movement with 41-hour power reserve.",
-    price: aproduct.variants?.[0]?.price,
-    stock: aproduct.variants?.[0]?.stock,
-  })
+
+  useEffect(()=>{
+    dispatch(getAllCategories())
+  },[params.id])
+  const CATEGORIES = categories?.filter((c)=>c.parentId === null)??[];
+  const categoryId = categories?.find(
+  c => c.name === product.category
+  )?.id;
+  console.log(categoryId)
+
   const [detailEditMode, setDetailEditMode] = useState(false)
   const [detailSaving, setDetailSaving] = useState(false)
   const [draft, setDraft] = useState<ProductData>(product)
@@ -466,6 +485,7 @@ export default function UpdateProduct() {
   const handleDetailSave = async () => {
     setDetailSaving(true)
     await new Promise((r) => setTimeout(r, 1000))
+    console.log({...draft})
     setProduct({ ...draft }); setDetailSaving(false); setDetailEditMode(false)
     showToast('Product details saved', 'success')
   }
