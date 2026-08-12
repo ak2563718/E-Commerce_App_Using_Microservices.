@@ -53,4 +53,6 @@ router.delete('/images/:id',deleteProductImage)
 
 // 8. upload product variant images
 router.post('/variants/:id/images',upload.array('images',10),uploadVariantImages)
+router.patch('/images/:id',upload.single('newimage'),updateProductImage)
+router.delete('/images/:id',deleteProductImage)
 export default router;

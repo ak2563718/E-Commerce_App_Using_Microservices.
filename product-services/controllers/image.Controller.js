@@ -159,3 +159,52 @@ export const uploadVariantImages = asyncHandler(async (req, res, next) => {
         data: images,
     });
 });
+
+// 2. update product variant images
+export const updateProductVariantImage = asyncHandler(async(req, res, next)=>{
+    const id = req.params.imageId;
+    const oldimages = await prisma.productImage.findUnique({
+        where:{
+            id,
+        }
+    });
+    if(!images){
+        return next(new AppError("No image found", 404))
+    }
+    await cloudinary.uploader.destroy(oldimages.publicId)
+    const uploaded = await cloudinary.uploader.upload(req.file,{folder:"products"})
+    const updateImage = await prisma.productImage.update({
+        where:{
+            id
+        },
+        data:{
+            url:uploaded.secure_url,
+            publicId:uploaded.public_id,
+        }
+    });
+    res.status(200).json({
+        message:"Image uploaded successfully",
+        success:true,
+        data:updateImage,
+    })
+})
+
+// 3. delete variants image
+export const deleteProductVariantImage = asyncHandler(async(req, res, next)=>{
+    const id = req.params.id;
+    const image = await prisma.productImage.findUnique({
+        where:{
+            id
+        }
+    });
+    if(!image){
+        return next(new AppError("Image not found", 404))
+    }
+    await cloudinary.uploader.destroy(image.publicId);
+    await prisma.productImage.delete({where:{id}})
+    res.status(200).json({
+        message:"image deletedsuccessfully",
+        success:true,
+        data:image
+    })
+})
