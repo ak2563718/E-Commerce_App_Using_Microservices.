@@ -4,7 +4,6 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { getProductbyId } from '@/redux/product/product.Action'
 import { useParams, useRouter } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 
 const PLACEHOLDER_IMAGES = [
   'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&h=600&fit=crop&auto=format',
@@ -22,16 +21,11 @@ interface ProductData {
   stock: string
 }
 
-// const CATEGORIES = ['Electronics', 'Clothing', 'Home & Garden', 'Sports', 'Books', 'Toys', 'Beauty', 'Automotive']
-const SUB_CATEGORIES: Record<string, string[]> = {
-  Electronics: ['Mobile Phones', 'Laptops', 'Cameras', 'Audio', 'Wearables'],
-  Clothing: ["Men's", "Women's", 'Kids', 'Footwear', 'Accessories'],
-  'Home & Garden': ['Furniture', 'Decor', 'Kitchen', 'Garden', 'Bedding'],
-  Sports: ['Fitness', 'Outdoor', 'Team Sports', 'Water Sports', 'Cycling'],
-  Books: ['Fiction', 'Non-Fiction', 'Science', 'Arts', 'Children'],
-  Toys: ['Action Figures', 'Board Games', 'Educational', 'Outdoor', 'Dolls'],
-  Beauty: ['Skincare', 'Makeup', 'Haircare', 'Fragrance', 'Tools'],
-  Automotive: ['Parts', 'Accessories', 'Tools', 'Electronics', 'Care'],
+type CategoryOption = {
+  id: string
+  name: string
+  parentId?: string | null
+  children?: CategoryOption[]
 }
 
 // ─── icons ───────────────────────────────────────────────────────────────────
@@ -345,7 +339,7 @@ function EditTextarea({ label, value, onChange, placeholder, rows = 4 }: {
 }
 
 function EditSelect({ label, value, onChange, options, optional }: {
-  label: string; value: string; onChange: (v: string) => void; options: any[]; optional?: boolean
+  label: string; value: string; onChange: (v: string) => void; options: CategoryOption[]; optional?: boolean
 }) {
   return (
     <div>
@@ -401,12 +395,17 @@ export default function UpdateProduct() {
   const [imageSaving, setImageSaving] = useState(false)
   const [pendingImages, setPendingImages] = useState<string[]>([])
   const [pendingMain, setPendingMain] = useState(0)
+  const [detailEditMode, setDetailEditMode] = useState(false)
+  const [detailSaving, setDetailSaving] = useState(false)
+  
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
+  const router = useRouter()
   const dispatch = useAppDispatch()
-  const { aproduct } = useAppSelector((state)=>state.product)
   const { categories } = useAppSelector((state)=>state.category)
 
 
-  const params = useParams<any>();
+  const params = useParams<{ id: string }>();
+  const productId = params.id
   const [product, setProduct] = useState<ProductData>({
     name: '',
     sku: '',
@@ -416,38 +415,47 @@ export default function UpdateProduct() {
     price: '',
     stock: '',
   })
+  const [categoryId, setCategoryId] = useState('')
    useEffect(()=>{
     const getProduct =async()=>{
-      if(params){
-        const res = await dispatch(getProductbyId(params.id)).unwrap();
+      if(productId){
+        const res = await dispatch(getProductbyId(productId)).unwrap();
         setProduct({
             name: res.data?.name,
             sku: res.data?.sku,
-            category: res.data?.category?.parent?.name,
-            subCategory: res.data?.category?.name,
-            description: "The Seiko SRPD55K1 features a robust stainless steel case with a deep blue sunburst dial. A 42mm diameter and 100m water resistance make it a versatile everyday timepiece. Powered by Seiko's 4R36 automatic movement with 41-hour power reserve.",
+            category: res.data?.category?.parent?.name ?? res.data?.category?.name ?? '',
+            subCategory: res.data?.category?.parent ? res.data?.category?.name : '',
+            description: res.data?.description ?? '',
             price: res.data?.variants?.[0]?.price,
             stock: res.data?.variants?.[0]?.stock,
         })
+        setCategoryId(res.data?.category?.id ?? '')
       } 
     }
     getProduct()
-  },[params.id])
+  },[dispatch, productId])
 
   useEffect(()=>{
     dispatch(getAllCategories())
-  },[params.id])
-  const CATEGORIES = categories?.filter((c)=>c.parentId === null)??[];
-  const categoryId = categories?.find(
-  c => c.name === product.category
-  )?.id;
-  console.log(categoryId)
-
-  const [detailEditMode, setDetailEditMode] = useState(false)
-  const [detailSaving, setDetailSaving] = useState(false)
+  },[dispatch])
   const [draft, setDraft] = useState<ProductData>(product)
-  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
-  const router = useRouter()
+  const parentCategories = (categories?.filter((c)=>c.parentId === null) ?? []) as CategoryOption[]
+  const selectedCategory = parentCategories.find((c) => c.name === draft.category)
+  const subCategories = selectedCategory?.children?.length
+    ? selectedCategory.children
+    : ((categories?.filter((c)=>c.parentId === selectedCategory?.id) ?? []) as CategoryOption[])
+
+  const handleCategoryChange = (name: string) => {
+    const category = parentCategories.find((c) => c.name === name)
+    setDraft({ ...draft, category: name, subCategory: '' })
+    setCategoryId(category?.id ?? '')
+  }
+
+  const handleSubCategoryChange = (name: string) => {
+    const subCategory = subCategories.find((c) => c.name === name)
+    setDraft({ ...draft, subCategory: name })
+    setCategoryId(subCategory?.id ?? selectedCategory?.id ?? '')
+  }
 
   const showToast = (message: string, type: 'success' | 'error') => {
     setToast({ message, type })
@@ -485,12 +493,10 @@ export default function UpdateProduct() {
   const handleDetailSave = async () => {
     setDetailSaving(true)
     await new Promise((r) => setTimeout(r, 1000))
-    console.log({...draft})
+    console.log(categoryId)
     setProduct({ ...draft }); setDetailSaving(false); setDetailEditMode(false)
     showToast('Product details saved', 'success')
   }
-
-  const subCategories = SUB_CATEGORIES[detailEditMode ? draft.category : product.category] || []
 
   return (
     <div className="min-h-full overflow-y-auto"
@@ -619,13 +625,13 @@ export default function UpdateProduct() {
 
             <div>
               {detailEditMode
-                ? <EditSelect label="Category" value={draft.category} onChange={(v) => setDraft({ ...draft, category: v, subCategory: '' })} options={CATEGORIES} />
+                ? <EditSelect label="Category" value={draft.category} onChange={handleCategoryChange} options={parentCategories} />
                 : <ReadonlyField label="Category" value={product.category} />}
             </div>
 
             <div>
               {detailEditMode
-                ? <EditSelect label="Sub-category" value={draft.subCategory} onChange={(v) => setDraft({ ...draft, subCategory: v })} options={subCategories} optional />
+                ? <EditSelect label="Sub-category" value={draft.subCategory} onChange={handleSubCategoryChange} options={subCategories} optional />
                 : <ReadonlyField label="Sub-category" value={product.subCategory} />}
             </div>
 
