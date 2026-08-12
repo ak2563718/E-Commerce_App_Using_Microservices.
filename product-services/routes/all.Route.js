@@ -4,7 +4,7 @@ import { createBrand, deleteBrand, getBrand, getbyId, updateBrand } from '../con
 import { createProduct, deleteProductbyId, getProdctbyId, getProduct, getProductbySlug, getProductofSeller, updateProduct } from '../controllers/product.Controller.js';
 import { createVariant, deleteVariant, getVariants, updateVariant } from '../controllers/variant.Controller.js';
 import { createAttributes, createAttributesvalue, deleteAttributes, deleteAttributesvalue, updateAttributes, updateAttributesValue } from '../controllers/attribute.Controller.js';
-import { uploadProductImages, uploadVariantImages } from '../controllers/image.Controller.js';
+import { deleteProductImage, updateProductImage, uploadProductImages, uploadVariantImages } from '../controllers/image.Controller.js';
 import { upload } from '../config/multer.js';
 import { authMiddleware, sellerMiddleware } from '../middlewares/authMiddleware.js';
 const router = express.Router();
@@ -48,6 +48,8 @@ router.delete('/values/:id',deleteAttributesvalue)
 
 // 7. upload product images
 router.post('/products/:id/images',upload.array('images',10),uploadProductImages)
+router.patch('/images/:id',upload.single('newimage'),updateProductImage)
+router.delete('/images/:id',deleteProductImage)
 
 // 8. upload product variant images
 router.post('/variants/:id/images',upload.array('images',10),uploadVariantImages)

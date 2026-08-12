@@ -85,7 +85,27 @@ export const updateProductImage = asyncHandler(async(req, res, next)=>{
     res.status(200).json({
         message:"Image uploaded successfully",
         success:true,
-        updateImage,
+        data:updateImage,
+    })
+})
+
+// 3. delete image 
+export const deleteProductImage = asyncHandler(async(req, res, next)=>{
+    const id = req.params.id;
+    const image = await prisma.productImage.findUnique({
+        where:{
+            id
+        }
+    });
+    if(!image){
+        return next(new AppError("Image not found", 404))
+    }
+    await cloudinary.uploader.destroy(image.publicId);
+    await prisma.productImage.delete({where:{id}})
+    res.status(200).json({
+        message:"image deletedsuccessfully",
+        success:true,
+        data:image
     })
 })
 
