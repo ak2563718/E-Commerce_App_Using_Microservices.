@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import api from "@/lib/axios";
 
 const type_uri = process.env.NEXT_PUBLIC_PRODUCT_URI;
 
@@ -143,6 +144,43 @@ export const uploadProductImage = createAsyncThunk<any, any, { rejectValue:strin
         }
     }
 )
+
+// 7. update product images ,single image
+export const updateProudctImage = createAsyncThunk<any, any, {rejectValue:string}>(
+    'update/productImage',
+    async({id, formData}, { rejectWithValue })=>{
+        try {
+            const { data } = await api.patch(`${type_uri}/images/${id}`,formData,{
+                headers:{'Content-Type':'application/json'},
+                withCredentials:true,
+            })
+            return data;
+        } catch (error) {
+            if(axios.isAxiosError(error)){
+                return rejectWithValue(error.response?.data.message)
+            }
+            return rejectWithValue("something went wrong")
+        }
+    }
+)
+
+// 8. delete product images, 
+export const deleteProductImage = createAsyncThunk<any, string, {rejectValue:string}>(
+    'delete/productImage',
+    async(id, { rejectWithValue })=>{
+        try {
+            const { data } = await api.delete(`${type_uri}/images/${id}`,{
+                headers:{'Content-Type':'application/json'},
+                withCredentials:true,
+        })
+            return data;
+        } catch (error) {
+            if(axios.isAxiosError(error)){
+                return rejectWithValue(error.response?.data.meessage)
+            }
+            return rejectWithValue('something went wrong')
+    }
+})
 
 // 8. upload productimages variant, here id= productvariants id
 export const uploadProductVariantImages = createAsyncThunk<any, any, {rejectValue:string}>(

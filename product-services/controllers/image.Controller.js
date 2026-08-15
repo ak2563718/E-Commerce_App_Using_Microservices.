@@ -82,6 +82,7 @@ export const updateProductImage = asyncHandler(async(req, res, next)=>{
             publicId:uploaded.public_id,
         }
     });
+    fs.unlinkSync(req.file)
     res.status(200).json({
         message:"Image uploaded successfully",
         success:true,
@@ -182,6 +183,7 @@ export const updateProductVariantImage = asyncHandler(async(req, res, next)=>{
             publicId:uploaded.public_id,
         }
     });
+    fs.unlinkSync(req.file)
     res.status(200).json({
         message:"Image uploaded successfully",
         success:true,
