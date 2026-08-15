@@ -1,15 +1,11 @@
 'use client'
 import { getAllCategories } from '@/redux/category/category.Action'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
-import { getProductbyId } from '@/redux/product/product.Action'
+import { getProductbyId, updateProductbyId } from '@/redux/product/product.Action'
+import { uploadProductImage } from '@/redux/product/product.Type.Action'
+import { updateVariants } from '@/redux/productvariants/variants.Action'
 import { useParams, useRouter } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
-
-const PLACEHOLDER_IMAGES = [
-  'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&h=600&fit=crop&auto=format',
-  'https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=600&h=600&fit=crop&auto=format',
-  'https://images.unsplash.com/photo-1434056886845-dac89ffe9b56?w=600&h=600&fit=crop&auto=format',
-]
 
 interface ProductData {
   name: string
@@ -26,6 +22,17 @@ type CategoryOption = {
   name: string
   parentId?: string | null
   children?: CategoryOption[]
+}
+
+type ProductImageData = {
+  url: string
+}
+
+type ProductVariantData = {
+  id?: string
+  sku?: string
+  price?: string | number
+  stock?: string | number
 }
 
 // ─── icons ───────────────────────────────────────────────────────────────────
@@ -389,12 +396,13 @@ function Toast({ message, type }: { message: string; type: 'success' | 'error' }
 // ─── main component ───────────────────────────────────────────────────────────
 
 export default function UpdateProduct() {
-  const [images, setImages] = useState<string[]>(PLACEHOLDER_IMAGES)
+  const [images, setImages] = useState<string[]>([])
   const [mainImageIndex, setMainImageIndex] = useState(0)
   const [imageEditMode, setImageEditMode] = useState(false)
   const [imageSaving, setImageSaving] = useState(false)
   const [pendingImages, setPendingImages] = useState<string[]>([])
   const [pendingMain, setPendingMain] = useState(0)
+  const [pendingImageFiles, setPendingImageFiles] = useState<Record<string, File>>({})
   const [detailEditMode, setDetailEditMode] = useState(false)
   const [detailSaving, setDetailSaving] = useState(false)
   
@@ -416,20 +424,25 @@ export default function UpdateProduct() {
     stock: '',
   })
   const [categoryId, setCategoryId] = useState('')
+  const [variantId, setVariantId] = useState('')
    useEffect(()=>{
     const getProduct =async()=>{
       if(productId){
         const res = await dispatch(getProductbyId(productId)).unwrap();
+        const variant = res.data?.variants?.[0] as ProductVariantData | undefined
         setProduct({
-            name: res.data?.name,
-            sku: res.data?.sku,
+            name: res.data?.name ?? '',
+            sku: res.data?.sku ?? '',
             category: res.data?.category?.parent?.name ?? res.data?.category?.name ?? '',
             subCategory: res.data?.category?.parent ? res.data?.category?.name : '',
             description: res.data?.description ?? '',
-            price: res.data?.variants?.[0]?.price,
-            stock: res.data?.variants?.[0]?.stock,
+            price: String(variant?.price ?? ''),
+            stock: String(variant?.stock ?? ''),
         })
         setCategoryId(res.data?.category?.id ?? '')
+        setVariantId(variant?.id ?? '')
+        const image = (res.data?.images as ProductImageData[] | undefined)?.map((i)=>i.url) ?? []
+        setImages(image)
       } 
     }
     getProduct()
@@ -462,40 +475,121 @@ export default function UpdateProduct() {
     setTimeout(() => setToast(null), 3000)
   }
 
-  const handleImageEditStart = () => { setPendingImages([...images]); setPendingMain(mainImageIndex); setImageEditMode(true) }
-  const handleImageEditCancel = () => { setImageEditMode(false); setPendingImages([]) }
+  const handleImageEditStart = () => { setPendingImages([...images]); setPendingMain(mainImageIndex); setPendingImageFiles({}); setImageEditMode(true) }
+  const handleImageEditCancel = () => { setImageEditMode(false); setPendingImages([]); setPendingImageFiles({}) }
   const handleImageSave = async () => {
-    setImageSaving(true)
-    await new Promise((r) => setTimeout(r, 1200))
-    setImages(pendingImages); setMainImageIndex(pendingMain)
-    setImageSaving(false); setImageEditMode(false)
-    showToast('Images updated successfully', 'success')
+    try {
+      setImageSaving(true)
+      const files = Object.values(pendingImageFiles)
+
+      if (files.length > 0) {
+        const formData = new FormData()
+        files.forEach((file) => formData.append('images', file))
+        const res = await dispatch(uploadProductImage({ id: productId, formData })).unwrap()
+        const updatedImages = (res.data as ProductImageData[] | undefined)?.map((image) => image.url) ?? pendingImages
+        setImages(updatedImages)
+      } else {
+        setImages(pendingImages)
+      }
+
+      setMainImageIndex(pendingMain)
+      setImageEditMode(false)
+      setPendingImageFiles({})
+      showToast('Images updated successfully', 'success')
+    } catch (error) {
+      showToast(typeof error === 'string' ? error : 'Image update failed', 'error')
+    } finally {
+      setImageSaving(false)
+    }
   }
 
   const activeImages = imageEditMode ? pendingImages : images
   const activeMain = imageEditMode ? pendingMain : mainImageIndex
 
-  const handleAddImage = (file: File) => { const url = URL.createObjectURL(file); setPendingImages((p) => [...p, url]) }
+  const handleAddImage = (file: File) => {
+    const url = URL.createObjectURL(file)
+    setPendingImageFiles((prev) => ({ ...prev, [url]: file }))
+    setPendingImages((p) => [...p, url])
+  }
   const handleRemoveImage = (i: number) => {
     setPendingImages((prev) => {
       const next = prev.filter((_, idx) => idx !== i)
       if (pendingMain >= next.length) setPendingMain(Math.max(0, next.length - 1))
+      const removed = prev[i]
+      if (removed) {
+        setPendingImageFiles((prev) => {
+          const next = { ...prev }
+          delete next[removed]
+          return next
+        })
+      }
       return next
     })
   }
   const handleReplaceImage = (i: number, file: File) => {
     const url = URL.createObjectURL(file)
-    setPendingImages((p) => p.map((img, idx) => (idx === i ? url : img)))
+    setPendingImages((p) => {
+      const oldUrl = p[i]
+      if (oldUrl) {
+        setPendingImageFiles((prev) => {
+          const next = { ...prev, [url]: file }
+          delete next[oldUrl]
+          return next
+        })
+      } else {
+        setPendingImageFiles((prev) => ({ ...prev, [url]: file }))
+      }
+      return p.map((img, idx) => (idx === i ? url : img))
+    })
   }
 
   const handleDetailEditStart = () => { setDraft({ ...product }); setDetailEditMode(true) }
   const handleDetailEditCancel = () => { setDetailEditMode(false); setDraft(product) }
   const handleDetailSave = async () => {
-    setDetailSaving(true)
-    await new Promise((r) => setTimeout(r, 1000))
-    console.log(categoryId)
-    setProduct({ ...draft }); setDetailSaving(false); setDetailEditMode(false)
-    showToast('Product details saved', 'success')
+    try {
+      setDetailSaving(true)
+
+      const productRes = await dispatch(updateProductbyId({
+        id: productId,
+        form: {
+          name: draft.name,
+          sku: draft.sku,
+          description: draft.description,
+          categoryId,
+        },
+      })).unwrap()
+
+      if (variantId) {
+        await dispatch(updateVariants({
+          id: variantId,
+          form: {
+            sku: draft.sku,
+            price: draft.price,
+            stock: draft.stock,
+          },
+        })).unwrap()
+      }
+
+      const refreshed = await dispatch(getProductbyId(productId)).unwrap()
+      const variant = refreshed.data?.variants?.[0] as ProductVariantData | undefined
+      setProduct({
+        name: refreshed.data?.name ?? draft.name,
+        sku: refreshed.data?.sku ?? draft.sku,
+        category: refreshed.data?.category?.parent?.name ?? refreshed.data?.category?.name ?? draft.category,
+        subCategory: refreshed.data?.category?.parent ? refreshed.data?.category?.name : '',
+        description: refreshed.data?.description ?? draft.description,
+        price: String(variant?.price ?? draft.price),
+        stock: String(variant?.stock ?? draft.stock),
+      })
+      setCategoryId(refreshed.data?.category?.id ?? categoryId)
+      setVariantId(variant?.id ?? variantId)
+      setDetailEditMode(false)
+      showToast(productRes.message ?? 'Product details saved', 'success')
+    } catch (error) {
+      showToast(typeof error === 'string' ? error : 'Product update failed', 'error')
+    } finally {
+      setDetailSaving(false)
+    }
   }
 
   return (

@@ -3,8 +3,34 @@ import axios  from "axios";
 
 const variant_uri = process.env.NEXT_PUBLIC_PRODUCT_URI;
 
+type Variant = {
+    id:string,
+    [key:string]:unknown,
+}
+
+type ApiResponse<T> = {
+    success:boolean,
+    message:string,
+    data:T,
+}
+
+type VariantForm = {
+    sku?:string,
+    price?:string,
+    stock?:string,
+}
+
+type ProductVariantPayload = VariantForm & {
+    id:string,
+}
+
+type UpdateVariantPayload = {
+    id:string,
+    form:VariantForm,
+}
+
 // 1. create product variants
-export const createVariants = createAsyncThunk<any, any, {rejectValue:string}>(
+export const createVariants = createAsyncThunk<ApiResponse<Variant>, ProductVariantPayload, {rejectValue:string}>(
     'post/variants',
     async({id, sku, price, stock}, { rejectWithValue })=>{
         try {
@@ -27,7 +53,7 @@ export const createVariants = createAsyncThunk<any, any, {rejectValue:string}>(
 )
 
 // 2. get product variants
-export const getVariats = createAsyncThunk<any, string, {rejectValue:string}>(
+export const getVariats = createAsyncThunk<ApiResponse<Variant[]>, string, {rejectValue:string}>(
     'get/varinats',
     async(id, { rejectWithValue})=>{
         try {
@@ -46,12 +72,12 @@ export const getVariats = createAsyncThunk<any, string, {rejectValue:string}>(
 )
 
 // 3. update product variants 
-export const updateVariants = createAsyncThunk<any, any, {rejectValue:string}>(
+export const updateVariants = createAsyncThunk<ApiResponse<Variant>, UpdateVariantPayload, {rejectValue:string}>(
     'patch/variants',
     async({id, form}, {rejectWithValue})=>{
         try {
-            const { data } = await axios.patch(`${variant_uri}/variants/${id}`,{form},{
-                headers:{'Content-Type':'applicaton/json'},
+            const { data } = await axios.patch(`${variant_uri}/variants/${id}`,form,{
+                headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
             return data;
@@ -65,7 +91,7 @@ export const updateVariants = createAsyncThunk<any, any, {rejectValue:string}>(
 )
 
 // 4. delete product variants
-export const deleteVariants = createAsyncThunk<any, string, {rejectValue:string}>(
+export const deleteVariants = createAsyncThunk<ApiResponse<Variant>, string, {rejectValue:string}>(
     'delete/variants',
     async(id, {rejectWithValue})=>{
         try {
