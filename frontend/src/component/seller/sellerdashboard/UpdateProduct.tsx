@@ -2,7 +2,7 @@
 import { getAllCategories } from '@/redux/category/category.Action'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { getProductbyId, updateProductbyId } from '@/redux/product/product.Action'
-import { uploadProductImage } from '@/redux/product/product.Type.Action'
+import { deleteProductImage, updateProudctImage, uploadProductImage } from '@/redux/product/product.Type.Action'
 import { updateVariants } from '@/redux/productvariants/variants.Action'
 import { useParams, useRouter } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
@@ -396,7 +396,7 @@ function Toast({ message, type }: { message: string; type: 'success' | 'error' }
 // ─── main component ───────────────────────────────────────────────────────────
 
 export default function UpdateProduct() {
-  const [images, setImages] = useState<string[]>([])
+  const [images, setImages] = useState<any[]>([])
   const [mainImageIndex, setMainImageIndex] = useState(0)
   const [imageEditMode, setImageEditMode] = useState(false)
   const [imageSaving, setImageSaving] = useState(false)
@@ -425,6 +425,7 @@ export default function UpdateProduct() {
   })
   const [categoryId, setCategoryId] = useState('')
   const [variantId, setVariantId] = useState('')
+  const [refresh, setRefresh]= useState<boolean>(false)
    useEffect(()=>{
     const getProduct =async()=>{
       if(productId){
@@ -441,12 +442,12 @@ export default function UpdateProduct() {
         })
         setCategoryId(res.data?.category?.id ?? '')
         setVariantId(variant?.id ?? '')
-        const image = (res.data?.images as ProductImageData[] | undefined)?.map((i)=>i.url) ?? []
+        const image = (res.data?.images as ProductImageData[] | undefined)?? [];
         setImages(image)
       } 
     }
     getProduct()
-  },[dispatch, productId])
+  },[dispatch, productId, refresh])
 
   useEffect(()=>{
     dispatch(getAllCategories())
@@ -486,7 +487,7 @@ export default function UpdateProduct() {
         const formData = new FormData()
         files.forEach((file) => formData.append('images', file))
         const res = await dispatch(uploadProductImage({ id: productId, formData })).unwrap()
-        const updatedImages = (res.data as ProductImageData[] | undefined)?.map((image) => image.url) ?? pendingImages
+        const updatedImages = (res.data as ProductImageData[] | undefined) ?? pendingImages
         setImages(updatedImages)
       } else {
         setImages(pendingImages)
@@ -511,36 +512,19 @@ export default function UpdateProduct() {
     setPendingImageFiles((prev) => ({ ...prev, [url]: file }))
     setPendingImages((p) => [...p, url])
   }
-  const handleRemoveImage = (i: number) => {
-    setPendingImages((prev) => {
-      const next = prev.filter((_, idx) => idx !== i)
-      if (pendingMain >= next.length) setPendingMain(Math.max(0, next.length - 1))
-      const removed = prev[i]
-      if (removed) {
-        setPendingImageFiles((prev) => {
-          const next = { ...prev }
-          delete next[removed]
-          return next
-        })
-      }
-      return next
-    })
+  const handleRemoveImage = async(imgId:string) => {
+    setPendingImages((prev)=>prev.filter((c:any)=>c.id !== imgId))
+    const res = await dispatch(deleteProductImage(imgId)).unwrap();
+    setRefresh(true)
   }
-  const handleReplaceImage = (i: number, file: File) => {
-    const url = URL.createObjectURL(file)
-    setPendingImages((p) => {
-      const oldUrl = p[i]
-      if (oldUrl) {
-        setPendingImageFiles((prev) => {
-          const next = { ...prev, [url]: file }
-          delete next[oldUrl]
-          return next
-        })
-      } else {
-        setPendingImageFiles((prev) => ({ ...prev, [url]: file }))
-      }
-      return p.map((img, idx) => (idx === i ? url : img))
-    })
+  const handleReplaceImage = async(imgId:string, file: File) => {
+    console.log(imgId, file)
+    const formData = new FormData();
+    formData.append('newimage',file)
+    const res = await dispatch(updateProudctImage({id:imgId, formData})).unwrap();
+    console.log(res)
+    setPendingImages((prev)=> prev?.map((i:any)=>i.id === imgId ?
+      res.data : i))
   }
 
   const handleDetailEditStart = () => { setDraft({ ...product }); setDetailEditMode(true) }
@@ -673,16 +657,16 @@ export default function UpdateProduct() {
           />
 
           <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))' }}>
-            {activeImages.map((src, i) => (
+            {activeImages.map((img, i) => (
               <ImageCard
-                key={src + i}
-                src={src}
+                key={img?.id}
+                src={img?.url}
                 index={i}
                 isMain={i === activeMain}
                 editMode={imageEditMode}
                 onSetMain={() => imageEditMode ? setPendingMain(i) : setMainImageIndex(i)}
-                onRemove={() => handleRemoveImage(i)}
-                onReplace={(f) => handleReplaceImage(i, f)}
+                onRemove={() => handleRemoveImage(img?.id)}
+                onReplace={(f) => handleReplaceImage(img?.id, f)}
               />
             ))}
             {imageEditMode && activeImages.length < 5 && <AddImageSlot onAdd={handleAddImage} />}

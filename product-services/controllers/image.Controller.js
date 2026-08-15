@@ -62,17 +62,17 @@ export const uploadProductImages = asyncHandler(async (req, res, next) => {
 
 // 2. update image controller
 export const updateProductImage = asyncHandler(async(req, res, next)=>{
-    const id = req.params.imageId;
+    const id = req.params.id;
     const oldimages = await prisma.productImage.findUnique({
         where:{
             id,
         }
     });
-    if(!images){
+    if(!oldimages){
         return next(new AppError("No image found", 404))
     }
     await cloudinary.uploader.destroy(oldimages.publicId)
-    const uploaded = await cloudinary.uploader.upload(req.file,{folder:"products"})
+    const uploaded = await cloudinary.uploader.upload(req.file.path,{folder:"products"})
     const updateImage = await prisma.productImage.update({
         where:{
             id
@@ -82,7 +82,7 @@ export const updateProductImage = asyncHandler(async(req, res, next)=>{
             publicId:uploaded.public_id,
         }
     });
-    fs.unlinkSync(req.file)
+    fs.unlinkSync(req.file.path)
     res.status(200).json({
         message:"Image uploaded successfully",
         success:true,

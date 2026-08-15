@@ -151,7 +151,6 @@ export const updateProudctImage = createAsyncThunk<any, any, {rejectValue:string
     async({id, formData}, { rejectWithValue })=>{
         try {
             const { data } = await api.patch(`${type_uri}/images/${id}`,formData,{
-                headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
             return data;
