@@ -6,6 +6,9 @@ import {
 } from 'lucide-react'
 import type { NavItem } from './SellerDashboard'
 import { notifications } from './data'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import { useEffect } from 'react'
+import { getProfile } from '@/redux/user/user.Action'
 
 interface Props {
   active: NavItem
@@ -23,6 +26,14 @@ const NAV: { id: NavItem; label: string; icon: typeof LayoutDashboard }[] = [
 ]
 
 export default function Sidebar({ active, setActive, open, setOpen,  }: Props) {
+  const dispatch = useAppDispatch()
+   useEffect(()=>{
+       const userProfile = async()=>{
+        const res = await dispatch(getProfile());
+       }
+       userProfile();
+    },[])
+  const { user } = useAppSelector((state)=>state.user);
   return (
     <aside
       className="flex flex-col shrink-0 transition-all duration-300 relative"
@@ -64,10 +75,10 @@ export default function Sidebar({ active, setActive, open, setOpen,  }: Props) {
             className="w-9 h-9 rounded-full flex items-center justify-center text-white font-black text-sm shrink-0"
             style={{ background: 'linear-gradient(135deg, #e91e8c, #a855f7)' }}
           >
-            PS
+            { user?.firstName?.[0].toUpperCase()}{user?.lastName?.[0].toUpperCase()}
           </div>
           <div className="overflow-hidden">
-            <div className="text-white text-xs font-bold truncate">Priya Sharma</div>
+            <div className="text-white text-xs font-bold truncate">{user?.firstName}{user?.lastName}</div>
             <div className="flex items-center gap-1 mt-0.5">
               <Star className="w-2.5 h-2.5" style={{ color: '#fbbf24', fill: '#fbbf24' }} />
               <span className="text-xs" style={{ color: 'rgba(255,255,255,0.45)' }}>4.9 · Top Seller</span>
@@ -81,7 +92,7 @@ export default function Sidebar({ active, setActive, open, setOpen,  }: Props) {
             className="w-9 h-9 rounded-full flex items-center justify-center text-white font-black text-sm"
             style={{ background: 'linear-gradient(135deg, #e91e8c, #a855f7)' }}
           >
-            PS
+            { user?.firstName?.[0].toUpperCase()}{user?.lastName?.[0].toUpperCase()}
           </div>
         </div>
       )}

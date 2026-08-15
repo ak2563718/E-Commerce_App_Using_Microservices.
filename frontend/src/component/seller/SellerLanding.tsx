@@ -1,4 +1,5 @@
 'use client'
+import { useAppSelector } from '@/redux/hooks'
 import { Store, TrendingUp, Package, Star, Shield, Zap, Users, ArrowRight, ChevronRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
@@ -45,6 +46,11 @@ const STATS = [
 
 export default function SellerLanding() {
   const router = useRouter()
+  const { user } = useAppSelector((state)=>state.auth)
+  console.log(user)
+  if(user.role === 'SELLER'){
+    return router.replace('/seller/dashboard')
+  }
   return (
     <div className="min-h-screen w-full" style={{ background: '#faf5ff', fontFamily: 'DM Sans, sans-serif' }}>
     
