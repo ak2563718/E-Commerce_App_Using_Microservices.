@@ -78,7 +78,7 @@ export default function Sidebar({ active, setActive, open, setOpen,  }: Props) {
             { user?.firstName?.[0].toUpperCase()}{user?.lastName?.[0].toUpperCase()}
           </div>
           <div className="overflow-hidden">
-            <div className="text-white text-xs font-bold truncate">{user?.firstName}{user?.lastName}</div>
+            <div className="text-white text-xs font-bold truncate">{user?.firstName}{" "}{user?.lastName}</div>
             <div className="flex items-center gap-1 mt-0.5">
               <Star className="w-2.5 h-2.5" style={{ color: '#fbbf24', fill: '#fbbf24' }} />
               <span className="text-xs" style={{ color: 'rgba(255,255,255,0.45)' }}>4.9 · Top Seller</span>
