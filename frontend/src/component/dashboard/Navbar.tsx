@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from 'react'
 import ProfileDropdown from './ProfileDropdown'
 import { authCheckSession } from '@/redux/auth/auth.Action'
 import LoadingSkeleton from './LoadingSkeleton'
+import { Search, SearchIcon } from 'lucide-react'
 
 interface NavbarProps {
   onLoginClick?: () => void
@@ -66,6 +67,11 @@ export default function Navbar({
     }
     fetchUserdetails();
   },[])
+
+  const handleSubmit=(e: React.FormEvent<HTMLFormElement>)=>{
+    e.preventDefault()
+    router.push(`/search?query=${search}`)
+  }
   
 
   if(loading){
@@ -97,6 +103,7 @@ export default function Navbar({
 
         {/* Search Bar */}
         <div className="flex-1 max-w-xl mx-2 sm:mx-4">
+          <form action="" onSubmit={handleSubmit}>
           <div className="relative group">
             <svg
               className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none transition-colors duration-150"
@@ -126,17 +133,14 @@ export default function Navbar({
             />
             {search && (
               <button
-                onClick={() => setSearch('')}
+                type='submit'
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 hover:text-pink-400 transition-colors"
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
+                <SearchIcon className='w-4 h-4'/>
               </button>
             )}
           </div>
+          </form>
         </div>
 
         {/* Right Actions */}
