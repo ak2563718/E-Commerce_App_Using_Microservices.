@@ -199,3 +199,23 @@ export const uploadProductVariantImages = createAsyncThunk<any, any, {rejectValu
         }
     }
 )
+
+
+// 9. get all brand names:
+export const getAllBrands = createAsyncThunk<any, void, {rejectValue:string}>(
+    'get/brands',
+    async(_, {rejectWithValue})=>{
+        try {
+            const { data } = await axios.get(`${type_uri}/brands`,{
+                headers:{'Content-Type':"application/json"},
+                withCredentials:true,
+            })
+            return data;
+        } catch (error) {
+            if(axios.isAxiosError(error)){
+                return rejectWithValue(error.response?.data.message)
+            }
+            return rejectWithValue("something went wrong")
+        }
+    }
+)

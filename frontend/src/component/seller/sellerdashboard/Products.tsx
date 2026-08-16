@@ -5,7 +5,7 @@ import { topProducts } from './data'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { getAllCategories } from '@/redux/category/category.Action'
 import { createProduct, deleteProductbyId, getAllProducts, sellerProduct } from '@/redux/product/product.Action'
-import { uploadProductImage, uploadProductVariantImages } from '@/redux/product/product.Type.Action'
+import { getAllBrands, uploadProductImage, uploadProductVariantImages } from '@/redux/product/product.Type.Action'
 import { toast } from 'sonner'
 import { createVariants } from '@/redux/productvariants/variants.Action'
 import UpdateProduct from './UpdateProduct'
@@ -135,6 +135,8 @@ function StepDetails({ onNext, onClose }: { onNext: () => void; onClose: () => v
   const [desc, setDesc] = useState('')
   const [catOpen, setCatOpen] = useState(false)
   const [subCatOpen, setSubCatOpen] = useState(false)
+  const [brand, setBrand]= useState<any[]>([])
+  const [brandOpen, setBrandOpen] = useState(false)
   const [optional , setOptional ] = useState({
     brandId:'',
     seoTitle:'',
@@ -152,6 +154,15 @@ function StepDetails({ onNext, onClose }: { onNext: () => void; onClose: () => v
   useEffect(() => {
     dispatch(getAllCategories())
   }, [dispatch])
+
+  useEffect(()=>{
+     const getbrands=async()=>{
+      const res = await dispatch(getAllBrands()).unwrap();
+      setBrand(res.data)
+     }
+     getbrands()
+  },[dispatch])
+  
 
   // Derived values — computed on every render, no side effects needed
   const topLevelCategories = categories?.filter((c) => c.parentId === null) ?? []
@@ -177,9 +188,23 @@ function StepDetails({ onNext, onClose }: { onNext: () => void; onClose: () => v
   }
   const handleContinue=async()=>{
     try {
-      const res = await dispatch(createProduct({name,sku,description:desc,categoryId:subCategoryId?subCategoryId:categoryId})).unwrap()
-      toast.success(res.message)
-      onNext()
+      const formdata = {name, 
+                        sku, 
+                        descriptiption:desc, 
+                        categoryId:subCategoryId?subCategoryId:categoryId, 
+                        brandId:optional.brandId,
+                        seoTitle:optional.seoTitle,
+                        seoDescritpion:optional.seoDescription,
+                        weight:optional.weight,
+                        height:optional.height,
+                        length:optional.length,
+                        width:optional.width,
+                        taxPercenteage:optional.taxPercentage
+                      }
+      console.log(formdata)
+      // const res = await dispatch(createProduct({name,sku,description:desc,categoryId:subCategoryId?subCategoryId:categoryId})).unwrap()
+      // toast.success(res.message)
+      // onNext()
     } catch (error:any) { 
       toast.error(error)
     } 
@@ -194,7 +219,7 @@ function StepDetails({ onNext, onClose }: { onNext: () => void; onClose: () => v
   }
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-5 ">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="font-black text-gray-900 text-lg" style={{ fontFamily: 'Outfit, sans-serif' }}>Add New Product</h2>
@@ -291,6 +316,80 @@ function StepDetails({ onNext, onClose }: { onNext: () => void; onClose: () => v
         </div>
       )}
 
+      {/* Brand dropdown */}
+      <div className="flex flex-col gap-1 relative">
+        <Label>Brand</Label>
+
+        <button
+          onClick={() => setBrandOpen(o => !o)}
+          className="w-full px-3 py-2.5 rounded-xl text-sm text-left flex items-center justify-between transition-all"
+          style={{
+            border: brandOpen
+              ? '1.5px solid #7c3aed'
+              : '1.5px solid #e9d5ff',
+
+            background: brandOpen
+              ? '#fff'
+              : '#faf5ff',
+
+            color: optional.brandId
+              ? '#111'
+              : '#9ca3af',
+          }}
+        >
+          {brand.find((b: any) => b.id === optional.brandId)?.name ||
+            'Select a brand'}
+
+          <ChevronDown
+            className="w-4 h-4 text-gray-400 transition-transform"
+            style={{
+              transform: brandOpen ? 'rotate(180deg)' : 'none'
+            }}
+          />
+        </button>
+
+        {brandOpen && (
+          <div
+            className="absolute top-full left-0 right-0 mt-1 rounded-xl overflow-hidden z-20 flex flex-col"
+            style={{
+              background: '#fff',
+              border: '1.5px solid #e9d5ff',
+              boxShadow: '0 8px 24px rgba(124,58,237,0.15)',
+              maxHeight: 200,
+              overflowY: 'auto'
+            }}
+          >
+            {brand.map((b: any) => (
+              <button
+                key={b.id}
+                onClick={() => {
+                  setOptional(prev => ({
+                    ...prev,
+                    brandId: b.id
+                  }));
+
+                  setBrandOpen(false);
+                }}
+                className="px-4 py-2.5 text-sm text-left transition-colors hover:bg-purple-50"
+                style={{
+                  color:
+                    optional.brandId === b.id
+                      ? '#7c3aed'
+                      : '#374151',
+
+                  fontWeight:
+                    optional.brandId === b.id
+                      ? 600
+                      : 400
+                }}
+              >
+                {b.name}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
       <div className="flex flex-col gap-1">
         <Label>Description<span className='text-red-700 ' aria-hidden="true">*</span></Label>
         <textarea
@@ -316,7 +415,17 @@ function StepDetails({ onNext, onClose }: { onNext: () => void; onClose: () => v
          placeholder="Describe you product seo-description"
          value={optional.seoDescription}
          onChange={(e)=>setOptional((prev)=>({...prev,seoDescription:e.target.value}))}
+         rows={4}
+         className="w-full px-3 py-2.5 rounded-xl text-sm outline-none resize-none transition-all"
+         style={{ border: '1.5px solid #e9d5ff', background: '#faf5ff', color: '#111', lineHeight: 1.6 }}
+         onFocus={e => { e.currentTarget.style.border = '1.5px solid #7c3aed'; e.currentTarget.style.background = '#fff' }}
+         onBlur={e => { e.currentTarget.style.border = '1.5px solid #e9d5ff'; e.currentTarget.style.background = '#faf5ff' }}
          />
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <Label>Tax-Percentage</Label>
+        <Input placeholder='Enter tax on product' value={optional.taxPercentage} onChange={(v)=>setOptional((prev)=>({...prev, taxPercentage:v}))} />
       </div>
 
       <div className='flex gap-3 justify-between'>
@@ -510,7 +619,7 @@ function AddProductModal({ onClose }: { onClose: () => void }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(26,5,51,0.55)', backdropFilter: 'blur(4px)' }}>
       <div
         className="bg-white rounded-2xl w-full flex flex-col overflow-y-auto"
-        style={{ maxWidth: 500, maxHeight: '90vh', boxShadow: '0 24px 64px rgba(124,58,237,0.28)', padding: '28px' }}
+        style={{ maxWidth: 600, maxHeight: '95vh', boxShadow: '0 24px 64px rgba(124,58,237,0.28)', padding: '28px' }}
       >
         {step === 1
           ? <StepDetails onNext={() => setStep(2)} onClose={onClose} />
