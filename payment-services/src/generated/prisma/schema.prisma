@@ -1,0 +1,94 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum PaymentMethod {
+  CARD
+  UPI
+  NET_BANKING
+  WALLET
+  COD
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  SUCCESS
+  FAILED
+  CANCELLED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum Currency {
+  INR
+  USD
+  EUR
+}
+
+model Payment {
+  id String @id @default(cuid())
+
+  orderId String @unique
+  userId  String
+
+  amount   Decimal  @db.Decimal(10, 2)
+  currency Currency @default(INR)
+
+  paymentMethod PaymentMethod
+
+  paymentStatus PaymentStatus @default(PENDING)
+
+  transactionId    String? @unique
+  paymentGatewayId String?
+
+  gatewayResponse Json?
+
+  paidAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  refunds Refund[]
+
+  @@index([userId])
+  @@index([paymentStatus])
+  @@index([paymentMethod])
+}
+
+enum RefundStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+model Refund {
+  id String @id @default(cuid())
+
+  paymentId String
+  payment   Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+
+  amount Decimal @db.Decimal(10, 2)
+
+  refundStatus RefundStatus @default(PENDING)
+
+  refundGatewayId String?
+
+  reason String?
+
+  refundedAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([paymentId])
+}

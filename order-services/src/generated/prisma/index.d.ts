@@ -38,7 +38,25 @@ export type OrderStatusHistory = $Result.DefaultSelection<Prisma.$OrderStatusHis
  * Enums
  */
 export namespace $Enums {
-  export const PaymentStatus: {
+  export const OrderStatus: {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  PROCESSING: 'PROCESSING',
+  PACKED: 'PACKED',
+  SHIPPED: 'SHIPPED',
+  OUT_FOR_DELIVERY: 'OUT_FOR_DELIVERY',
+  DELIVERED: 'DELIVERED',
+  CANCELLED: 'CANCELLED',
+  RETURN_REQUESTED: 'RETURN_REQUESTED',
+  RETURN_APPROVED: 'RETURN_APPROVED',
+  RETURNED: 'RETURNED',
+  REFUNDED: 'REFUNDED'
+};
+
+export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]
+
+
+export const PaymentStatus: {
   PENDING: 'PENDING',
   PAID: 'PAID',
   FAILED: 'FAILED',
@@ -59,25 +77,11 @@ export const PaymentMethod: {
 
 export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod]
 
-
-export const OrderStatus: {
-  PENDING: 'PENDING',
-  CONFIRMED: 'CONFIRMED',
-  PROCESSING: 'PROCESSING',
-  PACKED: 'PACKED',
-  SHIPPED: 'SHIPPED',
-  OUT_FOR_DELIVERY: 'OUT_FOR_DELIVERY',
-  DELIVERED: 'DELIVERED',
-  CANCELLED: 'CANCELLED',
-  RETURN_REQUESTED: 'RETURN_REQUESTED',
-  RETURN_APPROVED: 'RETURN_APPROVED',
-  RETURNED: 'RETURNED',
-  REFUNDED: 'REFUNDED'
-};
-
-export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]
-
 }
+
+export type OrderStatus = $Enums.OrderStatus
+
+export const OrderStatus: typeof $Enums.OrderStatus
 
 export type PaymentStatus = $Enums.PaymentStatus
 
@@ -86,10 +90,6 @@ export const PaymentStatus: typeof $Enums.PaymentStatus
 export type PaymentMethod = $Enums.PaymentMethod
 
 export const PaymentMethod: typeof $Enums.PaymentMethod
-
-export type OrderStatus = $Enums.OrderStatus
-
-export const OrderStatus: typeof $Enums.OrderStatus
 
 /**
  * ##  Prisma Client ʲˢ
