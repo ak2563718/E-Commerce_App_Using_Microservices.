@@ -188,23 +188,23 @@ function StepDetails({ onNext, onClose }: { onNext: () => void; onClose: () => v
   }
   const handleContinue=async()=>{
     try {
-      const formdata = {name, 
-                        sku, 
-                        descriptiption:desc, 
-                        categoryId:subCategoryId?subCategoryId:categoryId, 
-                        brandId:optional.brandId,
-                        seoTitle:optional.seoTitle,
-                        seoDescritpion:optional.seoDescription,
-                        weight:optional.weight,
-                        height:optional.height,
-                        length:optional.length,
-                        width:optional.width,
-                        taxPercenteage:optional.taxPercentage
-                      }
-      console.log(formdata)
+      // const formdata = {name, 
+      //                   sku, 
+      //                   descriptiption:desc, 
+      //                   categoryId:subCategoryId?subCategoryId:categoryId, 
+      //                   brandId:optional.brandId,
+      //                   seoTitle:optional.seoTitle,
+      //                   seoDescritpion:optional.seoDescription,
+      //                   weight:optional.weight,
+      //                   height:optional.height,
+      //                   length:optional.length,
+      //                   width:optional.width,
+      //                   taxPercenteage:optional.taxPercentage
+      //                 }
+      // console.log(formdata)
       // const res = await dispatch(createProduct({name,sku,description:desc,categoryId:subCategoryId?subCategoryId:categoryId})).unwrap()
       // toast.success(res.message)
-      // onNext()
+      onNext()
     } catch (error:any) { 
       toast.error(error)
     } 

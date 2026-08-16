@@ -6,8 +6,16 @@ import { AppError } from "../utils/AppError.js";
 // 1. Create a variant 
 export const createVariant = asyncHandler(async(req, res, next)=>{
     const id = req.params.id;
-    console.log(req.body);
-    const {sku, price, stock} = req.body;
+    const {sku, price, stock, color, size, costPrice, barcode, weight } = req.body;
+    if(!sku || !sku.trim()){
+        return next(new AppError("SKU is required", 400))
+    }
+    if(!price || !price.trim()){
+        return next(new AppError("Price is required"))
+    }
+    if(!stock ||!stock.trim()){
+        return next(new AppError('Stock is required', 400))
+    }
     const found = await prisma.productVariant.findUnique({where:{sku}})
     if(found){
         return next(new AppError("SKU already registered", 400))
@@ -17,7 +25,13 @@ export const createVariant = asyncHandler(async(req, res, next)=>{
         data:{
             productId:id,
             sku,
-            price,
+            color:color?.trim() || null,
+            size:size?.trim() || null,
+            price:Number(price),
+            costPrice:costPrice ? Number(costPrice):null,
+            comparePrice:costPrice ? Number(price) - Number(costPrice): null,
+            barcode:barcode ? barcode: null,
+            weight:weight? Number(weight):null,
             stock:total,
         }
     })
