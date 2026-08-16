@@ -6,6 +6,7 @@ import ProfileDropdown from './ProfileDropdown'
 import { authCheckSession } from '@/redux/auth/auth.Action'
 import LoadingSkeleton from './LoadingSkeleton'
 import { Search, SearchIcon } from 'lucide-react'
+import { searchProduct } from '@/redux/product/product.Action'
 
 interface NavbarProps {
   onLoginClick?: () => void
@@ -68,9 +69,9 @@ export default function Navbar({
     fetchUserdetails();
   },[])
 
-  const handleSubmit=(e: React.FormEvent<HTMLFormElement>)=>{
+  const handleSubmit=async(e: React.FormEvent<HTMLFormElement>)=>{
     e.preventDefault()
-    router.push(`/search?query=${search}`)
+    router.push(`/search?search=${search}`)
   }
   
 

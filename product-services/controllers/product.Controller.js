@@ -2,10 +2,11 @@ import { prisma } from "../src/db.js";
 import {asyncHandler} from '../utils/asyncHandler.js';
 import { AppError } from '../utils/AppError.js';
 import slugify from 'slugify'
+
 // 1. Add Product (protected controller)
 export const createProduct = asyncHandler(async(req, res, next)=>{
     const sellerId = req.user.id;
-    const { name, description, sku, categoryId } = req.body;
+    const { name, description, sku, categoryId, brandId, seoTitle, seoDescription, weight, length, width, height, taxPercentage } = req.body;
     if(!name || !name.trim()){
         return next(new AppError('Name is Required', 400))
     }
@@ -22,6 +23,16 @@ export const createProduct = asyncHandler(async(req, res, next)=>{
     })
     if(!categoryCheck){
         return next(new AppError("Category not found", 404))
+    }
+    if(brandId){
+        const brandcheck = await prisma.brand.findUnique({
+            where:{
+                id:brandId
+            }
+        })
+        if(!brandcheck){
+            return next(new AppError("Brand not found", 404))
+        }
     }
     const baseslug = slugify(name, {
         lower:true,
@@ -42,9 +53,18 @@ export const createProduct = asyncHandler(async(req, res, next)=>{
             sellerId,
             name:name.trim(),
             description:description?.trim(),
+            shortDescription:description.trim().split(".")[0],
             sku:sku.trim(),
             slug,
             categoryId,
+            brandId:brandId || null,
+            seoTitle:seoTitle?.trim() || null,
+            seoDescription:seoDescription?.trim() || null,
+            weight:weight != null ? Number(weight):null,
+            length:length != null ? Number(length):null,
+            width:width != null ? Number(width):null,
+            height: height !=null ? Number(height):null,
+            taxPercentage: taxPercentage !=null ? Number(taxPercentage):null,
         }
     })
     res.status(201).json({
@@ -258,18 +278,24 @@ export const serachProduct = asyncHandler(async(req, res, next)=>{
                     name:{
                         contains:query,
                         mode:'insensitive',
-                    },
+                    }
                 },
                 {
                 category:{
                     name:{
                         contains:query,
                         mode:'insensitive'
-                    },
+                    }
                 },
             },
             ]
-        }
+        },
+        include:{
+            images:true,
+            variants:true,
+            attributes:true,
+            reviews:true,
+            }                     
     });
     if(!products){
         return next(new AppError("Proudct not found", 404))

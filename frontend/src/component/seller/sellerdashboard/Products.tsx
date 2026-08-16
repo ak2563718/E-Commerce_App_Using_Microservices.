@@ -135,7 +135,16 @@ function StepDetails({ onNext, onClose }: { onNext: () => void; onClose: () => v
   const [desc, setDesc] = useState('')
   const [catOpen, setCatOpen] = useState(false)
   const [subCatOpen, setSubCatOpen] = useState(false)
-
+  const [optional , setOptional ] = useState({
+    brandId:'',
+    seoTitle:'',
+    seoDescription:'',
+    weight:'',
+    length:'',
+    width:'',
+    height:'',
+    taxPercentage:'',
+  })
   const dispatch = useAppDispatch();
   const { categories } = useAppSelector((state) => state.category)
   const { loading } = useAppSelector((state)=>state.product)
@@ -203,18 +212,18 @@ function StepDetails({ onNext, onClose }: { onNext: () => void; onClose: () => v
       </div>
 
       <div className="flex flex-col gap-1">
-        <Label>Product Name</Label>
+        <Label>Product Name<span className='text-red-700 ' aria-hidden="true">*</span></Label>
         <Input placeholder="e.g. Wireless Noise-Cancelling Headphones" value={name} onChange={setName} />
       </div>
 
       <div className="flex flex-col gap-1">
-        <Label>SKU</Label>
+        <Label>SKU<span className='text-red-700 ' aria-hidden="true">*</span></Label>
         <Input placeholder="e.g. ELEC-WH-001" value={sku} onChange={setSku} />
       </div>
 
       {/* Category dropdown */}
       <div className="flex flex-col gap-1 relative">
-        <Label>Category</Label>
+        <Label>Category<span className='text-red-700 ' aria-hidden="true">*</span></Label>
         <button
           onClick={() => setCatOpen(o => !o)}
           className="w-full px-3 py-2.5 rounded-xl text-sm text-left flex items-center justify-between transition-all"
@@ -283,7 +292,7 @@ function StepDetails({ onNext, onClose }: { onNext: () => void; onClose: () => v
       )}
 
       <div className="flex flex-col gap-1">
-        <Label>Description</Label>
+        <Label>Description<span className='text-red-700 ' aria-hidden="true">*</span></Label>
         <textarea
           placeholder="Describe your product — features, materials, dimensions..."
           value={desc}
@@ -294,6 +303,40 @@ function StepDetails({ onNext, onClose }: { onNext: () => void; onClose: () => v
           onFocus={e => { e.currentTarget.style.border = '1.5px solid #7c3aed'; e.currentTarget.style.background = '#fff' }}
           onBlur={e => { e.currentTarget.style.border = '1.5px solid #e9d5ff'; e.currentTarget.style.background = '#faf5ff' }}
         />
+      </div>
+
+      <div className="flex flex-col gap-1">
+         <Label>Seo-Title<span className='text-red-700 ' aria-hidden="true">*</span></Label>
+         <Input placeholder='Enter seo-title' value={optional.seoTitle} onChange={(v)=>setOptional((prev)=>({...prev, seoTitle:v}))} />
+      </div>
+
+      <div className="flex flex-col gap-1">
+         <Label>Seo-Description<span className='text-red-700 ' aria-hidden="true">*</span></Label>
+         <textarea
+         placeholder="Describe you product seo-description"
+         value={optional.seoDescription}
+         onChange={(e)=>setOptional((prev)=>({...prev,seoDescription:e.target.value}))}
+         />
+      </div>
+
+      <div className='flex gap-3 justify-between'>
+        <div>
+          <Label>Weight</Label>
+          <Input placeholder="Enter Product Weight" value={optional.weight} onChange={(v)=> setOptional((prev)=>({...prev, weight: v}))}/></div>
+        <div>
+           <Label>Height</Label>
+           <Input placeholder="Enter Product Height" value={optional.height} onChange={(v)=> setOptional((prev)=>({...prev, height: v}))}/></div>
+      </div>
+
+      <div className='flex gap-3 justify-between'>
+        <div>
+          <Label>Length</Label>
+          <Input placeholder="Enter Product Length" value={optional.length} onChange={(v)=> setOptional((prev)=>({...prev, length: v}))}/>
+          </div>
+        <div>
+          <Label>Width</Label>
+          <Input placeholder="Enter Product Width" value={optional.width} onChange={(v)=> setOptional((prev)=>({...prev, width: v}))}/>
+          </div>
       </div>
 
       <div className="flex gap-3 pt-1">

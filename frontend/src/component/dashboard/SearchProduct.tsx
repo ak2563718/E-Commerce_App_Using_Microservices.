@@ -1,5 +1,8 @@
 'use client'
-import { useState, useMemo } from 'react'
+import { useAppDispatch } from '@/redux/hooks'
+import { searchProduct } from '@/redux/product/product.Action'
+import { useSearchParams } from 'next/navigation'
+import { useState, useMemo, useEffect } from 'react'
 
 interface Product {
   id: number
@@ -374,28 +377,6 @@ function ProductCard({ product }: { product: Product }) {
         position: 'relative',
       }}
     >
-      {/* Badge */}
-      {product.badge && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '10px',
-            left: '10px',
-            background: product.badge === 'New' ? '#7c3aed' : product.badge === 'Top Rated' ? '#059669' : PINK,
-            color: '#fff',
-            fontSize: '9px',
-            fontWeight: 700,
-            padding: '3px 8px',
-            borderRadius: '20px',
-            letterSpacing: '0.05em',
-            textTransform: 'uppercase',
-            zIndex: 2,
-          }}
-        >
-          {product.badge}
-        </div>
-      )}
-
       {/* Wishlist */}
       <button
         onClick={e => { e.stopPropagation(); setWishlisted(v => !v) }}
@@ -575,6 +556,17 @@ export default function SearchProduct() {
   const [freeDeliveryOnly, setFreeDeliveryOnly] = useState(false)
   const [assuredOnly, setAssuredOnly] = useState(false)
   const [discountRange, setDiscountRange] = useState<number | null>(null)
+  const params = useSearchParams()
+  const search = params.get("search")
+  const dispatch = useAppDispatch();
+  
+  useEffect(()=>{
+    const getproduct = async()=>{
+      const res = await dispatch(searchProduct(search)).unwrap();
+      console.log(res)
+    }
+    getproduct()
+  },[search,dispatch])
 
   const toggleCategory = (cat: string) =>
     setSelectedCategories(prev => prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat])

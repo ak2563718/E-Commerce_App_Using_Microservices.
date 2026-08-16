@@ -135,3 +135,24 @@ export const deleteProductbyId = createAsyncThunk<any,string,{rejectValue:string
         }
     }
 )
+
+// 7. serach product 
+export const searchProduct = createAsyncThunk<any, any, {rejectValue:string}>(
+    'search/product',
+    async(search, { rejectWithValue })=>{
+        try {
+            const { data } = await axios.get(`${product_uri}/searchproduct`,{
+                params:{
+                    search:search,
+                },
+                withCredentials:true,
+            })
+            return data;
+        } catch (error) {
+            if(axios.isAxiosError(error)){
+                return rejectWithValue(error.response?.data.message)
+            }
+            return rejectWithValue("something went wrong")
+        }
+    }
+)
