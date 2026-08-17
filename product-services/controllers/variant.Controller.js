@@ -7,6 +7,7 @@ import { AppError } from "../utils/AppError.js";
 export const createVariant = asyncHandler(async(req, res, next)=>{
     const id = req.params.id;
     const {sku, price, stock, color, size, costPrice, barcode, weight } = req.body;
+    console.log(id, req.body)
     if(!sku || !sku.trim()){
         return next(new AppError("SKU is required", 400))
     }

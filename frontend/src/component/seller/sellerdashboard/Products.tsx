@@ -216,19 +216,20 @@ function StepDetails({ onNext, onClose }: { onNext: () => void; onClose: () => v
   }
   const handleContinue=async()=>{
     try {
-      const formdata = {name, 
-                        sku, 
-                        description:desc, 
-                        categoryId:subCategoryId?subCategoryId:categoryId, 
-                        brandId:optional.brandId,
-                        seoTitle:optional.seoTitle,
-                        seoDescritpion:optional.seoDescription,
-                        weight:optional.weight,
-                        height:optional.height,
-                        length:optional.length,
-                        width:optional.width,
-                        taxPercenteage:optional.taxPercentage
-                      }
+      const formdata = {
+        name, 
+        sku, 
+        description:desc, 
+        categoryId:subCategoryId?subCategoryId:categoryId, 
+        brandId:optional.brandId,
+        seoTitle:optional.seoTitle,
+        seoDescritpion:optional.seoDescription,
+        weight:optional.weight,
+        height:optional.height,
+        length:optional.length,
+        width:optional.width,
+        taxPercenteage:optional.taxPercentage
+      }
       const res = await dispatch(createProduct(formdata)).unwrap()
       toast.success(res.message)
       onNext()
@@ -518,14 +519,26 @@ function StepMedia({ onBack, onClose }: { onBack: () => void; onClose: () => voi
   }
 
   const handleSubmit=async()=>{
+    const form= {
+      id:aproduct.id,
+      sku:aproduct.sku,
+      price,
+      stock,
+      weight:aproduct.weight,
+      color,
+      size,
+      costPrice,
+      barcode
+    }
+    console.log(form)
     try {
     const formData = new FormData();
     images.forEach((img)=>{
       formData.append('images',img)
     })
     const uploadPIRes = await dispatch(uploadProductImage({id:aproduct.id,formData})).unwrap() 
-    const response = await dispatch(createVariants({id:aproduct.id,sku:aproduct.sku,price,stock,weight:aproduct.weight,color,size,costPrice,barcode})).unwrap()
-
+    const response1 = await dispatch(createVariants(form)).unwrap()
+    console.log(response1)
     if(variants.length >0){
     for (const variant of variants) {
     const response = await dispatch(
@@ -608,7 +621,7 @@ function StepMedia({ onBack, onClose }: { onBack: () => void; onClose: () => voi
         </div>
         <div className="flex flex-col gap-1">
           <Label>Barcode</Label>
-          <Input placeholder="e.g. JHCK1234HI" type="number" value={barcode} onChange={setBarcode} />
+          <Input placeholder="e.g. JHCK1234HI" type="text" value={barcode} onChange={setBarcode} />
         </div>
       </div>
 
@@ -890,12 +903,12 @@ return (
                 </button>
 
                 <button 
-                onClick={()=>{
+                onClick={async()=>{
                   try {
-                    dispatch(deleteProductbyId(p.id));
-                    toast.success(message)
-                  } catch (err) {
-                    toast.error(error)
+                    const res =await dispatch(deleteProductbyId(p.id)).unwrap();
+                    toast.success(res.message)
+                  } catch (err:any) {
+                    toast.error(err?.message)
                   }}}
                   className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-red-50 transition-colors"
                 >

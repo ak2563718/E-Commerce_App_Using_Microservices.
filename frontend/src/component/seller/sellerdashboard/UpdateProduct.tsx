@@ -8,13 +8,19 @@ import { useParams, useRouter } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
 
 interface ProductData {
-  name: string
-  sku: string
-  category: string
-  subCategory: string
-  description: string
-  price: string
-  stock: string
+  name: string;
+  sku: string;
+  category: string;
+  subCategory: string;
+  description: string;
+  price: string;
+  stock: string;
+  brand:string;
+  costPrice:string;
+  color:string;
+  size:string;
+  barcode:string;
+  weight:string;
 }
 
 type CategoryOption = {
@@ -33,6 +39,11 @@ type ProductVariantData = {
   sku?: string
   price?: string | number
   stock?: string | number
+  costPrice?: string |number
+  color?:string
+  size?:string
+  barcode?:string
+  weight?:string
 }
 
 // ─── icons ───────────────────────────────────────────────────────────────────
@@ -422,6 +433,12 @@ export default function UpdateProduct() {
     description: '',
     price: '',
     stock: '',
+    brand:'',
+    costPrice:'',
+    color:'',
+    size:'',
+    barcode:'',
+    weight:'',
   })
   const [categoryId, setCategoryId] = useState('')
   const [variantId, setVariantId] = useState('')
@@ -430,6 +447,7 @@ export default function UpdateProduct() {
     const getProduct =async()=>{
       if(productId){
         const res = await dispatch(getProductbyId(productId)).unwrap();
+        console.log(res)
         const variant = res.data?.variants?.[0] as ProductVariantData | undefined
         setProduct({
             name: res.data?.name ?? '',
@@ -439,6 +457,12 @@ export default function UpdateProduct() {
             description: res.data?.description ?? '',
             price: String(variant?.price ?? ''),
             stock: String(variant?.stock ?? ''),
+            brand:res.data?.brand?.name,
+            costPrice:String(variant?.costPrice),
+            color:variant?.color ?? "",
+            size:variant?.size ?? '',
+            barcode:variant?.barcode ?? '',
+            weight:variant?.weight ?? '',
         })
         setCategoryId(res.data?.category?.id ?? '')
         setVariantId(variant?.id ?? '')
@@ -564,6 +588,12 @@ export default function UpdateProduct() {
         description: refreshed.data?.description ?? draft.description,
         price: String(variant?.price ?? draft.price),
         stock: String(variant?.stock ?? draft.stock),
+        brand:refreshed.data?.brand?.name,
+        costPrice:String(variant?.costPrice),
+        color:variant?.color ?? draft.color,
+        size:variant?.size ?? draft.size,
+        barcode:variant?.barcode ?? draft.barcode,
+        weight:variant?.weight ?? draft.barcode,   
       })
       setCategoryId(refreshed.data?.category?.id ?? categoryId)
       setVariantId(variant?.id ?? variantId)
@@ -709,8 +739,14 @@ export default function UpdateProduct() {
 
             <div>
               {detailEditMode
-                ? <EditSelect label="Sub-category" value={draft.subCategory} onChange={handleSubCategoryChange} options={subCategories} optional />
-                : <ReadonlyField label="Sub-category" value={product.subCategory} />}
+                ? <EditSelect label="Brand" value={draft.brand} onChange={handleSubCategoryChange} options={subCategories} optional />
+                : <ReadonlyField label="Brand" value={product.brand} />}
+            </div>
+
+            <div>
+              {detailEditMode
+                ? <EditSelect label="Category" value={draft.category} onChange={handleCategoryChange} options={parentCategories} />
+                : <ReadonlyField label="Category" value={product.category} />}
             </div>
 
             <div>
@@ -718,11 +754,22 @@ export default function UpdateProduct() {
                 ? <EditField label="Price (₹)" value={draft.price} onChange={(v) => setDraft({ ...draft, price: v })} type="number" placeholder="0" prefix="₹" />
                 : <ReadonlyField label="Price" value={`₹${Number(product.price).toLocaleString('en-IN')}`} />}
             </div>
+            <div>
+              {detailEditMode
+                ? <EditField label="Cost-Price (₹)" value={draft.costPrice} onChange={(v) => setDraft({ ...draft, costPrice: v })} type="number" placeholder="0" prefix="₹" />
+                : <ReadonlyField label="Cost-Price" value={`₹${Number(product.costPrice).toLocaleString('en-IN')}`} />}
+            </div>
 
             <div>
               {detailEditMode
                 ? <EditField label="Stock Quantity" value={draft.stock} onChange={(v) => setDraft({ ...draft, stock: v })} type="number" placeholder="0" />
                 : <ReadonlyField label="Stock Quantity" value={`${product.stock} units`} />}
+            </div>
+
+            <div>
+              {detailEditMode
+                ? <EditField label="Color" value={draft.color} onChange={(v) => setDraft({ ...draft, color: v })} type="text" placeholder="RED-BLUE" />
+                : <ReadonlyField label="Color" value={`${product.color} `} />}
             </div>
 
             <div className="sm:col-span-2">
@@ -737,6 +784,19 @@ export default function UpdateProduct() {
                   </div>
                 )}
             </div>
+
+             <div>
+              {detailEditMode
+                ? <EditField label="Size" value={draft.size} onChange={(v) => setDraft({ ...draft, size: v })} type="number" placeholder="string" />
+                : <ReadonlyField label="Size" value={`${product.size} `} />}
+            </div>
+
+            <div>
+              {detailEditMode
+                ? <EditField label="Weight" value={draft.weight} onChange={(v) => setDraft({ ...draft, weight: v })} type="text" placeholder="string" />
+                : <ReadonlyField label="Weight" value={`${product.weight} gm`} />}
+            </div>    
+
              <button onClick={()=>router.push('/seller/dashboard')} className='relative text-white left-150 border border-white w-20 p-1 rounded-lg'>Cancel</button>
           </div>
         </div>

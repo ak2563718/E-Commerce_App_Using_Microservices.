@@ -10,7 +10,7 @@ type Variant = {
 
 type ApiResponse<T> = {
     success:boolean,
-    message:string,
+    message:string, 
     data:T,
 }
 
@@ -37,13 +37,9 @@ type UpdateVariantPayload = {
 // 1. create product variants
 export const createVariants = createAsyncThunk<ApiResponse<Variant>, ProductVariantPayload, {rejectValue:string}>(
     'post/variants',
-    async({id, sku, price, stock}, { rejectWithValue })=>{
+    async(form, { rejectWithValue })=>{
         try {
-            const { data } = await axios.post(`${variant_uri}/products/${id}/variants`,{
-                sku,
-                price,
-                stock,
-            },{
+            const { data } = await axios.post(`${variant_uri}/products/${form.id}/variants`,form,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
