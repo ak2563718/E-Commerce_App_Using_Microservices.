@@ -797,7 +797,13 @@ export default function UpdateProduct() {
                 : <ReadonlyField label="Weight" value={`${product.weight} gm`} />}
             </div>    
 
-             <button onClick={()=>router.push('/seller/dashboard')} className='relative text-white left-150 border border-white w-20 p-1 rounded-lg'>Cancel</button>
+            <div>
+              {detailEditMode
+                ? <EditField label="Barcode" value={draft.barcode} onChange={(v) => setDraft({ ...draft, barcode: v })} type="text" placeholder="string" />
+                : <ReadonlyField label="Barcode" value={`${product.barcode} `} />}
+            </div>    
+
+             {/* <button onClick={()=>router.push('/seller/dashboard')} className='relative text-white left-150 border border-white w-20 p-1 rounded-lg'>Cancel</button> */}
           </div>
         </div>
 

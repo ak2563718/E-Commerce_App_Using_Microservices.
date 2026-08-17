@@ -198,7 +198,7 @@ export const deleteProductbyId = asyncHandler(async(req, res, next)=>{
 // 6. update Product by Id: (protected controller)
 export const updateProduct = asyncHandler(async(req, res, next)=>{
     const id = req. params.id;
-    const { name, description, sku, categoryId } = req.body;
+    const { name, description, sku, categoryId, brandId, seoTitle, seoDescription, weight, length, width, height, taxPercentage } = req.body;
     if(!name && !description && !sku && !categoryId){
         return next(new AppError("Please provide something to update", 400))
     }
@@ -245,6 +245,20 @@ export const updateProduct = asyncHandler(async(req, res, next)=>{
         }
         data.categoryId = categoryId;
     }
+    if(brandId){
+        const found = await prisma.brand.findUnique({where:{id:brandId}})
+        if(!found){
+            return next(new AppError('Brand not found', 404))
+        }
+        data.brandId = brandId;
+    }
+    if(seoTitle) data.seoTitle = seoTitle.trim();
+    if(seoDescription) data.seoDescription = seoDescription.trim();
+    if(weight) data.weight = Number(weight);
+    if(height) data.height = Number(height);
+    if(length) data.length = Number(length);
+    if(width) data.width = Number(width);
+    if(taxPercentage) data.taxPercentage = Number(taxPercentage);
     const product = await prisma.product.findUnique({
         where:{
             id
