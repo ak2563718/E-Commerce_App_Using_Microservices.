@@ -90,9 +90,9 @@ export const deleteVariant = asyncHandler(async(req, res, next)=>{
 
 // 4. update variant 
 export const updateVariant = asyncHandler(async(req, res, next)=>{
-    const { sku, price, stock } = req.body;
+    const { sku, price, stock, color, size, costPrice, barcode, weight } = req.body;
     const id = req.params.variantId;
-    if(!sku && !price && !stock){
+    if(!sku && !price && !stock && !color && !size && !costPrice && !barcode && !weight){
         return next(new AppError("Please provide something to update", 400))
     }
     const data ={};
@@ -104,11 +104,16 @@ export const updateVariant = asyncHandler(async(req, res, next)=>{
         data.sku = sku.trim();
     }
     if(price){
-        data.price = price;
+        data.price = Number(price);
     }
     if(stock){
         data.stock = Number(stock);
     }
+    if(color) data.color = color.trim();
+    if(size) data.size = size.trim();
+    if(costPrice) data.costPrice = Number(costPrice);
+    if(barcode) data.barcode = barcode.trim();
+    if(weight) data.weight = Number(weight);
     const variant = await prisma.productVariant.update({
         where:{id},
         data:data,
