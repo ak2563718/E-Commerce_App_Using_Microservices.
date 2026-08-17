@@ -103,7 +103,7 @@ export const updateProductbyId = createAsyncThunk<any,any,{rejectValue:string}>(
     'update/product',
     async({id,form}, { rejectWithValue })=>{
         try {
-            const {data} = await axios.patch(`${product_uri}/products/${id}`,form,{
+            const {data} = await api.patch(`${product_uri}/products/${id}`,form,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })

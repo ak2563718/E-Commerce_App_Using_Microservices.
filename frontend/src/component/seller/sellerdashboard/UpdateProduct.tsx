@@ -4,8 +4,10 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { getProductbyId, updateProductbyId } from '@/redux/product/product.Action'
 import { deleteProductImage, updateProudctImage, uploadProductImage } from '@/redux/product/product.Type.Action'
 import { updateVariants } from '@/redux/productvariants/variants.Action'
+import axios from 'axios'
 import { useParams, useRouter } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
+import UpdateProductLoader from '../skeleton&Loader/UpdateProductLoader'
 
 interface ProductData {
   name: string;
@@ -422,6 +424,7 @@ export default function UpdateProduct() {
   const [pendingImageFiles, setPendingImageFiles] = useState<Record<string, File>>({})
   const [detailEditMode, setDetailEditMode] = useState(false)
   const [detailSaving, setDetailSaving] = useState(false)
+  const [loading, setLoading] = useState(true)
   
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
   const router = useRouter()
@@ -453,13 +456,14 @@ export default function UpdateProduct() {
     taxPercentage:'',
   })
   const [categoryId, setCategoryId] = useState('')
+  const [brand, setBrand] = useState<any[]>([])
+  const [brandId, setBrandId] = useState('')
   const [variantId, setVariantId] = useState('')
   const [refresh, setRefresh]= useState<boolean>(false)
    useEffect(()=>{
     const getProduct =async()=>{
       if(productId){
         const res = await dispatch(getProductbyId(productId)).unwrap();
-        console.log(res)
         const variant = res.data?.variants?.[0] as ProductVariantData | undefined
         setProduct({
             name: res.data?.name ?? '',
@@ -486,6 +490,7 @@ export default function UpdateProduct() {
         setVariantId(variant?.id ?? '')
         const image = (res.data?.images as ProductImageData[] | undefined)?? [];
         setImages(image)
+        setLoading(false)
       } 
     }
     getProduct()
@@ -494,6 +499,7 @@ export default function UpdateProduct() {
   useEffect(()=>{
     dispatch(getAllCategories())
   },[dispatch])
+
   const [draft, setDraft] = useState<ProductData>(product)
   const parentCategories = (categories?.filter((c)=>c.parentId === null) ?? []) as CategoryOption[]
   const selectedCategory = parentCategories.find((c) => c.name === draft.category)
@@ -516,6 +522,29 @@ export default function UpdateProduct() {
   const showToast = (message: string, type: 'success' | 'error') => {
     setToast({ message, type })
     setTimeout(() => setToast(null), 3000)
+  }
+
+  useEffect(() => {
+  const getBrand = async () => {
+    try {
+      const res = await axios.get('http://localhost:6002/api/brands', {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+      });
+      setBrand(res.data?.data)
+    } catch (error) {
+      console.error(error);
+    }
+  };
+    getBrand();
+  }, []);
+
+  const handleBrandChange=(name:string)=>{
+     const extract = brand.find((b)=>b.name === name);
+     setDraft({...draft,brand:name})
+     setBrandId(extract.id)
   }
 
   const handleImageEditStart = () => { setPendingImages([...images]); setPendingMain(mainImageIndex); setPendingImageFiles({}); setImageEditMode(true) }
@@ -560,11 +589,9 @@ export default function UpdateProduct() {
     setRefresh(true)
   }
   const handleReplaceImage = async(imgId:string, file: File) => {
-    console.log(imgId, file)
     const formData = new FormData();
     formData.append('newimage',file)
     const res = await dispatch(updateProudctImage({id:imgId, formData})).unwrap();
-    console.log(res)
     setPendingImages((prev)=> prev?.map((i:any)=>i.id === imgId ?
       res.data : i))
   }
@@ -582,6 +609,14 @@ export default function UpdateProduct() {
           sku: draft.sku,
           description: draft.description,
           categoryId,
+          brandId,
+          seoTitle:draft.seoTitle,
+          seoDescription:draft.seoDescription,
+          weight:draft.weight,
+          length:draft.length,
+          width:draft.width,
+          height:draft.height,
+          taxPercentage:draft.taxPercentage
         },
       })).unwrap()
 
@@ -592,6 +627,11 @@ export default function UpdateProduct() {
             sku: draft.sku,
             price: draft.price,
             stock: draft.stock,
+            costPrice:draft.costPrice,
+            color:draft.color,
+            size:draft.size,
+            barcode:draft.barcode,
+            weight:draft.weight,
           },
         })).unwrap()
       }
@@ -628,6 +668,12 @@ export default function UpdateProduct() {
     } finally {
       setDetailSaving(false)
     }
+  }
+
+  if(loading){
+    return (
+      <UpdateProductLoader/>
+    )
   }
 
   return (
@@ -763,14 +809,14 @@ export default function UpdateProduct() {
 
             <div>
               {detailEditMode
-                ? <EditSelect label="Brand" value={draft.brand} onChange={handleSubCategoryChange} options={subCategories} optional />
+                ? <EditSelect label="Brand" value={draft.brand} onChange={handleBrandChange} options={brand} optional />
                 : <ReadonlyField label="Brand" value={product.brand} />}
             </div>
 
             <div>
               {detailEditMode
-                ? <EditSelect label="Category" value={draft.category} onChange={handleCategoryChange} options={parentCategories} />
-                : <ReadonlyField label="Category" value={product.category} />}
+                ? <EditSelect label="Sub-Category" value={draft.subCategory} onChange={handleSubCategoryChange} options={subCategories} />
+                : <ReadonlyField label="Sub-Category" value={product.subCategory} />}
             </div>
 
             <div>
