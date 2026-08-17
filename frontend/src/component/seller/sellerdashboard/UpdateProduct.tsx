@@ -21,6 +21,12 @@ interface ProductData {
   size:string;
   barcode:string;
   weight:string;
+  seoTitle:string;
+  seoDescription:string;
+  length:string;
+  width:string;
+  height:string,
+  taxPercentage:string,
 }
 
 type CategoryOption = {
@@ -439,6 +445,12 @@ export default function UpdateProduct() {
     size:'',
     barcode:'',
     weight:'',
+    seoTitle:'',
+    seoDescription:'',
+    length:'',
+    width:'',
+    height:'',
+    taxPercentage:'',
   })
   const [categoryId, setCategoryId] = useState('')
   const [variantId, setVariantId] = useState('')
@@ -462,7 +474,13 @@ export default function UpdateProduct() {
             color:variant?.color ?? "",
             size:variant?.size ?? '',
             barcode:variant?.barcode ?? '',
-            weight:variant?.weight ?? '',
+            weight:res.data?.weight ?? '',
+            seoTitle:res.data?.seoTitle?? '',
+            seoDescription:res.data?.seoDescription?? '',
+            length:res.data?.length?? '',
+            width:res.data?.width?? '',
+            height:res.data?.height??'',
+            taxPercentage:res.data?.taxPercentage??'',
         })
         setCategoryId(res.data?.category?.id ?? '')
         setVariantId(variant?.id ?? '')
@@ -593,7 +611,13 @@ export default function UpdateProduct() {
         color:variant?.color ?? draft.color,
         size:variant?.size ?? draft.size,
         barcode:variant?.barcode ?? draft.barcode,
-        weight:variant?.weight ?? draft.barcode,   
+        weight:variant?.weight ?? draft.barcode,
+        seoTitle:refreshed.data?.seoTitle ?? draft.seoTitle,
+        seoDescription:refreshed.data?.seoDescription ?? draft.seoDescription,
+        length:refreshed.data?.length ?? draft.length,
+        width:refreshed.data?.width ?? draft.width,
+        height:refreshed.data?.height ?? draft.height,
+        taxPercentage:refreshed.data?.taxPercentage ?? draft.taxPercentage,   
       })
       setCategoryId(refreshed.data?.category?.id ?? categoryId)
       setVariantId(variant?.id ?? variantId)
@@ -766,10 +790,10 @@ export default function UpdateProduct() {
                 : <ReadonlyField label="Stock Quantity" value={`${product.stock} units`} />}
             </div>
 
-            <div>
+             <div>
               {detailEditMode
-                ? <EditField label="Color" value={draft.color} onChange={(v) => setDraft({ ...draft, color: v })} type="text" placeholder="RED-BLUE" />
-                : <ReadonlyField label="Color" value={`${product.color} `} />}
+                ? <EditField label="Barcode" value={draft.barcode} onChange={(v) => setDraft({ ...draft, barcode: v })} type="text" placeholder="string" />
+                : <ReadonlyField label="Barcode" value={`${product.barcode} `} />}
             </div>
 
             <div className="sm:col-span-2">
@@ -780,6 +804,31 @@ export default function UpdateProduct() {
                     <label className="block text-[11px] font-bold tracking-widest uppercase mb-1.5" style={{ color: t.textMuted }}>Description</label>
                     <div className="rounded-lg px-3.5 py-2.5 text-sm leading-relaxed" style={{ background: t.readonlyBg, border: `1px solid ${t.readonlyBorder}`, color: product.description ? t.textPrimary : t.textMuted }}>
                       {product.description || <span style={{ fontStyle: 'italic' }}>—</span>}
+                    </div>
+                  </div>
+                )}
+            </div>
+
+            <div>
+              {detailEditMode
+                ? <EditField label="Seo-Title" value={draft.seoTitle} onChange={(v) => setDraft({ ...draft, seoTitle: v })} type="text" placeholder="seo-title" />
+                : <ReadonlyField label="Seo-Title" value={`${product.seoTitle} `} />}
+            </div>
+
+            <div>
+              {detailEditMode
+                ? <EditField label="Tax-Percentage" value={draft.taxPercentage} onChange={(v) => setDraft({ ...draft, taxPercentage: v })} type="number" placeholder="tax-percentage" />
+                : <ReadonlyField label="Tax-Percentage" value={`${product.taxPercentage} `} />}
+            </div>
+
+            <div className="sm:col-span-2">
+              {detailEditMode
+                ? <EditTextarea label="Seo-Description" value={draft.seoDescription} onChange={(v) => setDraft({ ...draft, seoDescription: v })} placeholder="Describe the product seo..." rows={5} />
+                : (
+                  <div>
+                    <label className="block text-[11px] font-bold tracking-widest uppercase mb-1.5" style={{ color: t.textMuted }}>Seo-Description</label>
+                    <div className="rounded-lg px-3.5 py-2.5 text-sm leading-relaxed" style={{ background: t.readonlyBg, border: `1px solid ${t.readonlyBorder}`, color: product.seoDescription ? t.textPrimary : t.textMuted }}>
+                      {product.seoDescription || <span style={{ fontStyle: 'italic' }}>—</span>}
                     </div>
                   </div>
                 )}
@@ -797,10 +846,28 @@ export default function UpdateProduct() {
                 : <ReadonlyField label="Weight" value={`${product.weight} gm`} />}
             </div>    
 
-            <div>
+             <div>
               {detailEditMode
-                ? <EditField label="Barcode" value={draft.barcode} onChange={(v) => setDraft({ ...draft, barcode: v })} type="text" placeholder="string" />
-                : <ReadonlyField label="Barcode" value={`${product.barcode} `} />}
+                ? <EditField label="Color" value={draft.color} onChange={(v) => setDraft({ ...draft, color: v })} type="text" placeholder="RED-BLUE" />
+                : <ReadonlyField label="Color" value={`${product.color} `} />}
+            </div>    
+
+             <div>
+              {detailEditMode
+                ? <EditField label="Length" value={draft.length} onChange={(v) => setDraft({ ...draft, length: v })} type="text" placeholder="Inches.." />
+                : <ReadonlyField label="Length" value={`${product.length} `} />}
+            </div>   
+
+             <div>
+              {detailEditMode
+                ? <EditField label="Width" value={draft.width} onChange={(v) => setDraft({ ...draft, width: v })} type="text" placeholder="in cm.." />
+                : <ReadonlyField label="Width" value={`${product.width} `} />}
+            </div>  
+
+             <div>
+              {detailEditMode
+                ? <EditField label="Height" value={draft.height} onChange={(v) => setDraft({ ...draft, height: v })} type="text" placeholder="in cm.." />
+                : <ReadonlyField label="Height" value={`${product.height} `} />}
             </div>    
 
              {/* <button onClick={()=>router.push('/seller/dashboard')} className='relative text-white left-150 border border-white w-20 p-1 rounded-lg'>Cancel</button> */}

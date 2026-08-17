@@ -64,6 +64,37 @@ app.use("/auth", async (req, res) => {
   }
 });
 
+app.use('/api',async(req, res)=>{
+  try {
+     const response = await axios({
+      method:req.method,
+      url:`${process.env.PRODUCT_URL}${req.originalUrl}`,
+      data:req.body,
+      headers:{
+        
+      }
+     })
+  } catch (error) {
+     // Auth service returned an HTTP error (400, 401, 404, etc.)
+    if (error.response) {
+      return res.status(error.response.status).json(error.response.data);
+    }
+    // Network error or auth service is down
+    if (error.request) {
+      return res.status(503).json({
+        success: false,
+        message: "Auth service is unavailable",
+      });
+    }
+    // Unexpected error
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+      error: error.message,
+    });
+  }
+})
+
 const port = process.env.PORT;
 app.listen(port, ()=>{
     console.log(`server is running at port ${port}`)
