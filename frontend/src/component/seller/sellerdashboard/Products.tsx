@@ -86,7 +86,15 @@ function ImageUploader({ images, onAdd, onRemove, label = 'Product Images' }: {
 
 // ── Variant form ─────────────────────────────────────────────────────────────
 interface Variant {
-  sku: string; price: string; stock: string; images: File[]
+  sku: string; 
+  price: string; 
+  stock: string; 
+  images: File[];
+  costPrice:string;
+  color:string;
+  size:string;
+  barcode:string;
+  weight:string;
 }
 
 function VariantCard({ index, variant, onChange, onRemove }: {
@@ -110,8 +118,28 @@ function VariantCard({ index, variant, onChange, onRemove }: {
           <Input placeholder="999" type="number" value={variant.price} onChange={v => onChange({ ...variant, price: v })} />
         </div>
         <div className="flex flex-col gap-1">
+          <Label>Cost-Price (₹)</Label>
+          <Input placeholder="999" type="number" value={variant.costPrice} onChange={v => onChange({ ...variant, costPrice: v })} />
+        </div>
+        <div className="flex flex-col gap-1">
           <Label>Stock</Label>
           <Input placeholder="50" type="number" value={variant.stock} onChange={v => onChange({ ...variant, stock: v })} />
+        </div>
+         <div className="flex flex-col gap-1">
+          <Label>Color</Label>
+          <Input placeholder="e.g Red-blue" value={variant.color} onChange={v => onChange({ ...variant, color: v })} />
+        </div>
+         <div className="flex flex-col gap-1">
+          <Label>Size</Label>
+          <Input placeholder="e.g L-S-M" value={variant.size} onChange={v => onChange({ ...variant, size: v })} />
+        </div>
+         <div className="flex flex-col gap-1">
+          <Label>Barcode</Label>
+          <Input placeholder="e.g JHKL1234HI" value={variant.barcode} onChange={v => onChange({ ...variant, barcode: v })} />
+        </div>
+         <div className="flex flex-col gap-1">
+          <Label>Weight</Label>
+          <Input placeholder="e.g 100" value={variant.weight} onChange={v => onChange({ ...variant, weight: v })} />
         </div>
       </div>
       <ImageUploader
@@ -188,22 +216,21 @@ function StepDetails({ onNext, onClose }: { onNext: () => void; onClose: () => v
   }
   const handleContinue=async()=>{
     try {
-      // const formdata = {name, 
-      //                   sku, 
-      //                   descriptiption:desc, 
-      //                   categoryId:subCategoryId?subCategoryId:categoryId, 
-      //                   brandId:optional.brandId,
-      //                   seoTitle:optional.seoTitle,
-      //                   seoDescritpion:optional.seoDescription,
-      //                   weight:optional.weight,
-      //                   height:optional.height,
-      //                   length:optional.length,
-      //                   width:optional.width,
-      //                   taxPercenteage:optional.taxPercentage
-      //                 }
-      // console.log(formdata)
-      // const res = await dispatch(createProduct({name,sku,description:desc,categoryId:subCategoryId?subCategoryId:categoryId})).unwrap()
-      // toast.success(res.message)
+      const formdata = {name, 
+                        sku, 
+                        description:desc, 
+                        categoryId:subCategoryId?subCategoryId:categoryId, 
+                        brandId:optional.brandId,
+                        seoTitle:optional.seoTitle,
+                        seoDescritpion:optional.seoDescription,
+                        weight:optional.weight,
+                        height:optional.height,
+                        length:optional.length,
+                        width:optional.width,
+                        taxPercenteage:optional.taxPercentage
+                      }
+      const res = await dispatch(createProduct(formdata)).unwrap()
+      toast.success(res.message)
       onNext()
     } catch (error:any) { 
       toast.error(error)
@@ -469,12 +496,17 @@ function StepMedia({ onBack, onClose }: { onBack: () => void; onClose: () => voi
   const [images, setImages] = useState<File[]>([])
   const [price, setPrice] = useState('')
   const [stock, setStock] = useState('')
+  const [color, setColor] = useState('')
+  const [size, setSize] = useState('')
+  const [weight, setWeight]= useState('')
+  const [costPrice, setCostPrice]= useState('')
+  const [barcode, setBarcode]= useState('')
   const [variants, setVariants] = useState<Variant[]>([])
   const [showVariants, setShowVariants] = useState(false)
   const { aproduct, loading } = useAppSelector((state)=>state.product) 
   const dispatch = useAppDispatch();
   const addVariant = () => {
-    setVariants(v => [...v, { sku: '', price: '', stock: '', images: [] }])
+    setVariants(v => [...v, { sku: '', price: '', stock: '', images: [], color:'', size:'',costPrice:'',barcode:'',weight:'' }])
     setShowVariants(true)
   }
 
@@ -492,7 +524,7 @@ function StepMedia({ onBack, onClose }: { onBack: () => void; onClose: () => voi
       formData.append('images',img)
     })
     const uploadPIRes = await dispatch(uploadProductImage({id:aproduct.id,formData})).unwrap() 
-    const response = await dispatch(createVariants({id:aproduct.id,sku:aproduct.sku,price,stock})).unwrap()
+    const response = await dispatch(createVariants({id:aproduct.id,sku:aproduct.sku,price,stock,weight:aproduct.weight,color,size,costPrice,barcode})).unwrap()
 
     if(variants.length >0){
     for (const variant of variants) {
@@ -502,6 +534,11 @@ function StepMedia({ onBack, onClose }: { onBack: () => void; onClose: () => voi
         sku: variant.sku,
         price: variant.price,
         stock: variant.stock,
+        color:variant.color,
+        size:variant.size,
+        costPrice:variant.costPrice,
+        barcode:variant.barcode,
+        weight:variant.weight,
       })
     ).unwrap();
     console.log(response)
@@ -562,9 +599,28 @@ function StepMedia({ onBack, onClose }: { onBack: () => void; onClose: () => voi
           <Input placeholder="e.g. 1999" type="number" value={price} onChange={setPrice} />
         </div>
         <div className="flex flex-col gap-1">
+          <Label>Cost-Price</Label>
+          <Input placeholder="e.g. 1999" type="number" value={costPrice} onChange={setCostPrice} />
+        </div>
+        <div className="flex flex-col gap-1">
           <Label>Stock Quantity</Label>
           <Input placeholder="e.g. 100" type="number" value={stock} onChange={setStock} />
         </div>
+        <div className="flex flex-col gap-1">
+          <Label>Barcode</Label>
+          <Input placeholder="e.g. JHCK1234HI" type="number" value={barcode} onChange={setBarcode} />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+         <div className="flex flex-col gap-1">
+          <Label>Color</Label>
+          <Input placeholder="e.g. Red-Blue-Green" type="text" value={color} onChange={setColor} />
+        </div>
+        <div className="flex flex-col gap-1">
+          <Label>Size</Label>
+          <Input placeholder="e.g. L-XL" type="text" value={size} onChange={setSize} />
+        </div> 
       </div>
 
       {/* Variants */}

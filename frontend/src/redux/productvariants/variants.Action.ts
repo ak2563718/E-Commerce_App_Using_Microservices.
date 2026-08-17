@@ -18,6 +18,11 @@ type VariantForm = {
     sku?:string,
     price?:string,
     stock?:string,
+    costPrice?:string,
+    weight?:string,
+    color?:string,
+    size?:string,
+    barcode?:string,
 }
 
 type ProductVariantPayload = VariantForm & {
