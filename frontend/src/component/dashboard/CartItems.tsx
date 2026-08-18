@@ -1,4 +1,6 @@
 'use client'
+import { useAppSelector } from '@/redux/hooks'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 const PINK = '#e91e8c'
@@ -423,97 +425,14 @@ export default function CartItems() {
   const deliveryCharge = inStockItems.every(i => i.freeDelivery) ? 0 : 49
   const totalAmount = subtotal + deliveryCharge
   const totalItems = cartItems.reduce((sum, i) => sum + i.quantity, 0)
+  const router = useRouter()
+  const { islogin } = useAppSelector((state)=>state.auth)
+  if(!islogin){
+    return router.replace('/auth/login')
+  }
 
   return (
     <div style={{ minHeight: '100vh', background: '#fdf0f8', fontFamily: 'Inter, sans-serif' }}>
-      {/* Header */}
-      <div
-        style={{
-          background: `linear-gradient(135deg, ${PINK} 0%, ${PINK_DARK} 100%)`,
-          padding: '14px 0',
-          position: 'sticky',
-          top: 0,
-          zIndex: 100,
-          boxShadow: '0 3px 16px rgba(233,30,140,0.25)',
-        }}
-      >
-        <div
-          style={{
-            maxWidth: '1160px',
-            margin: '0 auto',
-            padding: '0 28px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div
-              style={{
-                background: '#fff',
-                borderRadius: '10px',
-                width: '32px',
-                height: '32px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke={PINK} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M3 6h18M16 10a4 4 0 01-8 0" stroke={PINK} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </div>
-            <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: '22px', fontWeight: 700, color: '#fff', letterSpacing: '-0.3px' }}>
-              ShopHub
-            </span>
-          </div>
-
-          <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
-            {['Home', 'Products', 'Wishlist'].map(item => (
-              <span key={item} style={{ color: 'rgba(255,255,255,0.85)', fontSize: '13px', fontWeight: 500, cursor: 'pointer' }}>
-                {item}
-              </span>
-            ))}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '7px',
-                background: 'rgba(255,255,255,0.18)',
-                border: '1px solid rgba(255,255,255,0.3)',
-                borderRadius: '8px',
-                padding: '6px 14px',
-                color: '#fff',
-                fontSize: '13px',
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
-                <path d="M1 1h4l2.68 13.39a2 2 0 001.99 1.61h9.72a2 2 0 001.99-1.61L23 6H6" />
-              </svg>
-              Cart
-              {totalItems > 0 && (
-                <span
-                  style={{
-                    background: '#fff',
-                    color: PINK,
-                    borderRadius: '10px',
-                    padding: '1px 7px',
-                    fontSize: '11px',
-                    fontWeight: 800,
-                  }}
-                >
-                  {totalItems}
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div style={{ maxWidth: '1160px', margin: '0 auto', padding: '28px 28px' }}>
         {/* Page title */}
         <div style={{ marginBottom: '20px' }}>

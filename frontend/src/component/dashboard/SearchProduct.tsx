@@ -7,6 +7,7 @@ import SearchProductSkeleton from './SearchProductSkeleton'
 import { authCheckSession } from '@/redux/auth/auth.Action'
 import { getProfile } from '@/redux/user/user.Action'
 import ProfileDropdown from './ProfileDropdown'
+import { getCart } from '@/redux/cart/cart.Action'
 
 interface Product {
   id: number
@@ -169,7 +170,7 @@ function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }
   )
 }
 
-function ProductCard({ product }: { product: Product }) {
+function ProductCard({ product, addtocart }: { product: Product, addtocart:()=>void }) {
   const [imgError, setImgError] = useState(false)
   const [hovered, setHovered] = useState(false)
   const [wishlisted, setWishlisted] = useState(false)
@@ -316,6 +317,7 @@ function ProductCard({ product }: { product: Product }) {
         {/* Buttons */}
         <div style={{ display: 'flex', gap: '6px', marginTop: 'auto', paddingTop: '6px' }}>
           <button
+            onClick={addtocart}
             style={{
               flex: 1,
               padding: '8px 0',
@@ -438,6 +440,34 @@ export default function SearchProduct() {
 
    const ALL_CATEGORIES = [...new Set(data.map(p => p.category.name))]
    const ALL_BRANDS = [...new Set(data.map(p => p.brand.name))].sort()
+   
+   const [cartId, setCartId] = useState('')
+   useEffect(()=>{
+    const getcartvalue = async()=>{
+      try {
+        const res = await dispatch(getCart()).unwrap()
+        setCartId(res.data?.id)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getcartvalue()
+   },[dispatch])
+   
+   
+   const handleAddtoCart = async(productId:string, variantId:string)=>{
+    if(!islogin){
+      router.push('/auth/login')
+    }
+    const data ={
+        cartId,
+        productId,
+        variantId,
+        quantity:1,
+    }
+    console.log(data)
+   }
+
   if(loading){
     return <SearchProductSkeleton/>
   }
@@ -522,10 +552,11 @@ export default function SearchProduct() {
           )
           :
           (
-            <ProfileDropdown name={name} />
+            <ProfileDropdown name={name}  />
           )}
 
           <button
+          onClick={()=>router.push('/user/cart')}
             className="relative w-11 h-11 flex items-center justify-center rounded-xl text-gray-400 hover:bg-pink-50 hover:text-pink-500 transition-all duration-150"
           >
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
@@ -730,7 +761,7 @@ export default function SearchProduct() {
               }}
             >
               {filtered.map(product => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard key={product.id} product={product} addtocart={()=>handleAddtoCart(product.id,product.variants?.[0]?.id)} />
               ))}
             </div>
           ) : (

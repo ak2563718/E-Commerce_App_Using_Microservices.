@@ -12,14 +12,12 @@ import { getProfile } from '@/redux/user/user.Action'
 
 interface NavbarProps {
   onLoginClick?: () => void
-  onCartClick?: () => void
   cartCount?: number
   notificationCount?: number
 }
 
 export default function Navbar({
   onLoginClick,
-  onCartClick,
   cartCount = 3,
   notificationCount = 5,
 }: NavbarProps) {
@@ -81,6 +79,10 @@ export default function Navbar({
   const handleSubmit=async(e: React.FormEvent<HTMLFormElement>)=>{
     e.preventDefault()
     router.push(`/search?search=${search}`)
+  }
+
+  const onCartClick =()=>{
+    router.push('/user/cart')
   }
   
 
@@ -341,15 +343,24 @@ export default function Navbar({
               <circle cx="20" cy="21" r="1" />
               <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
             </svg>
-            {cartCount > 0 && (
-              <span
-                className="absolute -top-0.5 -right-0.5 w-4 h-4 flex items-center justify-center text-white rounded-full font-black"
-                style={{ background: '#e91e8c', fontSize: '9px' }}
-              >
-                {cartCount > 9 ? '9+' : cartCount}
-              </span>
-            )}
           </button>
+
+          <button
+              className="relative w-11 h-11 flex items-center justify-center rounded-xl text-gray-400 hover:bg-pink-50 hover:text-pink-500 transition-all duration-150"
+            >
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.78-8.84a5.5 5.5 0 0 0 .06-7.78z" />
+              </svg>
+            </button>
 
         </div>
       </div>
