@@ -7,8 +7,8 @@ router.post("/carts",createCart)
 router.get("/carts",authMiddleware,getCart)
 
 // 2. cart items routes
-router.post("/carts/:cartId/cartitems",createCartItems)
-router.patch("/cartitems/:itemId",updateCartItems)
-router.delete("/cartitems/:itemsId",deleteCartItems)
-router.delete("/carts/:cartId",clearCart)
+router.post("/carts/:cartId/cartitems",authMiddleware,createCartItems)
+router.patch("/cartitems/:itemId",authMiddleware,updateCartItems)
+router.delete("/cartitems/:itemsId",authMiddleware,deleteCartItems)
+router.delete("/carts/:cartId",authMiddleware,clearCart)
 export default router;

@@ -95,7 +95,7 @@ export const createCartItems = asyncHandler(async (req, res, next) => {
     );
 
     const product = response.data.data;
-
+    
     if (!product) {
         return next(new AppError("Product not found", 404));
     }
@@ -153,6 +153,7 @@ export const createCartItems = asyncHandler(async (req, res, next) => {
             productSlug: product.slug,
             unitPrice,
             totalPrice,
+            variantName:product.name,
         },
     });
 
@@ -199,10 +200,11 @@ export const deleteCartItems = asyncHandler(async(req, res, next)=>{
     if(!cartItem){
         return next(new AppError("Cart not found", 404))
     }
-    await prisma.cartItem.delete({where:{id:itemId}})
+    const data = await prisma.cartItem.delete({where:{id:itemId}})
     res.status(200).json({
         message:"items Deleted Successfully",
         success:true,
+        data,
     })
 });
 

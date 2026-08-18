@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createCart, getCart } from "./cart.Action";
+import { clearCart, createCart, createCartItems, deleteCartItems, getCart, updateCartItems } from "./cart.Action";
 
 interface data{
     cart:any,
@@ -49,6 +49,63 @@ const cartSlice = createSlice({
         }).addCase(getCart.rejected,(state,action)=>{
             state.loading = false;
             state.error = action.payload?? 'failed';
+        });
+
+        // 3. create cart items
+        builder.addCase(createCartItems.pending,(state)=>{
+            state.loading = true;
+            state.message = null;
+            state.error = null;
+        }).addCase(createCartItems.fulfilled,(state,action)=>{
+            state.loading = false;
+            state.message = action.payload.message;
+            state.cartitems.push(action.payload.data)
+        }).addCase(createCartItems.rejected,(state,action)=>{
+            state.loading = false;
+            state.error = action.payload?? 'failed';
+        });
+
+        // 4. update cart items
+        builder.addCase(updateCartItems.pending,(state,action)=>{
+            state.loading = true;
+            state.message = null;
+            state.error = null;
+        }).addCase(updateCartItems.fulfilled,(state,action)=>{
+            state.loading = false;
+            state.message = action.payload.message;
+            state.cartitems = state.cartitems.map((c)=>c.id === action.payload?.data.id
+                                ?action.payload.data:c)
+        }).addCase(updateCartItems.rejected,(state,action)=>{
+            state.loading = false;
+            state.error = action.payload?? "failed";
+        });
+
+        // 5.delte cart items;
+        builder.addCase(deleteCartItems.pending,(state)=>{
+            state.loading = true;
+            state.message = null;
+            state.error = null;
+        }).addCase(deleteCartItems.fulfilled,(state,action)=>{
+            state.loading = false;
+            state.message = action.payload.message;
+            state.cartitems = state.cartitems.filter((c)=>c.id !== action.payload.data.id)
+        }).addCase(updateCartItems.rejected,(state,action)=>{
+            state.loading = false;
+            state.error = action.payload?? 'failed';
+        });
+
+        // 6. clear cart
+        builder.addCase(clearCart.pending,(state)=>{
+            state.loading = true;
+            state.message = null;
+            state.error = null;
+        }).addCase(clearCart.fulfilled,(state,action)=>{
+            state.loading = false;
+            state.message = action.payload.message;
+            state.cartitems =[];
+        }).addCase(clearCart.rejected,(state,action)=>{
+            state.loading = false;
+            state.error = action.payload?? "failed";
         })
     }
 })
