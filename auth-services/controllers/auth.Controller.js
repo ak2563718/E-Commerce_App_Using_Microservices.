@@ -102,10 +102,15 @@ export const authRegister = asyncHandler(async(req, res, next)=>{
     },{
         headers:{'Content-Type':'application/json',}
     })
+    const createdCart = await axios.post('http://localhost:6003/api/cart/carts',{
+        userId:user.id
+    },{
+        headers:{'Content-Type':"application/json"}
+    })
     res.status(201).json({
         success:true,
         message:"User Created Successfully",
-        user
+        user,
     })
 })
 

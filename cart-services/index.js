@@ -11,7 +11,7 @@ app.use(express.urlencoded({extended:false}));
 app.use(cookieParser())
 app.use(cors())
 
-app.use('/api',cart)
+app.use('/api/cart',cart)
 app.use(errorMiddleware)
 const port = process.env.PORT;
 app.listen(port, ()=>{
