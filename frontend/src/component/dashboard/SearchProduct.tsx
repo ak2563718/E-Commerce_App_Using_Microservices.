@@ -170,6 +170,11 @@ function ProductCard({ product }: { product: Product }) {
   const [imgError, setImgError] = useState(false)
   const [hovered, setHovered] = useState(false)
   const [wishlisted, setWishlisted] = useState(false)
+
+  const discoutcalculate =(val1:number, val2:number)=>{
+      const percentage = ((val1-val2)/val1)*100;
+      return Math.floor(percentage);
+  }
   return (
     <div
       onMouseEnter={() => setHovered(true)}
@@ -272,13 +277,13 @@ function ProductCard({ product }: { product: Product }) {
               color: '#1a1a2e',
             }}
           >
-            ₹{product?.variants?.[0]?.price.toLocaleString('en-IN')}
+            ₹{product?.variants?.[0]?.costPrice.toLocaleString('en-IN')}
           </span>
           <span style={{ fontSize: '12px', color: '#bbb', textDecoration: 'line-through' }}>
-            ₹{product?.originalPrice?.toLocaleString('en-IN')}
+            ₹{product?.variants?.[0].price?.toLocaleString('en-IN')}
           </span>
           <span style={{ fontSize: '12px', fontWeight: 600, color: '#27ae60' }}>
-            {product?.discount}% off
+            {discoutcalculate(product?.variants?.[0].price?.toLocaleString('en-IN'),product?.variants?.[0]?.costPrice.toLocaleString('en-IN'))}% off
           </span>
         </div>
 
