@@ -7,7 +7,7 @@ const router = express.Router();
 router.post('/register',singupLimiter,authRegister)
 router.post('/seller-register',authMiddleware,sellerSignup)
 router.get('/verify-email',authverifyEmail)
-router.post('/login',loginLimiter,authLogin)
+router.post('/login',authLogin)
 router.get('/logout',authLogout)
 router.get('/refresh-token',auth_refresh_AccessToken)
 router.get('/check-session',auth_CheckSession)

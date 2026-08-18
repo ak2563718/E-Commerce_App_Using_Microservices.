@@ -12,6 +12,7 @@ import UpdateProduct from './UpdateProduct'
 import { useRouter } from 'next/navigation'
 import { LoaderOne } from '@/components/ui/loader'
 import ProductLoading from '../skeleton&Loader/ProductLoading'
+import DeleteConfirmation from '../skeleton&Loader/DeleteConfirmation'
 
   
 // ── Field helpers ────────────────────────────────────────────────────────────
@@ -223,13 +224,14 @@ function StepDetails({ onNext, onClose }: { onNext: () => void; onClose: () => v
         categoryId:subCategoryId?subCategoryId:categoryId, 
         brandId:optional.brandId,
         seoTitle:optional.seoTitle,
-        seoDescritpion:optional.seoDescription,
+        seoDescription:optional.seoDescription,
         weight:optional.weight,
         height:optional.height,
         length:optional.length,
         width:optional.width,
-        taxPercenteage:optional.taxPercentage
+        taxPercentage:optional.taxPercentage
       }
+      console.log(formdata)
       const res = await dispatch(createProduct(formdata)).unwrap()
       toast.success(res.message)
       onNext()
@@ -703,15 +705,18 @@ function AddProductModal({ onClose }: { onClose: () => void }) {
 export default function Products() {
   const [search, setSearch] = useState('')
   const [showModal, setShowModal] = useState(false)
+  const [showDelete, setShowDelete] = useState(false)
+  const [productId, setProductId] = useState('')
   const dispatch = useAppDispatch();
-  const { products , message, error} = useAppSelector((state)=>state.product)
-  const [loading, setLoading] = useState<boolean>(true)
+  const { products , loading} = useAppSelector((state)=>state.product)
+  const [loader, setLoader] = useState<boolean>(true)
   const router = useRouter()
+
 
   useEffect(()=>{
     const getProduct =async()=>{
       const res = await dispatch(sellerProduct()).unwrap();
-      setLoading(false)
+      setLoader(false)
     }
     getProduct()
   },[dispatch])
@@ -726,7 +731,18 @@ export default function Products() {
   );
 });
 
-if(loading){
+const handleDelete =async()=>{
+      try {
+        const res =await dispatch(deleteProductbyId(productId)).unwrap();
+        toast.success(res.message)
+        setShowDelete(false)
+        setProductId('')
+      } catch (err:any) {
+        toast.error(err?.message)
+      }               
+    }
+
+if(loader){
   return <ProductLoading/>
 }
 
@@ -782,7 +798,7 @@ return (
     </div>
 
     {/* Product grid */}
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+    <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
       {Array.isArray(filtered) && filtered?.map((p) => {
         const variant = p.variants?.[0];
 
@@ -903,13 +919,10 @@ return (
                 </button>
 
                 <button 
-                onClick={async()=>{
-                  try {
-                    const res =await dispatch(deleteProductbyId(p.id)).unwrap();
-                    toast.success(res.message)
-                  } catch (err:any) {
-                    toast.error(err?.message)
-                  }}}
+                  onClick={()=>{
+                    setProductId(p.id)
+                    setShowDelete(true)
+                  }}
                   className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-red-50 transition-colors"
                 >
                   <Trash2 className="w-3.5 h-3.5 text-red-400" />
@@ -920,7 +933,7 @@ return (
         );
       })}
     </div>
-
+    <DeleteConfirmation open={showDelete} onConfirm={handleDelete} onCancel={()=>setShowDelete(false)} loading={loading} />
     {showModal && (
       <AddProductModal
         onClose={() => setShowModal(false)}

@@ -97,7 +97,6 @@ export default function Profile() {
   const [loading, setLoading] = useState(true)
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state)=>state.user)
-  
   useEffect(()=>{
      const userProfile = async()=>{
       const res = await dispatch(getProfile());

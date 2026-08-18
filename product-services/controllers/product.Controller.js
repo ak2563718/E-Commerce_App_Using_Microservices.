@@ -5,6 +5,7 @@ import slugify from 'slugify'
 
 // 1. Add Product (protected controller)
 export const createProduct = asyncHandler(async(req, res, next)=>{
+    console.log(req.body)
     const sellerId = req.user.id;
     const { name, description, sku, categoryId, brandId, seoTitle, seoDescription, weight, length, width, height, taxPercentage } = req.body;
     if(!name || !name.trim()){

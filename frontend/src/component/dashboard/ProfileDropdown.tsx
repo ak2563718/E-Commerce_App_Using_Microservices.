@@ -1,17 +1,17 @@
 "use client";
 import { authLogout } from "@/redux/auth/auth.Action";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { getProfile } from "@/redux/user/user.Action";
 import { ArrowDown, ArrowUp, Bell, ChevronDown, ChevronUp, Heart, Home, LogOut, Package, User, User2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-export default function ProfileDropdown() {
+export default function ProfileDropdown({name}:{name:string}) {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter()
-  const { user } = useAppSelector((state)=>state.auth)
   const dispatch = useAppDispatch()
-
+  const { user } = useAppSelector((state)=>state.user)
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -37,7 +37,7 @@ export default function ProfileDropdown() {
       >
          <User2 className="w-4 h-4 mb-[2px] ml-[2px]"/>
        <span>
-        Akash
+        {user.firstName ?? name}
        </span>
        {open ? (<ChevronUp className="w-4 h-4"/>):(<ChevronDown className="w-4 h-4"/>)}
       </button>

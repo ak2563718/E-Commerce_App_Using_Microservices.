@@ -1,99 +1,86 @@
-export default function ProductLoading() {
+function Bone({ className }: { className?: string }) {
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-      {/* Header */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'flex-end',
-          justifyContent: 'space-between',
-          marginBottom: 28,
-          gap: 20,
-        }}
-      >
-        {/* Left: title + search */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {/* "Products" heading */}
-          <div className="skel" style={{ width: 160, height: 32, borderRadius: 6 }} />
-          {/* Search bar */}
-          <div
-            className="skel"
-            style={{ width: 320, height: 40, borderRadius: 10 }}
-          />
-        </div>
+    <div
+      className={`rounded-md bg-purple-100/60 animate-pulse ${className ?? ""}`}
+    />
+  );
+}
 
-        {/* Right: Add Product button */}
-        <div className="skel" style={{ width: 140, height: 40, borderRadius: 10, flexShrink: 0 }} />
+function ProductCardSkeleton() {
+  return (
+    <div
+      className="rounded-2xl p-5 flex flex-col gap-3"
+      style={{
+        background: "#fff",
+        border: "1px solid #f0ebff",
+        boxShadow: "0 1px 8px rgba(124,58,237,0.06)",
+      }}
+    >
+      {/* Image */}
+      <div
+        className="w-full h-40 rounded-xl animate-pulse"
+        style={{ background: "linear-gradient(135deg, #f3e8ff, #ede9fe)" }}
+      />
+
+      {/* Name + SKU */}
+      <div className="flex flex-col gap-1.5">
+        <Bone className="h-3.5 w-3/4" />
+        <Bone className="h-2.5 w-1/3" />
       </div>
 
-      {/* 3x3 product card grid */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: 20,
-        }}
-      >
-        {Array.from({ length: 9 }).map((_, i) => (
-          <ProductCardSkeleton key={i} delay={i * 50} />
+      {/* Price + Stock tiles */}
+      <div className="grid grid-cols-2 gap-2">
+        {[0, 1].map((i) => (
+          <div key={i} className="rounded-lg p-3" style={{ background: "#faf5ff" }}>
+            <Bone className="h-4 w-12 mb-1.5" />
+            <Bone className="h-2.5 w-8" />
+          </div>
         ))}
       </div>
 
-      {/* Pagination area */}
+      {/* Footer */}
       <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginTop: 28,
-        }}
+        className="flex items-center justify-between pt-2 border-t"
+        style={{ borderColor: "#f3e8ff" }}
       >
-        <div className="skel" style={{ width: 120, height: 14, borderRadius: 4, opacity: 0.5 }} />
-        <div style={{ display: 'flex', gap: 8 }}>
-          {[1, 2, 3, 4].map(n => (
-            <div key={n} className="skel" style={{ width: 34, height: 34, borderRadius: 8 }} />
+        <Bone className="h-2.5 w-14" />
+        <div className="flex gap-1">
+          {[0, 1, 2].map((i) => (
+            <Bone key={i} className="w-7 h-7 rounded-lg" />
           ))}
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-function ProductCardSkeleton({ delay }: { delay: number }) {
+export default function ProductsLoading({ count = 8 }: { count?: number }) {
   return (
-    <div
-      style={{
-        background: '#fff',
-        borderRadius: 14,
-        border: '1px solid #e8edf2',
-        overflow: 'hidden',
-        animationDelay: `${delay}ms`,
-      }}
-    >
-      {/* Product image */}
-      <div className="skel" style={{ width: '100%', height: 180, borderRadius: 0 }} />
-
-      <div style={{ padding: '16px' }}>
-        {/* Category badge */}
-        <div className="skel" style={{ width: 72, height: 22, borderRadius: 20, marginBottom: 12 }} />
-
-        {/* Product name */}
-        <div className="skel" style={{ width: '80%', height: 16, borderRadius: 4, marginBottom: 8 }} />
-        {/* Description */}
-        <div className="skel" style={{ width: '60%', height: 12, borderRadius: 4, marginBottom: 16, opacity: 0.6 }} />
-
-        {/* Price + stock row */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <div className="skel" style={{ width: 64, height: 20, borderRadius: 4 }} />
-          <div className="skel" style={{ width: 68, height: 22, borderRadius: 20 }} />
+    <div className="space-y-6 p-4">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-2">
+          <Bone className="h-7 w-28" />
+          <Bone className="h-3 w-40" />
         </div>
+        <Bone className="h-9 w-28 rounded-xl" />
+      </div>
 
-        {/* Action buttons */}
-        <div style={{ display: 'flex', gap: 8 }}>
-          <div className="skel" style={{ flex: 1, height: 36, borderRadius: 8 }} />
-          <div className="skel" style={{ width: 36, height: 36, borderRadius: 8 }} />
-        </div>
+      {/* Search bar */}
+      <div
+        className="flex items-center gap-2 px-3 py-2 rounded-xl max-w-sm"
+        style={{ background: "#fff", border: "1px solid #e9d5ff" }}
+      >
+        <Bone className="w-4 h-4 rounded-full flex-shrink-0" />
+        <Bone className="h-3 w-48" />
+      </div>
+
+      {/* Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+        {Array.from({ length: count }).map((_, i) => (
+          <ProductCardSkeleton key={i} />
+        ))}
       </div>
     </div>
-  )
+  );
 }

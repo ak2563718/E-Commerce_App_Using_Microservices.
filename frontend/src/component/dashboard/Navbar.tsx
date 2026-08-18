@@ -6,7 +6,9 @@ import ProfileDropdown from './ProfileDropdown'
 import { authCheckSession } from '@/redux/auth/auth.Action'
 import LoadingSkeleton from './LoadingSkeleton'
 import { Search, SearchIcon } from 'lucide-react'
-import { searchProduct } from '@/redux/product/product.Action'
+import { getProfile } from '@/redux/user/user.Action'
+
+
 
 interface NavbarProps {
   onLoginClick?: () => void
@@ -27,7 +29,8 @@ export default function Navbar({
   const moreRef = useRef<HTMLDivElement>(null)
   const notifRef = useRef<HTMLDivElement>(null)
   const [ loading, setLoading ] = useState(true)
-  const { user, islogin, accessToken } = useAppSelector((state)=>state.auth)
+  const { islogin} = useAppSelector((state)=>state.auth)
+  const [name, setName] = useState('')
   const dispatch = useAppDispatch()
   useEffect(() => {
     window.scrollTo({
@@ -62,7 +65,12 @@ export default function Navbar({
     const fetchUserdetails = async()=>{
       try {
         const response = await dispatch(authCheckSession()).unwrap()
-      } finally {
+        const getuser = await dispatch(getProfile()).unwrap()
+        setName(getuser.data?.firstName)
+      } catch(error:any){
+        console.log(error)
+      }
+      finally {
         setLoading(false)
       }
     }
@@ -169,7 +177,7 @@ export default function Navbar({
           </button>
           )
           :(
-            <ProfileDropdown/>
+            <ProfileDropdown name={name} />
           )}
           
 
