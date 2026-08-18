@@ -310,6 +310,8 @@ export const serachProduct = asyncHandler(async(req, res, next)=>{
             variants:true,
             attributes:true,
             reviews:true,
+            brand:true,
+            category:true,
             }                     
     });
     if(!products){

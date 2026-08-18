@@ -3,6 +3,7 @@ import { useAppDispatch } from '@/redux/hooks'
 import { searchProduct } from '@/redux/product/product.Action'
 import { useSearchParams } from 'next/navigation'
 import { useState, useMemo, useEffect } from 'react'
+import SearchProductSkeleton from './SearchProductSkeleton'
 
 interface Product {
   id: number
@@ -19,199 +20,9 @@ interface Product {
   badge?: string
   freeDelivery?: boolean
   assured?: boolean
+  images:any[]
+  variants:any[]
 }
-
-const PRODUCTS: Product[] = [
-  {
-    id: 1,
-    name: 'Samsung Galaxy S24 Ultra 5G (Titanium Black, 256GB)',
-    slug: 'samsung-galaxy-s24-ultra-5g-black-256gb',
-    category: 'Smartphones',
-    brand: 'Samsung',
-    image: 'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=300&h=300&fit=crop&auto=format',
-    price: 109999,
-    originalPrice: 134999,
-    discount: 18,
-    rating: 4.5,
-    reviewCount: 18432,
-    badge: 'Bestseller',
-    freeDelivery: true,
-    assured: true,
-  },
-  {
-    id: 2,
-    name: 'Apple iPhone 15 Pro Max (Natural Titanium, 512GB)',
-    slug: 'apple-iphone-15-pro-max-natural-titanium-512gb',
-    category: 'Smartphones',
-    brand: 'Apple',
-    image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=300&h=300&fit=crop&auto=format',
-    price: 159900,
-    originalPrice: 189900,
-    discount: 15,
-    rating: 4.6,
-    reviewCount: 34210,
-    badge: 'Top Rated',
-    freeDelivery: true,
-    assured: true,
-  },
-  {
-    id: 3,
-    name: 'OnePlus 12 5G (Flowy Emerald, 256GB)',
-    slug: 'oneplus-12-5g-flowy-emerald-256gb',
-    category: 'Smartphones',
-    brand: 'OnePlus',
-    image: 'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=300&h=300&fit=crop&auto=format',
-    price: 64999,
-    originalPrice: 69999,
-    discount: 7,
-    rating: 4.3,
-    reviewCount: 8764,
-    freeDelivery: true,
-    assured: true,
-  },
-  {
-    id: 4,
-    name: 'Xiaomi 14 Pro 5G (Black, 512GB)',
-    slug: 'xiaomi-14-pro-5g-black-512gb',
-    category: 'Smartphones',
-    brand: 'Xiaomi',
-    image: 'https://images.unsplash.com/photo-1567690187548-f07b1d7bf5a9?w=300&h=300&fit=crop&auto=format',
-    price: 79999,
-    originalPrice: 99999,
-    discount: 20,
-    rating: 4.2,
-    reviewCount: 5312,
-    badge: 'Limited Deal',
-    freeDelivery: true,
-    assured: false,
-  },
-  {
-    id: 5,
-    name: 'Sony WH-1000XM5 Wireless Noise Cancelling Headphones',
-    slug: 'sony-wh1000xm5-wireless-headphones',
-    category: 'Headphones',
-    brand: 'Sony',
-    image: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=300&h=300&fit=crop&auto=format',
-    price: 26990,
-    originalPrice: 34990,
-    discount: 22,
-    rating: 4.7,
-    reviewCount: 22154,
-    badge: 'Bestseller',
-    freeDelivery: true,
-    assured: true,
-  },
-  {
-    id: 6,
-    name: 'Apple AirPods Pro (2nd Gen) with MagSafe Case',
-    slug: 'apple-airpods-pro-2nd-gen-magsafe',
-    category: 'Headphones',
-    brand: 'Apple',
-    image: 'https://images.unsplash.com/photo-1606841837239-c5a1a4a07af7?w=300&h=300&fit=crop&auto=format',
-    price: 19900,
-    originalPrice: 24900,
-    discount: 20,
-    rating: 4.5,
-    reviewCount: 41087,
-    freeDelivery: true,
-    assured: true,
-  },
-  {
-    id: 7,
-    name: 'Samsung Galaxy Watch 6 Classic (47mm, Graphite)',
-    slug: 'samsung-galaxy-watch-6-classic-47mm-graphite',
-    category: 'Smartwatches',
-    brand: 'Samsung',
-    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&h=300&fit=crop&auto=format',
-    price: 34999,
-    originalPrice: 44999,
-    discount: 22,
-    rating: 4.4,
-    reviewCount: 9823,
-    badge: 'New',
-    freeDelivery: true,
-    assured: true,
-  },
-  {
-    id: 8,
-    name: 'Apple Watch Series 9 GPS (45mm, Midnight)',
-    slug: 'apple-watch-series-9-gps-45mm-midnight',
-    category: 'Smartwatches',
-    brand: 'Apple',
-    image: 'https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?w=300&h=300&fit=crop&auto=format',
-    price: 44900,
-    originalPrice: 51900,
-    discount: 13,
-    rating: 4.6,
-    reviewCount: 31450,
-    freeDelivery: true,
-    assured: true,
-  },
-  {
-    id: 9,
-    name: 'Nothing Phone (2a) (Black, 256GB)',
-    slug: 'nothing-phone-2a-black-256gb',
-    category: 'Smartphones',
-    brand: 'Nothing',
-    image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300&h=300&fit=crop&auto=format',
-    price: 23999,
-    originalPrice: 27999,
-    discount: 14,
-    rating: 4.1,
-    reviewCount: 4210,
-    freeDelivery: false,
-    assured: false,
-  },
-  {
-    id: 10,
-    name: 'Bose QuietComfort 45 Bluetooth Headphones',
-    slug: 'bose-quietcomfort-45-bluetooth-headphones',
-    category: 'Headphones',
-    brand: 'Bose',
-    image: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=300&h=300&fit=crop&auto=format',
-    price: 25990,
-    originalPrice: 34900,
-    discount: 25,
-    rating: 4.5,
-    reviewCount: 15630,
-    badge: 'Top Rated',
-    freeDelivery: true,
-    assured: true,
-  },
-  {
-    id: 11,
-    name: 'Garmin Forerunner 265 GPS Running Smartwatch',
-    slug: 'garmin-forerunner-265-gps-running-smartwatch',
-    category: 'Smartwatches',
-    brand: 'Garmin',
-    image: 'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=300&h=300&fit=crop&auto=format',
-    price: 39999,
-    originalPrice: 49999,
-    discount: 20,
-    rating: 4.3,
-    reviewCount: 3207,
-    freeDelivery: true,
-    assured: false,
-  },
-  {
-    id: 12,
-    name: 'Google Pixel 8 Pro (Hazel, 128GB)',
-    slug: 'google-pixel-8-pro-hazel-128gb',
-    category: 'Smartphones',
-    brand: 'Google',
-    image: 'https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=300&h=300&fit=crop&auto=format',
-    price: 79999,
-    originalPrice: 99999,
-    discount: 20,
-    rating: 4.4,
-    reviewCount: 7851,
-    freeDelivery: true,
-    assured: true,
-  },
-]
-
-const ALL_CATEGORIES = [...new Set(PRODUCTS.map(p => p.category))]
-const ALL_BRANDS = [...new Set(PRODUCTS.map(p => p.brand))].sort()
 
 const RATING_FILTERS = [
   { label: '4★ & above', value: 4 },
@@ -359,7 +170,6 @@ function ProductCard({ product }: { product: Product }) {
   const [imgError, setImgError] = useState(false)
   const [hovered, setHovered] = useState(false)
   const [wishlisted, setWishlisted] = useState(false)
-
   return (
     <div
       onMouseEnter={() => setHovered(true)}
@@ -415,8 +225,8 @@ function ProductCard({ product }: { product: Product }) {
         }}
       >
         <img
-          src={imgError ? 'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=300&h=300&fit=crop&auto=format' : product.image}
-          alt={product.name}
+          src={imgError ? 'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=300&h=300&fit=crop&auto=format' : product.images?.[0]?.url}
+          alt={product?.name}
           onError={() => setImgError(true)}
           style={{
             width: '140px',
@@ -445,12 +255,12 @@ function ProductCard({ product }: { product: Product }) {
             minHeight: '36px',
           }}
         >
-          {product.name}
+          {product?.name}
         </p>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <StarRating rating={product.rating} />
-          <span style={{ fontSize: '11px', color: '#999' }}>({product.reviewCount.toLocaleString('en-IN')})</span>
+          <StarRating rating={product?.rating || 0} />
+          <span style={{ fontSize: '11px', color: '#999' }}>({product?.reviewCount?.toLocaleString('en-IN')})</span>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', flexWrap: 'wrap' }}>
@@ -462,21 +272,21 @@ function ProductCard({ product }: { product: Product }) {
               color: '#1a1a2e',
             }}
           >
-            ₹{product.price.toLocaleString('en-IN')}
+            ₹{product?.variants?.[0]?.price.toLocaleString('en-IN')}
           </span>
           <span style={{ fontSize: '12px', color: '#bbb', textDecoration: 'line-through' }}>
-            ₹{product.originalPrice.toLocaleString('en-IN')}
+            ₹{product?.originalPrice?.toLocaleString('en-IN')}
           </span>
           <span style={{ fontSize: '12px', fontWeight: 600, color: '#27ae60' }}>
-            {product.discount}% off
+            {product?.discount}% off
           </span>
         </div>
 
-        {product.freeDelivery && (
+        {product?.freeDelivery && (
           <span style={{ fontSize: '11px', color: '#27ae60', fontWeight: 500 }}>✓ Free Delivery</span>
         )}
 
-        {product.assured && (
+        {product?.assured && (
           <span
             style={{
               display: 'inline-flex',
@@ -556,6 +366,8 @@ export default function SearchProduct() {
   const [freeDeliveryOnly, setFreeDeliveryOnly] = useState(false)
   const [assuredOnly, setAssuredOnly] = useState(false)
   const [discountRange, setDiscountRange] = useState<number | null>(null)
+  const [ loading, setLoading] = useState(true);
+  const [data, setData] = useState<any[]>([])
   const params = useSearchParams()
   const search = params.get("search")
   const dispatch = useAppDispatch();
@@ -563,7 +375,8 @@ export default function SearchProduct() {
   useEffect(()=>{
     const getproduct = async()=>{
       const res = await dispatch(searchProduct(search)).unwrap();
-      console.log(res)
+      setData(res?.data)
+      setLoading(false)
     }
     getproduct()
   },[search,dispatch])
@@ -592,7 +405,7 @@ export default function SearchProduct() {
     discountRange !== null
 
   const filtered = useMemo(() => {
-    let result = [...PRODUCTS]
+    let result = [...data]
     if (selectedCategories.length > 0) result = result.filter(p => selectedCategories.includes(p.category))
     if (selectedBrands.length > 0) result = result.filter(p => selectedBrands.includes(p.brand))
     if (minRating !== null) result = result.filter(p => p.rating >= minRating)
@@ -600,7 +413,13 @@ export default function SearchProduct() {
     if (assuredOnly) result = result.filter(p => p.assured)
     if (discountRange !== null) result = result.filter(p => p.discount >= discountRange)
     return result
-  }, [selectedCategories, selectedBrands, minRating, freeDeliveryOnly, assuredOnly, discountRange])
+  }, [data,selectedCategories, selectedBrands, minRating, freeDeliveryOnly, assuredOnly, discountRange])
+
+   const ALL_CATEGORIES = [...new Set(data.map(p => p.category.name))]
+   const ALL_BRANDS = [...new Set(data.map(p => p.brand.name))].sort()
+  if(loading){
+    return <SearchProductSkeleton/>
+  }
 
   return (
     <div style={{ minHeight: '100vh', background: '#fdf0f8', fontFamily: 'Inter, sans-serif' }}>
@@ -822,9 +641,6 @@ export default function SearchProduct() {
               marginBottom: '14px',
             }}
           >
-            <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: '14px', fontWeight: 600, color: '#1a1a2e' }}>
-              {filtered.length} <span style={{ color: '#999', fontWeight: 400 }}>products found</span>
-            </span>
             {hasFilters && (
               <>
                 {selectedCategories.map(cat => (
