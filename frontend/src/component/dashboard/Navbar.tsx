@@ -32,6 +32,7 @@ export default function Navbar({
   const { islogin} = useAppSelector((state)=>state.auth)
   const [name, setName] = useState('')
   const dispatch = useAppDispatch()
+  const PINK = '#e91e8c'
   useEffect(() => {
     window.scrollTo({
       top: 0,
@@ -93,15 +94,24 @@ export default function Navbar({
       style={{ background: '#fff', boxShadow: '0 2px 16px rgba(233,30,140,0.10)' }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center gap-4 h-18" style={{ height: '68px' }}>
-
         {/* Logo + Brand */}
         <a href="/" className="flex items-center gap-2 shrink-0 group">
-          <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-black text-base shadow-sm transition-transform duration-150 group-hover:scale-105"
-            style={{ background: 'linear-gradient(135deg, #e91e8c 0%, #c2185b 100%)' }}
-          >
-            S
-          </div>
+                <div
+              style={{
+                background: '#fff',
+                borderRadius: '10px',
+                width: '32px',
+                height: '32px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke={PINK} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M3 6h18M16 10a4 4 0 01-8 0" stroke={PINK} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
           <span
             className="font-extrabold text-xl tracking-tight hidden sm:block"
             style={{ color: '#e91e8c' }}

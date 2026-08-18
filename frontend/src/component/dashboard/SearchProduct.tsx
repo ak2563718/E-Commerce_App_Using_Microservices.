@@ -1,9 +1,12 @@
 'use client'
-import { useAppDispatch } from '@/redux/hooks'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { searchProduct } from '@/redux/product/product.Action'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useState, useMemo, useEffect } from 'react'
 import SearchProductSkeleton from './SearchProductSkeleton'
+import { authCheckSession } from '@/redux/auth/auth.Action'
+import { getProfile } from '@/redux/user/user.Action'
+import ProfileDropdown from './ProfileDropdown'
 
 interface Product {
   id: number
@@ -375,7 +378,11 @@ export default function SearchProduct() {
   const [data, setData] = useState<any[]>([])
   const params = useSearchParams()
   const search = params.get("search")
+  const [name, setName] = useState('')
   const dispatch = useAppDispatch();
+  const { islogin } = useAppSelector((state)=>state.auth)
+  const router = useRouter()
+  
   
   useEffect(()=>{
     const getproduct = async()=>{
@@ -385,6 +392,15 @@ export default function SearchProduct() {
     }
     getproduct()
   },[search,dispatch])
+
+  useEffect(()=>{
+    const getuserinfo = async()=>{
+      const logininfo = await dispatch(authCheckSession()).unwrap();
+      const userinfo = await dispatch(getProfile()).unwrap()
+      setName(userinfo.data?.firstName)
+    }
+    getuserinfo()
+  },[dispatch])
 
   const toggleCategory = (cat: string) =>
     setSelectedCategories(prev => prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat])
@@ -467,16 +483,11 @@ export default function SearchProduct() {
               </svg>
             </div>
             <span
-              style={{
-                fontFamily: 'Poppins, sans-serif',
-                fontSize: '22px',
-                fontWeight: 700,
-                color: '#fff',
-                letterSpacing: '-0.3px',
-              }}
-            >
-              ShopHub
-            </span>
+            className="font-extrabold text-xl tracking-tight hidden sm:block"
+            style={{ color: '#f5f5f5' }}
+          >
+            ShopHub
+          </span>
           </div>
 
           <div
@@ -497,13 +508,52 @@ export default function SearchProduct() {
             <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}>Search products…</span>
           </div>
 
-          <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-            {['Wishlist', 'Cart', 'Account'].map(item => (
-              <span key={item} style={{ color: '#fff', fontSize: '13px', fontWeight: 500, cursor: 'pointer', opacity: 0.9 }}>
-                {item}
-              </span>
-            ))}
-          </div>
+         <div className="flex items-center gap-3 shrink-0">
+          {!islogin ?
+          (
+            <button
+            onClick={()=>router.replace('/auth/login')}
+            className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-white transition-all duration-150 active:scale-95 hover:bg-pink-50 hover:text-pink-500 transition-all duration-150"
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 5px 16px rgba(233,30,140,0.45)' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 3px 10px rgba(233,30,140,0.30)' }}
+          >
+            Login
+          </button>
+          )
+          :
+          (
+            <ProfileDropdown name={name} />
+          )}
+
+          <button
+            className="relative w-11 h-11 flex items-center justify-center rounded-xl text-gray-400 hover:bg-pink-50 hover:text-pink-500 transition-all duration-150"
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="9" cy="21" r="1" />
+              <circle cx="20" cy="21" r="1" />
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+            </svg>
+          </button>
+
+          <button
+              className="relative w-11 h-11 flex items-center justify-center rounded-xl text-gray-400 hover:bg-pink-50 hover:text-pink-500 transition-all duration-150"
+            >
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.78-8.84a5.5 5.5 0 0 0 .06-7.78z" />
+              </svg>
+            </button>
+
+         </div>
         </div>
       </div>
 
