@@ -38,7 +38,7 @@ export const createCart = asyncHandler(async(req, res, next)=>{
 
 // 2. Get Cart
 export const getCart = asyncHandler(async(req, res, next)=>{
-    const userId = req.params.userId;
+    const userId = req.user.id;
     const cart = await prisma.cart.findUnique({
         where:{
             userId
