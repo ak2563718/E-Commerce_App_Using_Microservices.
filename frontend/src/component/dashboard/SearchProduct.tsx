@@ -7,7 +7,8 @@ import SearchProductSkeleton from './SearchProductSkeleton'
 import { authCheckSession } from '@/redux/auth/auth.Action'
 import { getProfile } from '@/redux/user/user.Action'
 import ProfileDropdown from './ProfileDropdown'
-import { getCart } from '@/redux/cart/cart.Action'
+import { createCartItems, getCart } from '@/redux/cart/cart.Action'
+import { toast } from 'sonner'
 
 interface Product {
   id: number
@@ -446,6 +447,7 @@ export default function SearchProduct() {
     const getcartvalue = async()=>{
       try {
         const res = await dispatch(getCart()).unwrap()
+        console.log(res.data)
         setCartId(res.data?.id)
       } catch (error) {
         console.log(error)
@@ -465,7 +467,12 @@ export default function SearchProduct() {
         variantId,
         quantity:1,
     }
-    console.log(data)
+    try {
+      const res = await dispatch(createCartItems(data)).unwrap();
+      toast.success(res.message)
+    } catch (error:any) {
+      toast.error(error.message)
+    }
    }
 
   if(loading){

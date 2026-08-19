@@ -1,10 +1,12 @@
 import CartItems from '@/component/dashboard/CartItems'
-import React from 'react'
+import type { ReactElement } from 'react'
+
+const CartItemsComponent = CartItems as unknown as () => ReactElement
 
 function page() {
   return (
     <div>
-        <CartItems/>
+        <CartItemsComponent />
     </div>
   )
 }

@@ -89,7 +89,7 @@ const cartSlice = createSlice({
             state.loading = false;
             state.message = action.payload.message;
             state.cartitems = state.cartitems.filter((c)=>c.id !== action.payload.data.id)
-        }).addCase(updateCartItems.rejected,(state,action)=>{
+        }).addCase(deleteCartItems.rejected,(state,action)=>{
             state.loading = false;
             state.error = action.payload?? 'failed';
         });

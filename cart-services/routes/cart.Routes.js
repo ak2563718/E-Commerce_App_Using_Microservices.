@@ -1,5 +1,5 @@
 import express from 'express';
-import { clearCart, createCart, createCartItems, deleteCartItems, getCart, updateCartItems } from '../controller/cart.Controller.js';
+import { clearCart, createCart, createCartItems, deleteCartItems, getCart, getCartitems, updateCartItems } from '../controller/cart.Controller.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
 const router = express.Router();
 // 1. cart routes
@@ -8,6 +8,7 @@ router.get("/carts",authMiddleware,getCart)
 
 // 2. cart items routes
 router.post("/carts/:cartId/cartitems",authMiddleware,createCartItems)
+router.get('/carts/:id/cartitems',getCartitems)
 router.patch("/cartitems/:itemId",authMiddleware,updateCartItems)
 router.delete("/cartitems/:itemsId",authMiddleware,deleteCartItems)
 router.delete("/carts/:cartId",authMiddleware,clearCart)

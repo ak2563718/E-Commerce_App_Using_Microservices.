@@ -7,7 +7,6 @@ interface data{
 }
 interface quantity{
     quantity:number
-    cartitemId:string,
 }
 interface data2 extends quantity{
     cartId:string,
@@ -74,7 +73,7 @@ export const createCartItems = createAsyncThunk<any, data2, {rejectValue:string}
 )
 
 // 4. update cart items
-export const updateCartItems = createAsyncThunk<any, quantity, {rejectValue:string}>(
+export const updateCartItems = createAsyncThunk<any, any, {rejectValue:string}>(
     'patch/cartitems',
     async({cartitemId,quantity}, { rejectWithValue })=>{
         try {
