@@ -3,6 +3,10 @@ import { getCart, getCartItems } from '@/redux/cart/cart.Action'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import ProfileDropdown from './ProfileDropdown'
+import { getProfile } from '@/redux/user/user.Action'
+import { authCheckSession } from '@/redux/auth/auth.Action'
+import CartSkeleton from './CartSkeleton'
 
 const PINK = '#e91e8c'
 const PINK_DARK = '#c2185b'
@@ -146,13 +150,17 @@ function CartItemRow({
   onRemove,
   onSaveLater,
 }: {
-  item: CartItem
+  item: any
   onQtyChange: (id: number, delta: number) => void
   onRemove: (id: number) => void
   onSaveLater: (id: number) => void
 }) {
   const [imgError, setImgError] = useState(false)
-
+  console.log('items value',item)
+  const discountPer =(val1:number, val2:number)=>{
+    const percentage = Math.floor(((val1-val2)/val1)*100);
+    return percentage;
+  }
   return (
     <div
       style={{
@@ -163,11 +171,11 @@ function CartItemRow({
         display: 'flex',
         gap: '18px',
         position: 'relative',
-        opacity: item.inStock ? 1 : 0.72,
+        opacity: item.stock ? 1 : 0.72,
       }}
     >
       {/* Out of stock ribbon */}
-      {!item.inStock && (
+      {!item.stock && (
         <div
           style={{
             position: 'absolute',
@@ -222,7 +230,7 @@ function CartItemRow({
             fontWeight: 600,
             color: '#1a1a2e',
             lineHeight: 1.4,
-            paddingRight: item.inStock ? 0 : '100px',
+            paddingRight: item.stock ? 0 : '100px',
           }}
         >
           {item.name}
@@ -249,7 +257,7 @@ function CartItemRow({
             {fmt(item.originalPrice)}
           </span>
           <span style={{ fontSize: '13px', fontWeight: 600, color: '#27ae60' }}>
-            {item.discount}% off
+            {discountPer(Number(item.originalPrice),Number(item.price))}% off
           </span>
           <span style={{ fontSize: '12px', color: '#27ae60' }}>
             You save {fmt((item.originalPrice - item.price) * item.quantity)}
@@ -391,9 +399,24 @@ export default function CartItems() {
    const dispatch = useAppDispatch()
   const { islogin } = useAppSelector((state)=>state.auth)
   const { cartitems } = useAppSelector((state)=>state.cart);
-  const [cartItems, setCartItems] = useState<any[]>(cartitems)
+   useEffect(()=>{
+    const cartinfo = async()=>{
+      try {
+        const cart = await dispatch(getCart()).unwrap();
+        const cartItem = await dispatch(getCartItems(cart.data.id)).unwrap();
+        setCartItems(cartItem.data)
+      } catch (error) {
+        console.log(error)
+      }finally{
+        setLoading(false)
+      }
+    }
+    cartinfo()
+  },[dispatch])
+  const [cartItems, setCartItems] = useState<any[]>([])
   const [savedItems, setSavedItems] = useState<CartItem[]>([])
-
+  const [name , setName ] = useState('')
+  const [ loading, setLoading ] = useState(true)
   const handleQtyChange = (id: number, delta: number) => {
     setCartItems(prev =>
       prev.map(item =>
@@ -422,7 +445,7 @@ export default function CartItems() {
     }
   }
 
-  const inStockItems = cartItems.filter(i => i.inStock)
+  const inStockItems = cartItems.filter(i => i.stock)
   const subtotal = inStockItems.reduce((sum, i) => sum + i.price * i.quantity, 0)
   const originalTotal = inStockItems.reduce((sum, i) => sum + i.originalPrice * i.quantity, 0)
   const totalDiscount = originalTotal - subtotal
@@ -430,24 +453,142 @@ export default function CartItems() {
   const totalAmount = subtotal + deliveryCharge
   const totalItems = cartItems.reduce((sum, i) => sum + i.quantity, 0)
   const router = useRouter()
-  
+
   useEffect(()=>{
-    const cartinfo = async()=>{
+    const getprofileInfo = async()=>{
       try {
-        const cart = await dispatch(getCart()).unwrap();
-        const cartItem = await dispatch(getCartItems(cart.data.id)).unwrap();
+        const user = await dispatch(authCheckSession()).unwrap();
+        const res = await dispatch(getProfile()).unwrap();
+        setName(res.data?.firstName) 
       } catch (error) {
         console.log(error)
       }
     }
-    cartinfo()
+    getprofileInfo()
   },[dispatch])
+  
   if(!islogin){
     return router.replace('/auth/login')
   }
-
+ 
+  if(loading){
+    return <CartSkeleton/>
+  }
   return (
     <div style={{ minHeight: '100vh', background: '#fdf0f8', fontFamily: 'Inter, sans-serif' }}>
+       {/* Header */}
+              <div
+                style={{
+                  background: `linear-gradient(135deg, ${PINK} 0%, #c2185b 100%)`,
+                  padding: '14px 0',
+                  position: 'sticky',
+                  top: 0,
+                  zIndex: 100,
+                  boxShadow: '0 3px 16px rgba(233,30,140,0.25)',
+                }}
+              >
+                <div
+                  style={{
+                    maxWidth: '1320px',
+                    margin: '0 auto',
+                    padding: '0 28px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <div onClick={()=>router.push('/')} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div
+                      style={{
+                        background: '#fff',
+                        borderRadius: '10px',
+                        width: '32px',
+                        height: '32px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke={PINK} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M3 6h18M16 10a4 4 0 01-8 0" stroke={PINK} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                    <span
+                    className="font-extrabold text-xl tracking-tight hidden sm:block"
+                    style={{ color: '#f5f5f5' }}
+                  >
+                    ShopHub
+                  </span>
+                  </div>
+        
+                  <div
+                    style={{
+                      background: 'rgba(255,255,255,0.18)',
+                      borderRadius: '8px',
+                      padding: '8px 16px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      flex: '0 0 420px',
+                      border: '1px solid rgba(255,255,255,0.3)',
+                    }}
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" stroke="#fff" strokeWidth="2.2" fill="none" strokeLinecap="round">
+                      <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
+                    </svg>
+                    <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}>Search products…</span>
+                  </div>
+        
+                 <div className="flex items-center gap-3 shrink-0">
+                  {!islogin ?
+                  (
+                    <button
+                    onClick={()=>router.replace('/auth/login')}
+                    className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-white transition-all duration-150 active:scale-95 hover:bg-pink-50 hover:text-pink-500 transition-all duration-150"
+                    onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 5px 16px rgba(233,30,140,0.45)' }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 3px 10px rgba(233,30,140,0.30)' }}
+                  >
+                    Login
+                  </button>
+                  )
+                  :
+                  (
+                    <ProfileDropdown name={name}  />
+                  )}
+        
+                  <button
+                  onClick={()=>router.push('/user/cart')}
+                    className="relative w-11 h-11 flex items-center justify-center rounded-xl text-gray-400 hover:bg-pink-50 hover:text-pink-500 transition-all duration-150"
+                  >
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="9" cy="21" r="1" />
+                      <circle cx="20" cy="21" r="1" />
+                      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                    </svg>
+                  </button>
+        
+                  <button
+                      className="relative w-11 h-11 flex items-center justify-center rounded-xl text-gray-400 hover:bg-pink-50 hover:text-pink-500 transition-all duration-150"
+                    >
+                      <svg
+                        width="22"
+                        height="22"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.78-8.84a5.5 5.5 0 0 0 .06-7.78z" />
+                      </svg>
+                    </button>
+        
+                 </div>
+                </div>
+              </div>
       <div style={{ maxWidth: '1160px', margin: '0 auto', padding: '28px 28px' }}>
         {/* Page title */}
         <div style={{ marginBottom: '20px' }}>

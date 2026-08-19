@@ -1,5 +1,8 @@
 'use client'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import LoadingSkeleton from './LoadingSkeleton'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import { getAllCategories } from '@/redux/category/category.Action'
 
 const categories = [
   {
@@ -121,6 +124,9 @@ interface SubNavbarProps {
 export default function SubNavbar({ onCategoryChange }: SubNavbarProps) {
   const [active, setActive] = useState('foryou')
   const scrollRef = useRef<HTMLDivElement>(null)
+  const [ loading, setLoading] = useState(true)
+  const dispatch = useAppDispatch();
+  const { category } = useAppSelector((state)=>state.category)
 
   const handleSelect = (id: string) => {
     setActive(id)
@@ -131,6 +137,20 @@ export default function SubNavbar({ onCategoryChange }: SubNavbarProps) {
     if (!scrollRef.current) return
     scrollRef.current.scrollBy({ left: dir === 'left' ? -200 : 200, behavior: 'smooth' })
   }
+
+  useEffect(()=>{
+    const categoryinfo =async()=>{
+    try {
+      const res = await dispatch(getAllCategories()).unwrap();
+    } catch (error) {
+      console.log(error)
+    }finally{
+      setLoading(false)
+    }
+    }
+    categoryinfo()
+  },[dispatch])
+
 
   return (
     <div

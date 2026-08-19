@@ -563,7 +563,7 @@ export default function SearchProduct() {
           )}
 
           <button
-          onClick={()=>router.push('/user/cart')}
+          onClick={()=>router.push('/cart')}
             className="relative w-11 h-11 flex items-center justify-center rounded-xl text-gray-400 hover:bg-pink-50 hover:text-pink-500 transition-all duration-150"
           >
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none"

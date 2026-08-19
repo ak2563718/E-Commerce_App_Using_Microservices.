@@ -27,8 +27,8 @@ export default function Navbar({
   const [notifOpen, setNotifOpen] = useState(false)
   const moreRef = useRef<HTMLDivElement>(null)
   const notifRef = useRef<HTMLDivElement>(null)
-  const [ loading, setLoading ] = useState(true)
-  const { islogin} = useAppSelector((state)=>state.auth)
+  const { islogin } = useAppSelector((state)=>state.auth)
+  const [loading, setLoading] = useState(true)
   const [name, setName] = useState('')
   const dispatch = useAppDispatch()
   const PINK = '#e91e8c'
@@ -69,8 +69,7 @@ export default function Navbar({
         setName(getuser.data?.firstName)
       } catch(error:any){
         console.log(error)
-      }
-      finally {
+      }finally{
         setLoading(false)
       }
     }
@@ -81,16 +80,14 @@ export default function Navbar({
     e.preventDefault()
     router.push(`/search?search=${search}`)
   }
-
   const onCartClick =()=>{
-    router.push('/user/cart')
+    router.push('/cart')
   }
-  
 
   if(loading){
-    return <LoadingSkeleton />
+    return <LoadingSkeleton/>
   }
-
+  
   return (
     <nav
       className="w-full sticky top-0 z-50"
