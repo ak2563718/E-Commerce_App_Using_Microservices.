@@ -323,3 +323,61 @@ export const serachProduct = asyncHandler(async(req, res, next)=>{
         data:products,
     })
 })
+
+// 8. Mangae Wishlist
+export const manageWhislist = asyncHandler(async(req, res, next)=>{
+    const productId = req.params.id;
+    const userId = req.user.id;
+    const found= await prisma.wishlist.findUnique({
+        where: {
+        userId_productId: {
+            userId,
+            productId
+            }
+        }
+        })
+    if(found){
+        await prisma.wishlist.delete({
+            where:{
+                userId_productId:{
+                    userId,
+                    productId,
+                }
+            }
+        })
+        return res.status(200).json({
+            message:"Product remove from Wishlist",
+            success:true,
+        })
+    }
+    const wishlist = await prisma.wishlist.create({
+        data:{
+            userId,
+            productId,
+        }
+    })
+    res.status(201).json({
+        message:"Wishlist updated",
+        success:true,
+        data:wishlist
+    })
+})
+
+
+// 9.get wishlist items
+export const getWishlist = asyncHandler(async(req, res, next)=>{
+    const userId = req.user.id;
+    const wishlist = await prisma.wishlist.findMany({
+        where:{
+            userId
+        }
+    })
+    if(!wishlist){
+        return next(new AppError("No items found", 404))
+    }
+    res.status(200).json({
+        message:"Items found",
+        success:true,
+        data:wishlist,
+    })
+})

@@ -1,7 +1,7 @@
 import express from 'express';
 import { categorybyId, createCategories, deleteCategory, getCategory } from '../controllers/category.Controller.js';
 import { createBrand, deleteBrand, getBrand, getbyId, updateBrand } from '../controllers/brand.Controller.js';
-import { createProduct, deleteProductbyId, getProdctbyId, getProduct, getProductbySlug, getProductofSeller, serachProduct, updateProduct } from '../controllers/product.Controller.js';
+import { createProduct, deleteProductbyId, getProdctbyId, getProduct, getProductbySlug, getProductofSeller, getWishlist, manageWhislist, serachProduct, updateProduct } from '../controllers/product.Controller.js';
 import { createVariant, deleteVariant, getVariants, updateVariant } from '../controllers/variant.Controller.js';
 import { createAttributes, createAttributesvalue, deleteAttributes, deleteAttributesvalue, updateAttributes, updateAttributesValue } from '../controllers/attribute.Controller.js';
 import { deleteProductImage, updateProductImage, uploadProductImages, uploadVariantImages } from '../controllers/image.Controller.js';
@@ -56,4 +56,8 @@ router.delete('/images/:id',deleteProductImage)
 router.post('/variants/:id/images',upload.array('images',10),uploadVariantImages)
 router.patch('/images/:id',upload.single('newimage'),updateProductImage)
 router.delete('/images/:id',deleteProductImage)
+
+// 9. manage wishlist
+router.post('/products/:id/wishlist',authMiddleware,manageWhislist);
+router.get('/products/wishlist/items',authMiddleware,getWishlist)
 export default router;
