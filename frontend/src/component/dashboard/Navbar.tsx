@@ -7,6 +7,7 @@ import { authCheckSession } from '@/redux/auth/auth.Action'
 import LoadingSkeleton from './LoadingSkeleton'
 import { Search, SearchIcon } from 'lucide-react'
 import { getProfile } from '@/redux/user/user.Action'
+import { getCart } from '@/redux/cart/cart.Action'
 
 
 

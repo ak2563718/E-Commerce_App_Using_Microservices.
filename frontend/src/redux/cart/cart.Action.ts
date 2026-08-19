@@ -72,7 +72,26 @@ export const createCartItems = createAsyncThunk<any, data2, {rejectValue:string}
     }
 )
 
-// 4. update cart items
+// 4. get cartitems
+export const getCartItems = createAsyncThunk<any, string, {rejectValue:string}>(
+    'get/cartitems',
+    async(cartId, { rejectWithValue })=>{
+        try {
+            const { data } = await api.get(`${cart_uri}/carts/${cartId}/cartitems`,{
+                headers:{'Content-Type':'application/json'},
+                withCredentials:true,
+            })
+            return data;
+        } catch (error) {
+            if(axios.isAxiosError(error)){
+                return rejectWithValue(error.response?.data.message)
+            }
+            return rejectWithValue('something went wrong')
+        }
+    }
+)
+
+// 5. update cart items
 export const updateCartItems = createAsyncThunk<any, any, {rejectValue:string}>(
     'patch/cartitems',
     async({cartitemId,quantity}, { rejectWithValue })=>{
@@ -91,7 +110,7 @@ export const updateCartItems = createAsyncThunk<any, any, {rejectValue:string}>(
     }
 )
 
-// 5. delete cart items
+// 6. delete cart items
 export const deleteCartItems = createAsyncThunk<any, string, {rejectValue:string}>(
     'delete/cartitems',
     async(cartItemId, { rejectWithValue})=>{
@@ -110,7 +129,7 @@ export const deleteCartItems = createAsyncThunk<any, string, {rejectValue:string
     }
 )
 
-// 6. clear cart 
+// 7. clear cart 
 export const clearCart = createAsyncThunk<any, string, {rejectValue:string}>(
     'delete/cart',
     async(cartId, { rejectWithValue })=>{

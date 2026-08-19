@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { clearCart, createCart, createCartItems, deleteCartItems, getCart, updateCartItems } from "./cart.Action";
+import { clearCart, createCart, createCartItems, deleteCartItems, getCart, getCartItems, updateCartItems } from "./cart.Action";
 
 interface data{
     cart:any,
@@ -64,6 +64,20 @@ const cartSlice = createSlice({
             state.loading = false;
             state.error = action.payload?? 'failed';
         });
+
+        // 4. get cart items
+        builder.addCase(getCartItems.pending,(state)=>{
+            state.loading = true;
+            state.message = null;
+            state.error = null;
+        }).addCase(getCartItems.fulfilled,(state,action)=>{
+            state.loading = false;
+            state.message = action.payload.message;
+            state.cartitems = action.payload.data;
+        }).addCase(getCartItems.rejected,(state,action)=>{
+            state.loading = false;
+            state.error = action.payload ?? 'failed';
+        })
 
         // 4. update cart items
         builder.addCase(updateCartItems.pending,(state,action)=>{

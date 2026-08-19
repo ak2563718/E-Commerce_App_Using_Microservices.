@@ -1,7 +1,8 @@
 'use client'
-import { useAppSelector } from '@/redux/hooks'
+import { getCart, getCartItems } from '@/redux/cart/cart.Action'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const PINK = '#e91e8c'
 const PINK_DARK = '#c2185b'
@@ -387,7 +388,10 @@ function SavedItem({ item, onMoveToCart }: { item: CartItem; onMoveToCart: (id: 
 }
 
 export default function CartItems() {
-  const [cartItems, setCartItems] = useState<CartItem[]>(INITIAL_CART)
+   const dispatch = useAppDispatch()
+  const { islogin } = useAppSelector((state)=>state.auth)
+  const { cartitems } = useAppSelector((state)=>state.cart);
+  const [cartItems, setCartItems] = useState<any[]>(cartitems)
   const [savedItems, setSavedItems] = useState<CartItem[]>([])
 
   const handleQtyChange = (id: number, delta: number) => {
@@ -426,7 +430,18 @@ export default function CartItems() {
   const totalAmount = subtotal + deliveryCharge
   const totalItems = cartItems.reduce((sum, i) => sum + i.quantity, 0)
   const router = useRouter()
-  const { islogin } = useAppSelector((state)=>state.auth)
+  
+  useEffect(()=>{
+    const cartinfo = async()=>{
+      try {
+        const cart = await dispatch(getCart()).unwrap();
+        const cartItem = await dispatch(getCartItems(cart.data.id)).unwrap();
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    cartinfo()
+  },[dispatch])
   if(!islogin){
     return router.replace('/auth/login')
   }
