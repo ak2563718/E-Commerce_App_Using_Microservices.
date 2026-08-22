@@ -399,12 +399,14 @@ export default function CartItems() {
    const dispatch = useAppDispatch()
   const { islogin } = useAppSelector((state)=>state.auth)
   const { cartitems } = useAppSelector((state)=>state.cart);
+  const [ cartId, setCartId ] = useState('')
    useEffect(()=>{
     const cartinfo = async()=>{
       try {
         const cart = await dispatch(getCart()).unwrap();
         const cartItem = await dispatch(getCartItems(cart.data.id)).unwrap();
         setCartItems(cartItem.data)
+        setCartId(cart.data.id)
       } catch (error) {
         console.log(error)
       }finally{
@@ -449,6 +451,10 @@ export default function CartItems() {
       setCartItems(prev => [...prev, { ...item, quantity: 1 }])
       setSavedItems(prev => prev.filter(i => i.id !== id))
     }
+  }
+
+  const handleClearCart =()=>{
+     console.log(cartId)
   }
 
   const inStockItems = cartItems.filter(i => i.stock)
@@ -683,6 +689,7 @@ export default function CartItems() {
                 }}
               >
                 <button
+                   onClick={handleClearCart}
                   style={{
                     background: `linear-gradient(135deg, ${PINK} 0%, ${PINK_DARK} 100%)`,
                     color: '#fff',
