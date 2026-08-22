@@ -165,40 +165,113 @@ export const createCartItems = asyncHandler(async (req, res, next) => {
 });
 
 // 2. get all cart items
-export const getCartitems = asyncHandler(async(req, res, next)=>{
-    const cartId = req.params.id;
-    const cartitems = await prisma.cartItem.findMany({
-        where:{cartId}
-    })
-    if(cartitems.length <= 0){
-        return next(new AppError("No cart items found",404))
+// export const getCartitems = asyncHandler(async(req, res, next)=>{
+//     const cartId = req.params.id;
+//     const cartitems = await prisma.cartItem.findMany({
+//         where:{cartId}
+//     })
+//     if(cartitems.length <= 0){
+//         return next(new AppError("No cart items found",404))
+//     }
+//     let object=[];
+//     for ( const cart of cartitems){
+//         const productInfo = await axios.get(`http://localhost:6002/api/products/${cart.productId}`,{
+//             headers:{'Content-Type':'application/json'},
+//             withCredentials:true,
+//         })
+//         const product= productInfo.data.data;
+//         const variant = product.variants.find((v)=>v.id === cart.variantId);
+//         object.push({
+//             image:product.images?.[0]?.url,
+//             name:product.name,
+//             brandName:product.brand?.name,
+//             price:variant.costPrice,
+//             originalPrice:variant.price,//higher than price
+//             stock:variant.stock,
+//             color:variant.color,
+//             size:variant.size,
+//             quantity:cart.quantity,
+//         })
+//     }
+//     res.status(200).json({
+//         message:"Get items found",
+//         data:object,
+//         success:true,
+//     })
+// })
+
+export const getCartitems = asyncHandler(async (req, res, next) => {
+  const cartId = req.params.id;
+
+  // 1. Get all cart items
+  const cartitems = await prisma.cartItem.findMany({
+    where: { cartId },
+  });
+
+  if (cartitems.length === 0) {
+    return next(new AppError("No cart items found", 404));
+  }
+
+  // 2. Fetch all products concurrently
+  const productResponses = await Promise.all(
+    cartitems.map((cart) =>
+      axios.get(
+        `http://localhost:6002/api/products/${cart.productId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      )
+    )
+  );
+  console.log(productResponses)
+  // 3. Build the cart response
+  const object = cartitems.map((cart, index) => {
+    const product = productResponses[index].data.data;
+
+    const variant = product.variants.find(
+      (v) => v.id === cart.variantId
+    );
+
+    // Handle case where variant doesn't exist
+    if (!variant) {
+      return {
+        id:product.id,
+        image: product.images?.[0]?.url,
+        name: product.name,
+        brandName: product.brand?.name,
+        price: null,
+        originalPrice: null,
+        stock: 0,
+        color: null,
+        size: null,
+        quantity: cart.quantity,
+      };
     }
-    let object=[];
-    for ( const cart of cartitems){
-        const productInfo = await axios.get(`http://localhost:6002/api/products/${cart.productId}`,{
-            headers:{'Content-Type':'application/json'},
-            withCredentials:true,
-        })
-        const product= productInfo.data.data;
-        const variant = product.variants.find((v)=>v.id === cart.variantId);
-        object.push({
-            image:product.images?.[0]?.url,
-            name:product.name,
-            brandName:product.brand?.name,
-            price:variant.costPrice,
-            originalPrice:variant.price,//higher than price
-            stock:variant.stock,
-            color:variant.color,
-            size:variant.size,
-            quantity:cart.quantity,
-        })
-    }
-    res.status(200).json({
-        message:"Get items found",
-        data:object,
-        success:true,
-    })
-})
+
+    return {
+      id:product.id,
+      image: product.images?.[0]?.url,
+      name: product.name,
+      brandName: product.brand?.name,
+      price: variant.costPrice,
+      originalPrice: variant.price,
+      stock: variant.stock,
+      color: variant.color,
+      size: variant.size,
+      quantity: cart.quantity,
+    };
+  });
+
+  // 4. Send response
+  res.status(200).json({
+    message: "Cart items found",
+    data: object,
+    success: true,
+  });
+});
 
 // 2. update cart items
 export const updateCartItems = asyncHandler(async(req, res, next)=>{
@@ -231,12 +304,17 @@ export const updateCartItems = asyncHandler(async(req, res, next)=>{
 
 // 3. delete cart items 
 export const deleteCartItems = asyncHandler(async(req, res, next)=>{
-    const { itemId } = req.params;
-    const cartItem = await prisma.cartItem.findUnique({where:{id:itemId}})
+    const { itemsId } = req.params;
+    const cartItem = await prisma.cartItem.findFirst({where:{
+         productId:itemsId
+    }})
     if(!cartItem){
-        return next(new AppError("Cart not found", 404))
+        return next(new AppError("Item not found is cart", 404))
     }
-    const data = await prisma.cartItem.delete({where:{id:itemId}})
+    const data = await prisma.cartItem.delete({where:
+        {
+        id:cartItem?.id,
+    } })
     res.status(200).json({
         message:"items Deleted Successfully",
         success:true,

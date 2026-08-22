@@ -1,5 +1,5 @@
 'use client'
-import { getCart, getCartItems } from '@/redux/cart/cart.Action'
+import { deleteCartItems, getCart, getCartItems } from '@/redux/cart/cart.Action'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -7,6 +7,7 @@ import ProfileDropdown from './ProfileDropdown'
 import { getProfile } from '@/redux/user/user.Action'
 import { authCheckSession } from '@/redux/auth/auth.Action'
 import CartSkeleton from './CartSkeleton'
+import { toast } from 'sonner'
 
 const PINK = '#e91e8c'
 const PINK_DARK = '#c2185b'
@@ -152,11 +153,10 @@ function CartItemRow({
 }: {
   item: any
   onQtyChange: (id: number, delta: number) => void
-  onRemove: (id: number) => void
+  onRemove: () => void
   onSaveLater: (id: number) => void
 }) {
   const [imgError, setImgError] = useState(false)
-  console.log('items value',item)
   const discountPer =(val1:number, val2:number)=>{
     const percentage = Math.floor(((val1-val2)/val1)*100);
     return percentage;
@@ -302,7 +302,7 @@ function CartItemRow({
 
           <div style={{ display: 'flex', gap: '0', borderLeft: '1.5px solid #f0e0eb', paddingLeft: '16px' }}>
             <button
-              onClick={() => onRemove(item.id)}
+              onClick={onRemove}
               style={{
                 background: 'none',
                 border: 'none',
@@ -425,8 +425,14 @@ export default function CartItems() {
     )
   }
 
-  const handleRemove = (id: number) => {
-    setCartItems(prev => prev.filter(item => item.id !== id))
+  const handleRemove = async(item:any) => {
+    try {
+      const res = await dispatch(deleteCartItems(item.id)).unwrap();
+      setCartItems(prev => prev.filter(i=>i.id !== item.id))
+      toast.success(res.message)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const handleSaveLater = (id: number) => {
@@ -558,7 +564,7 @@ export default function CartItems() {
                   )}
         
                   <button
-                  onClick={()=>router.push('/user/cart')}
+                  onClick={()=>router.push('/cart')}
                     className="relative w-11 h-11 flex items-center justify-center rounded-xl text-gray-400 hover:bg-pink-50 hover:text-pink-500 transition-all duration-150"
                   >
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
@@ -660,7 +666,7 @@ export default function CartItems() {
                   key={item.id}
                   item={item}
                   onQtyChange={handleQtyChange}
-                  onRemove={handleRemove}
+                  onRemove={()=>handleRemove(item)}
                   onSaveLater={handleSaveLater}
                 />
               ))}
