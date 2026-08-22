@@ -1,5 +1,5 @@
 'use client'
-import { deleteCartItems, getCart, getCartItems } from '@/redux/cart/cart.Action'
+import { clearCart, deleteCartItems, getCart, getCartItems, updateCartItems } from '@/redux/cart/cart.Action'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -280,7 +280,7 @@ function CartItemRow({
         {/* Qty + actions */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <QtyBtn onClick={() => onQtyChange(item.id, -1)} disabled={item.quantity <= 1 || !item.inStock}>
+            <QtyBtn onClick={() => onQtyChange(item.id, -1)} disabled={item.quantity <= 1 || !item.stock}>
               −
             </QtyBtn>
             <span
@@ -295,7 +295,7 @@ function CartItemRow({
             >
               {item.quantity}
             </span>
-            <QtyBtn onClick={() => onQtyChange(item.id, 1)} disabled={item.quantity >= 5 || !item.inStock}>
+            <QtyBtn onClick={() => onQtyChange(item.id, 1)} disabled={item.quantity >= 5 || !item.stock}>
               +
             </QtyBtn>
           </div>
@@ -419,13 +419,34 @@ export default function CartItems() {
   const [savedItems, setSavedItems] = useState<CartItem[]>([])
   const [name , setName ] = useState('')
   const [ loading, setLoading ] = useState(true)
-  const handleQtyChange = (id: number, delta: number) => {
-    setCartItems(prev =>
-      prev.map(item =>
-        item.id === id ? { ...item, quantity: Math.min(5, Math.max(1, item.quantity + delta)) } : item
-      )
-    )
+  const [ quantity, setQuantity] = useState(1)
+
+  const handleQtyChange = async(id: number, delta: number) => {
+      const item = cartItems.find((item) => item.id === id);
+
+      if (!item) return;
+
+      const newQuantity = Math.min(
+        5,
+        Math.max(1, item.quantity + delta)
+      );
+
+      // Update UI immediately
+      setCartItems((prev) =>
+        prev.map((item) =>
+          item.id === id
+            ? {
+                ...item,
+                quantity: newQuantity,
+              }
+            : item
+        )
+      );
+   const res =await dispatch(updateCartItems({cartitemId:id,quantity:newQuantity})).unwrap()
+   console.log(res)
+   // Update backend after user stops clicking
   }
+  
 
   const handleRemove = async(item:any) => {
     try {
@@ -453,8 +474,14 @@ export default function CartItems() {
     }
   }
 
-  const handleClearCart =()=>{
-     console.log(cartId)
+  const handleClearCart = async()=>{
+    try {
+      const res = await dispatch(clearCart(cartId)).unwrap();
+      toast.success(res.message);
+      setCartItems([])
+    } catch (error:any) {
+      toast.error(error)
+    }
   }
 
   const inStockItems = cartItems.filter(i => i.stock)

@@ -226,7 +226,7 @@ export const getCartitems = asyncHandler(async (req, res, next) => {
       )
     )
   );
-  console.log(productResponses)
+  console.log(productResponses[0].data.data)
   // 3. Build the cart response
   const object = cartitems.map((cart, index) => {
     const product = productResponses[index].data.data;
@@ -238,7 +238,8 @@ export const getCartitems = asyncHandler(async (req, res, next) => {
     // Handle case where variant doesn't exist
     if (!variant) {
       return {
-        id:product.id,
+        id:cart.id,
+        productId:product.id,
         cartId:cartId,
         image: product.images?.[0]?.url,
         name: product.name,
@@ -253,7 +254,8 @@ export const getCartitems = asyncHandler(async (req, res, next) => {
     }
 
     return {
-      id:product.id,
+      id:cart.id,
+      productId:product.id,
       cartId:product.cartId,
       image: product.images?.[0]?.url,
       name: product.name,
@@ -277,20 +279,20 @@ export const getCartitems = asyncHandler(async (req, res, next) => {
 
 // 2. update cart items
 export const updateCartItems = asyncHandler(async(req, res, next)=>{
-    const { itemId } = req.params;
+    const { itemsId } = req.params;
     const { quantity } = req.body;
     if(!quantity || quantity <=0){
         return next(new AppError("quantity can not be negative or zero", 400))
     }
     const cartItem = await prisma.cartItem.findUnique({
-        where:{id:itemId}
+        where:{id:itemsId}
     })
     if(!cartItem){
         return next(new AppError("CartItem not found", 404))
     }
     const totalPrice = cartItem.unitPrice * quantity;
     const updateditem = await prisma.cartItem.update({
-        where:{id:itemId},
+        where:{id:itemsId},
         data:{
             quantity,
             totalPrice,
@@ -306,16 +308,17 @@ export const updateCartItems = asyncHandler(async(req, res, next)=>{
 
 // 3. delete cart items 
 export const deleteCartItems = asyncHandler(async(req, res, next)=>{
+    console.log('cartitem id is',req.params)
     const { itemsId } = req.params;
     const cartItem = await prisma.cartItem.findFirst({where:{
-         productId:itemsId
+         id:itemsId
     }})
     if(!cartItem){
         return next(new AppError("Item not found is cart", 404))
     }
     const data = await prisma.cartItem.delete({where:
         {
-        id:cartItem?.id,
+        id:itemsId,
     } })
     res.status(200).json({
         message:"items Deleted Successfully",

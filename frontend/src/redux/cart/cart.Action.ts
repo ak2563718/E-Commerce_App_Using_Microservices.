@@ -96,7 +96,7 @@ export const updateCartItems = createAsyncThunk<any, any, {rejectValue:string}>(
     'patch/cartitems',
     async({cartitemId,quantity}, { rejectWithValue })=>{
         try {
-           const { data } = await api.patch(`${cart_uri}/cartitems/${cartitemId}`,quantity,{
+           const { data } = await api.patch(`${cart_uri}/cartitems/${cartitemId}`,{quantity},{
             headers:{'Content-Type':'application/json'},
             withCredentials:true,
            }) 
