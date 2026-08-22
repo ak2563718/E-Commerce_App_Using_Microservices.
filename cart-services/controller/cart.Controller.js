@@ -239,6 +239,7 @@ export const getCartitems = asyncHandler(async (req, res, next) => {
     if (!variant) {
       return {
         id:product.id,
+        cartId:cartId,
         image: product.images?.[0]?.url,
         name: product.name,
         brandName: product.brand?.name,
@@ -253,6 +254,7 @@ export const getCartitems = asyncHandler(async (req, res, next) => {
 
     return {
       id:product.id,
+      cartId:product.cartId,
       image: product.images?.[0]?.url,
       name: product.name,
       brandName: product.brand?.name,

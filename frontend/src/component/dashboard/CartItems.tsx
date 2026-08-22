@@ -692,6 +692,27 @@ export default function CartItems() {
                     fontFamily: 'Poppins, sans-serif',
                     fontSize: '14px',
                     fontWeight: 700,
+                    marginRight: '12px',
+                    cursor: 'pointer',
+                    letterSpacing: '0.02em',
+                    boxShadow: '0 4px 16px rgba(233,30,140,0.28)',
+                    transition: 'opacity 0.15s',
+                  }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '0.88' }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '1' }}
+                >
+                  Clear Cart
+                </button>
+                <button
+                  style={{
+                    background: `linear-gradient(135deg, ${PINK} 0%, ${PINK_DARK} 100%)`,
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '10px',
+                    padding: '13px 40px',
+                    fontFamily: 'Poppins, sans-serif',
+                    fontSize: '14px',
+                    fontWeight: 700,
                     cursor: 'pointer',
                     letterSpacing: '0.02em',
                     boxShadow: '0 4px 16px rgba(233,30,140,0.28)',
