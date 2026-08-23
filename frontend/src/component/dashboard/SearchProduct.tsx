@@ -2,13 +2,14 @@
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { searchProduct } from '@/redux/product/product.Action'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, ReactHTMLElement } from 'react'
 import SearchProductSkeleton from './SearchProductSkeleton'
 import { authCheckSession } from '@/redux/auth/auth.Action'
 import { getProfile } from '@/redux/user/user.Action'
 import ProfileDropdown from './ProfileDropdown'
 import { createCartItems, getCart } from '@/redux/cart/cart.Action'
 import { toast } from 'sonner'
+import { Search } from 'lucide-react'
 
 interface Product {
   id: number
@@ -380,12 +381,12 @@ export default function SearchProduct() {
   const [ loading, setLoading] = useState(true);
   const [data, setData] = useState<any[]>([])
   const params = useSearchParams()
+  const [query, setquery] = useState('')
   const search = params.get("search")
   const [name, setName] = useState('')
   const dispatch = useAppDispatch();
   const { islogin } = useAppSelector((state)=>state.auth)
   const router = useRouter()
-  
   
   useEffect(()=>{
     const getproduct = async()=>{
@@ -455,6 +456,12 @@ export default function SearchProduct() {
     }
     getcartvalue()
    },[dispatch])
+
+   const handleQuerySearch =(e: React.FormEvent<HTMLFormElement>)=>{
+    e.preventDefault();
+    console.log('clicked ')
+      router.push(`/search?search=${query.trim()}`)
+   }
    
    
    const handleAddtoCart = async(productId:string, variantId:string)=>{
@@ -529,20 +536,87 @@ export default function SearchProduct() {
 
           <div
             style={{
-              background: 'rgba(255,255,255,0.18)',
-              borderRadius: '8px',
-              padding: '8px 16px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              flex: '0 0 420px',
-              border: '1px solid rgba(255,255,255,0.3)',
+              background: "rgba(255,255,255,0.18)",
+              borderRadius: "8px",
+              padding: "6px 12px",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              flex: "0 0 420px",
+              border: "1px solid rgba(255,255,255,0.3)",
+              height: "40px",
+              boxSizing: "border-box",
             }}
           >
-            <svg width="15" height="15" viewBox="0 0 24 24" stroke="#fff" strokeWidth="2.2" fill="none" strokeLinecap="round">
-              <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              stroke="#fff"
+              strokeWidth="2.2"
+              fill="none"
+              strokeLinecap="round"
+              style={{
+                flexShrink: 0,
+              }}
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="M21 21l-4.35-4.35" />
             </svg>
-            <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}>Search products…</span>
+
+            <span
+              style={{
+                fontSize: "13px",
+                color: "rgba(255,255,255,0.7)",
+                flex: 1,
+                minWidth: 0,
+              }}
+            >
+              <form
+                onSubmit={handleQuerySearch}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  width: "100%",
+                  gap: "6px",
+                  margin: 0,
+                }}
+              >
+                <input
+                  type="text"
+                  value={query}
+                  onChange={(e) => setquery(e.target.value)}
+                  placeholder="Search product..."
+                  style={{
+                    flex: 1,
+                    minWidth: 0,
+                    background: "transparent",
+                    border: "none",
+                    outline: "none",
+                    color: "#fff",
+                    fontSize: "13px",
+                    padding: "4px 0",
+                  }}
+                />
+
+                <button
+                  type='submit'
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: "transparent",
+                    border: "none",
+                    color: "#fff",
+                    padding: "4px",
+                    cursor: "pointer",
+                    flexShrink: 0,
+                  }}
+                >
+                  <Search className="w-4 h-4" />
+                </button>
+              </form>
+            </span>
           </div>
 
          <div className="flex items-center gap-3 shrink-0">

@@ -1,22 +1,36 @@
 'use client'
-import { useAppDispatch, useAppSelector } from '@/redux/hooks'
-import { getProfile } from '@/redux/user/user.Action';
-import React, { useEffect } from 'react'
+import { useEffect, useRef } from "react";
+// @ts-expect-error qrcode does not provide TypeScript declarations
+import QRCode from 'qrcode'
 
-function Text() {
-    const dispatch =useAppDispatch();
-    const { user } = useAppSelector((state)=>state.user)
+export default function QRCodeGenerator() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-    useEffect(()=>{
-        const getUser =async()=>{
-            const response = await dispatch(getProfile()).unwrap()
-            console.log(response.data)
+  const url = "https://google.com";
+
+  useEffect(() => {
+    if (canvasRef.current) {
+      QRCode.toCanvas(
+        canvasRef.current,
+        url,
+        {
+          width: 250,
+          margin: 2,
+        },
+        (error:any) => {
+          if (error) console.error(error);
         }
-        getUser()
-    },[])
-  return (
-    <div>Text</div>
-  )
-}
+      );
+    }
+  }, []);
 
-export default Text
+  return (
+    <div>
+      <h2>Scan this QR code</h2>
+
+      <canvas ref={canvasRef} />
+
+      <p>{url}</p>
+    </div>
+  );
+}

@@ -9,6 +9,7 @@ import { notifications } from './data'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { useEffect } from 'react'
 import { getProfile } from '@/redux/user/user.Action'
+import { useRouter } from 'next/navigation'
 
 interface Props {
   active: NavItem
@@ -26,6 +27,7 @@ const NAV: { id: NavItem; label: string; icon: typeof LayoutDashboard }[] = [
 ]
 
 export default function Sidebar({ active, setActive, open, setOpen,  }: Props) {
+  const router = useRouter()
   const dispatch = useAppDispatch()
    useEffect(()=>{
        const userProfile = async()=>{
@@ -148,6 +150,7 @@ export default function Sidebar({ active, setActive, open, setOpen,  }: Props) {
           {open && <span className="text-sm font-medium">Settings</span>}
         </button>
         <button
+        onClick={()=>router.replace('/')}
           className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all hover:bg-red-500/10"
           style={{ color: 'rgba(255,100,100,0.6)' }}
         >
