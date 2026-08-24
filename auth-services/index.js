@@ -5,6 +5,7 @@ import cors from 'cors';
 import { errorMiddleware } from './middleware/errorMiddleware.js'
 import auth from './routes/auth.Routes.js'
 import { apiLimiter } from './config/rateLimiting.js';
+import helmet from 'helmet'
 const app = express();
 app.use(apiLimiter);
 app.use(express.json());
