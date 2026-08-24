@@ -14,6 +14,7 @@ app.use(cors({
     origin:['http://localhost:5000','http://localhost:3000'],
     credentials:true,
 }));
+app.use(helmet())
 app.use('/auth',auth)
 app.use(errorMiddleware);
 const port = process.env.PORT;

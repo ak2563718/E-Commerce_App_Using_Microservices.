@@ -1,8 +1,10 @@
-import React from 'react'
+import ProductOverview from "@/component/dashboard/ProductOverview"
 
 function page() {
   return (
-    <div>page</div>
+    <div>
+        <ProductOverview/>
+    </div>
   )
 }
 
