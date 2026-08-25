@@ -172,7 +172,7 @@ function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }
   )
 }
 
-function ProductCard({ product, addtocart }: { product: Product, addtocart:()=>void }) {
+function ProductCard({ product, addtocart, clickValue }: { product: Product, addtocart:()=>void , clickValue:()=>void}) {
   const [imgError, setImgError] = useState(false)
   const [hovered, setHovered] = useState(false)
   const [wishlisted, setWishlisted] = useState(false)
@@ -183,6 +183,7 @@ function ProductCard({ product, addtocart }: { product: Product, addtocart:()=>v
   }
   return (
     <div
+      onClick={clickValue}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
@@ -462,7 +463,9 @@ export default function SearchProduct() {
     console.log('clicked ')
       router.push(`/search?search=${query.trim()}`)
    }
-   
+   const handleClick=(id:string)=>{
+    console.log(id)
+   }
    
    const handleAddtoCart = async(productId:string, variantId:string)=>{
     if(!islogin){
@@ -487,7 +490,7 @@ export default function SearchProduct() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#fdf0f8', fontFamily: 'Inter, sans-serif' }}>
+    <div  style={{ minHeight: '100vh', background: '#fdf0f8', fontFamily: 'Inter, sans-serif' }}>
       {/* Header */}
       <div
         style={{
@@ -842,7 +845,7 @@ export default function SearchProduct() {
               }}
             >
               {filtered.map(product => (
-                <ProductCard key={product.id} product={product} addtocart={()=>handleAddtoCart(product.id,product.variants?.[0]?.id)} />
+                <ProductCard  clickValue={()=>handleClick(product.id)} key={product.id} product={product} addtocart={()=>handleAddtoCart(product.id,product.variants?.[0]?.id)} />
               ))}
             </div>
           ) : (
