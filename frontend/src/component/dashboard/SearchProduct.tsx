@@ -463,8 +463,9 @@ export default function SearchProduct() {
     console.log('clicked ')
       router.push(`/search?search=${query.trim()}`)
    }
-   const handleClick=(id:string)=>{
-    console.log(id)
+   const handleClick=(product:any)=>{
+    const route = `product/${product.slug}/${product.id}`;
+    router.push(route)
    }
    
    const handleAddtoCart = async(productId:string, variantId:string)=>{
@@ -845,7 +846,7 @@ export default function SearchProduct() {
               }}
             >
               {filtered.map(product => (
-                <ProductCard  clickValue={()=>handleClick(product.id)} key={product.id} product={product} addtocart={()=>handleAddtoCart(product.id,product.variants?.[0]?.id)} />
+                <ProductCard  clickValue={()=>handleClick(product)} key={product.id} product={product} addtocart={()=>handleAddtoCart(product.id,product.variants?.[0]?.id)} />
               ))}
             </div>
           ) : (

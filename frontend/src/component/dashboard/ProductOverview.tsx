@@ -1,5 +1,9 @@
 'use client'
-import { useState } from 'react'
+import { useAppDispatch } from '@/redux/hooks'
+import { getProductbyId } from '@/redux/product/product.Action'
+import { useParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
 
 const PINK = '#e91e8c'
 const PINK_DARK = '#c2185b'
@@ -232,11 +236,20 @@ export default function ProductOverview() {
   const [deliveryChecked, setDeliveryChecked] = useState(false)
   const [expandedOffer, setExpandedOffer] = useState<number | null>(null)
   const [helpfulClicked, setHelpfulClicked] = useState<number[]>([])
-
+  const dispatch = useAppDispatch();
   const handleAddToCart = () => {
     setAddedToCart(true)
     setTimeout(() => setAddedToCart(false), 2200)
   }
+
+  const params = useParams<{slug:string,id:string}>()
+  useEffect(()=>{
+  const getproduct =async()=>{
+    const res = await dispatch(getProductbyId(params.id)).unwrap();
+    console.log(res.data)
+  }
+  getproduct()
+  },[params])
 
   return (
     <div style={{ minHeight: '100vh', background: '#fdf0f8', fontFamily: 'Inter, sans-serif' }}>
