@@ -219,3 +219,40 @@ export const getAllBrands = createAsyncThunk<any, void, {rejectValue:string}>(
         }
     }
 )
+
+// 10. manageWishlist
+export const manageWishlist = createAsyncThunk<any, string, { rejectValue:string}>(
+    'post/wishlist',
+    async(productId, { rejectWithValue })=>{
+        try {
+            const { data } = await api.get(`${type_uri}/products/${productId}/wishlist`,{
+                headers:{'Content-Type':'application/json'},
+                withCredentials:true,
+            })
+            return data;
+        } catch (error) {
+            if(axios.isAxiosError(error)){
+                return rejectWithValue(error.response?.data?.message)
+            }
+            rejectWithValue("something went wrong")
+        }
+    }
+)
+
+export const getWishlist = createAsyncThunk<any, void, {rejectValue:string}>(
+    'get/wishlist',
+    async(_, { rejectWithValue})=>{
+        try {
+            const { data } = await api.get(`${type_uri}/products/wishlist/items`,{
+                headers:{'Content-Type':'application/json'},
+                withCredentials:true,
+            })
+            return data;
+        } catch (error) {
+           if(axios.isAxiosError(error)){
+            return rejectWithValue(error.response?.data.meessage)
+           } 
+           return rejectWithValue("something went wrong")
+        }
+    }
+)

@@ -59,7 +59,7 @@ router.patch('/images/:id',upload.single('newimage'),updateProductImage)
 router.delete('/images/:id',deleteProductImage)
 
 // 9. manage wishlist
-router.post('/products/:id/wishlist',authMiddleware,manageWhislist);
+router.get('/products/:id/wishlist',authMiddleware,manageWhislist);
 router.get('/products/wishlist/items',authMiddleware,getWishlist)
 
 // 10.mange Pincode

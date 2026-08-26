@@ -10,6 +10,7 @@ import ProfileDropdown from './ProfileDropdown'
 import { createCartItems, getCart } from '@/redux/cart/cart.Action'
 import { toast } from 'sonner'
 import { Search } from 'lucide-react'
+import { getWishlist } from '@/redux/product/product.Type.Action'
 
 interface Product {
   id: number
@@ -172,10 +173,10 @@ function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }
   )
 }
 
-function ProductCard({ product, addtocart, clickValue }: { product: Product, addtocart:()=>void , clickValue:()=>void}) {
+function ProductCard({ product, addtocart, clickValue , wishlist, wishlisted}: { product: Product, addtocart:()=>void , clickValue:()=>void, wishlist:()=>void,wishlisted:boolean}) {
   const [imgError, setImgError] = useState(false)
   const [hovered, setHovered] = useState(false)
-  const [wishlisted, setWishlisted] = useState(false)
+  
 
   const discoutcalculate =(val1:number, val2:number)=>{
       const percentage = ((val1-val2)/val1)*100;
@@ -200,7 +201,7 @@ function ProductCard({ product, addtocart, clickValue }: { product: Product, add
     >
       {/* Wishlist */}
       <button
-        onClick={e => { e.stopPropagation(); setWishlisted(v => !v) }}
+        onClick={wishlist}
         style={{
           position: 'absolute',
           top: '10px',
@@ -445,11 +446,11 @@ export default function SearchProduct() {
    const ALL_BRANDS = [...new Set(data.map(p => p.brand.name))].sort()
    
    const [cartId, setCartId] = useState('')
+   const [wishlisted, setWishlisted] = useState(false)
    useEffect(()=>{
     const getcartvalue = async()=>{
       try {
         const res = await dispatch(getCart()).unwrap()
-        console.log(res.data)
         setCartId(res.data?.id)
       } catch (error) {
         console.log(error)
@@ -460,7 +461,6 @@ export default function SearchProduct() {
 
    const handleQuerySearch =(e: React.FormEvent<HTMLFormElement>)=>{
     e.preventDefault();
-    console.log('clicked ')
       router.push(`/search?search=${query.trim()}`)
    }
    const handleClick=(product:any)=>{
@@ -484,6 +484,23 @@ export default function SearchProduct() {
     } catch (error:any) {
       toast.error(error.message)
     }
+   }
+
+   useEffect(()=>{
+    const wishlistitems = async()=>{
+      try {
+        const res = await dispatch(getWishlist()).unwrap();
+        console.log(res)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    wishlistitems()
+   },[])
+
+   const handlewishlist = async(product:any)=>{
+        console.log(product.id);
+        setWishlisted(true)
    }
 
   if(loading){
@@ -846,7 +863,7 @@ export default function SearchProduct() {
               }}
             >
               {filtered.map(product => (
-                <ProductCard  clickValue={()=>handleClick(product)} key={product.id} product={product} addtocart={()=>handleAddtoCart(product.id,product.variants?.[0]?.id)} />
+                <ProductCard wishlisted={wishlisted} wishlist={()=>handlewishlist(product)} clickValue={()=>handleClick(product)} key={product.id} product={product} addtocart={()=>handleAddtoCart(product.id,product.variants?.[0]?.id)} />
               ))}
             </div>
           ) : (
