@@ -45,6 +45,7 @@ model Product {
 
   averageRating   Float       @default(0)
   totalReviews    Int         @default(0)
+  deliveryDays    Int         @default(7)
 
   images          ProductImage[]
   variants        ProductVariant[]

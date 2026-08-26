@@ -183,7 +183,6 @@ function ProductCard({ product, addtocart, clickValue }: { product: Product, add
   }
   return (
     <div
-      onClick={clickValue}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
@@ -227,6 +226,7 @@ function ProductCard({ product, addtocart, clickValue }: { product: Product, add
 
       {/* Image */}
       <div
+        onClick={clickValue}
         style={{
           background: '#fdf4fa',
           height: '180px',
