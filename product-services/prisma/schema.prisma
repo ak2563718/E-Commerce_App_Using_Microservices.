@@ -46,6 +46,8 @@ model Product {
   averageRating   Float       @default(0)
   totalReviews    Int         @default(0)
   deliveryDays    Int         @default(7)
+  freeDelivery    Boolean     @default(true)
+  returnDays      Int         @default(10)
 
   images          ProductImage[]
   variants        ProductVariant[]
@@ -227,4 +229,14 @@ model Wishlist {
   @@unique([userId, productId])
   @@index([userId])
   @@index([productId])
+}
+
+model DeliveryPincode {
+  id          String  @id @default(cuid())
+  pincode     String  @unique
+  city        String
+  state       String
+  isServiceable Boolean @default(true)
+
+  createdAt   DateTime @default(now())
 }

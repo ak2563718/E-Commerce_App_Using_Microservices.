@@ -7,6 +7,7 @@ import { createAttributes, createAttributesvalue, deleteAttributes, deleteAttrib
 import { deleteProductImage, updateProductImage, uploadProductImages, uploadVariantImages } from '../controllers/image.Controller.js';
 import { upload } from '../config/multer.js';
 import { authMiddleware, sellerMiddleware } from '../middlewares/authMiddleware.js';
+import { managePincode } from '../controllers/delivery.Controller.js';
 const router = express.Router();
 // 1. category routes
 router.post('/categories',createCategories)
@@ -60,4 +61,7 @@ router.delete('/images/:id',deleteProductImage)
 // 9. manage wishlist
 router.post('/products/:id/wishlist',authMiddleware,manageWhislist);
 router.get('/products/wishlist/items',authMiddleware,getWishlist)
+
+// 10.mange Pincode
+router.post('/pincode',managePincode)
 export default router;
