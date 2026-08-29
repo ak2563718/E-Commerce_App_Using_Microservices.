@@ -843,7 +843,7 @@ export default function ProductCheckout() {
                   <SectionCard>
                     <div style={{ padding: '18px 22px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                       <div>
-                        <div style={{ display: 'flex', align: 'center', gap: '8px', marginBottom: '6px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
                           <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: '13px', fontWeight: 700, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Deliver To</span>
                         </div>
                         <p style={{ margin: '0 0 2px', fontFamily: 'Poppins, sans-serif', fontSize: '14px', fontWeight: 700, color: '#1a1a2e' }}>{addr.name} · {addr.phone}</p>

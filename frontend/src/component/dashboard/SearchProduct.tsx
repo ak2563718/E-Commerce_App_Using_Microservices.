@@ -10,7 +10,7 @@ import ProfileDropdown from './ProfileDropdown'
 import { createCartItems, getCart } from '@/redux/cart/cart.Action'
 import { toast } from 'sonner'
 import { Search } from 'lucide-react'
-import { getWishlist } from '@/redux/product/product.Type.Action'
+import { getWishlist, manageWishlist } from '@/redux/product/product.Type.Action'
 
 interface Product {
   id: number
@@ -446,7 +446,7 @@ export default function SearchProduct() {
    const ALL_BRANDS = [...new Set(data.map(p => p.brand.name))].sort()
    
    const [cartId, setCartId] = useState('')
-   const [wishlisted, setWishlisted] = useState(false)
+   const [wishlistId, setWishlistId] = useState<any[]>([])
    useEffect(()=>{
     const getcartvalue = async()=>{
       try {
@@ -490,17 +490,23 @@ export default function SearchProduct() {
     const wishlistitems = async()=>{
       try {
         const res = await dispatch(getWishlist()).unwrap();
-        console.log(res)
+        setWishlistId(
+          res.data.map((item:any)=>item.productId)
+        )
       } catch (error) {
         console.log(error)
       }
     }
     wishlistitems()
    },[])
-
    const handlewishlist = async(product:any)=>{
-        console.log(product.id);
-        setWishlisted(true)
+        const res = await dispatch(manageWishlist(product.id)).unwrap();
+        if(res.message === "Added"){
+          setWishlistId((prev)=>[...prev,res.data.productId])
+        }
+        else{
+        setWishlistId((prev)=>prev.filter((id)=>id!==product.id))
+        }
    }
 
   if(loading){
@@ -863,7 +869,7 @@ export default function SearchProduct() {
               }}
             >
               {filtered.map(product => (
-                <ProductCard wishlisted={wishlisted} wishlist={()=>handlewishlist(product)} clickValue={()=>handleClick(product)} key={product.id} product={product} addtocart={()=>handleAddtoCart(product.id,product.variants?.[0]?.id)} />
+                <ProductCard wishlisted={wishlistId.includes(product.id)} wishlist={()=>handlewishlist(product)} clickValue={()=>handleClick(product)} key={product.id} product={product} addtocart={()=>handleAddtoCart(product.id,product.variants?.[0]?.id)} />
               ))}
             </div>
           ) : (

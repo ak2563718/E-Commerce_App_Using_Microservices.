@@ -346,7 +346,7 @@ export const manageWhislist = asyncHandler(async(req, res, next)=>{
             }
         })
         return res.status(200).json({
-            message:"Product remove from Wishlist",
+            message:"Removed",
             success:true,
         })
     }
@@ -357,7 +357,7 @@ export const manageWhislist = asyncHandler(async(req, res, next)=>{
         }
     })
     res.status(201).json({
-        message:"Wishlist updated",
+        message:"Added",
         success:true,
         data:wishlist
     })

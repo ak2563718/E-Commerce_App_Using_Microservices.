@@ -493,7 +493,7 @@ function ShareModal({ item, onClose }: { item: WishlistItem | null; onClose: () 
 }
 
 /* ── Main ── */
-export default function App() {
+export default function WishListItems() {
   const [items, setItems] = useState<WishlistItem[]>(INITIAL_WISHLIST)
   const [filterCategory, setFilterCategory] = useState('All')
   const [sortBy, setSortBy] = useState('date')
