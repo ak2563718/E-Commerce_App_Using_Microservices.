@@ -236,6 +236,8 @@ export default function ProductOverview() {
   const [deliveryChecked, setDeliveryChecked] = useState(false)
   const [expandedOffer, setExpandedOffer] = useState<number | null>(null)
   const [helpfulClicked, setHelpfulClicked] = useState<number[]>([])
+  const [product, setProduct] = useState<any>(null)
+  const [imagedata, setImageData] = useState<any[]>([])
   const dispatch = useAppDispatch();
   const handleAddToCart = () => {
     setAddedToCart(true)
@@ -246,10 +248,14 @@ export default function ProductOverview() {
   useEffect(()=>{
   const getproduct =async()=>{
     const res = await dispatch(getProductbyId(params.id)).unwrap();
-    console.log(res.data)
+    setProduct(res.data)
+    setImageData(res.data.images.map((img:any)=>img.url))
   }
   getproduct()
   },[params])
+
+  console.log('proudct array data',product)
+  console.log('image data',imagedata)
 
   return (
     <div style={{ minHeight: '100vh', background: '#fdf0f8', fontFamily: 'Inter, sans-serif' }}>
@@ -315,8 +321,8 @@ export default function ProductOverview() {
               }}
             >
               <img
-                src={PRODUCT.images[selectedImage]}
-                alt={PRODUCT.name}
+                src={imagedata[selectedImage]}
+                alt={PRODUCT?.name}
                 style={{ width: '300px', height: '300px', objectFit: 'contain', transition: 'opacity 0.2s' }}
               />
               {/* Wishlist */}
@@ -363,7 +369,7 @@ export default function ProductOverview() {
 
             {/* Thumbnails */}
             <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-              {PRODUCT.images.map((img, i) => (
+              {imagedata.map((img, i) => (
                 <button
                   key={i}
                   onClick={() => setSelectedImage(i)}
