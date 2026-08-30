@@ -344,6 +344,7 @@ export default function Navbar({
           </button>
 
           <button
+              onClick={()=>router.push('/wishlist')}
               className="relative w-11 h-11 flex items-center justify-center rounded-xl text-gray-400 hover:bg-pink-50 hover:text-pink-500 transition-all duration-150"
             >
               <svg

@@ -7,6 +7,8 @@ import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { toast } from 'sonner'
+import ProductPageSkeleton from './ProductOverviewSkeleton'
+import { getWishlist, manageWishlist } from '@/redux/product/product.Type.Action'
 
 const PINK = '#e91e8c'
 const PINK_DARK = '#c2185b'
@@ -242,6 +244,8 @@ export default function ProductOverview() {
   const [product, setProduct] = useState<any>(null)
   const [imagedata, setImageData] = useState<any[]>([])
   const [cartId, setCartId] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [WishlistId, setWishlistId] = useState<any[]>([])
   const dispatch = useAppDispatch();
   const router = useRouter();
 
@@ -251,28 +255,33 @@ export default function ProductOverview() {
   const getproduct =async()=>{
     const res = await dispatch(getProductbyId(params.id)).unwrap();
     const cart = await dispatch(getCart()).unwrap();
+    const wishlist = await dispatch(getWishlist()).unwrap();
     setProduct(res.data)
     setImageData(res.data.images.map((img:any)=>img.url))
     setCartId(cart.data.id)
+    setLoading(false)
+    setWishlistId(wishlist.data.map((item:any)=>item.productId))
+    setWishlisted(wishlist.data.some((item:any) => item.productId === res.data?.id))
   }
   getproduct()
   },[params])
   
+
   const data ={
     cartId,
     productId:product?.id,
-    variantId:product?.variants?.[0].id,
+    variantId:product?.variants?.[0]?.id,
     quantity:1,
   }
  
  const date = new Date();
 const deliveryDate = new Date(date);
-deliveryDate.setDate(date.getDate() + product?.deliveryDays);
+deliveryDate.setDate(date.getDate() + 7);
 const formattedDate = deliveryDate.toLocaleDateString('en-GB', {
   day: 'numeric',
   month: 'short',
 });
-const discount = product ? Math.round(((product.variants?.[0].price - product.variants?.[0].costPrice)/product.variants?.[0].price)*100):0;
+const discount = product ? Math.round(((product.variants?.[0]?.price - product.variants?.[0]?.costPrice)/product.variants?.[0]?.price)*100):0;
 
 const handleAddToCart = async() => {
     setAddedToCart(true)
@@ -283,6 +292,21 @@ const handleAddToCart = async() => {
     }
   }
 
+const handleWishlist = async()=>{
+  const res = await dispatch(manageWishlist(params.id)).unwrap();
+  if(res.message === "Added"){
+    setWishlistId((prev)=>[...prev,res.data.productId])
+    setWishlisted(true)
+  }
+  else{
+    setWishlistId((prev)=>prev.filter((id)=>id!==product.id))
+    setWishlisted(false)
+  }
+}
+
+if(loading){
+  return <ProductPageSkeleton/>
+}
   return (
     <div style={{ minHeight: '100vh', background: '#fdf0f8', fontFamily: 'Inter, sans-serif' }}>
       {/* Header */}
@@ -348,7 +372,7 @@ const handleAddToCart = async() => {
               />
               {/* Wishlist */}
               <button
-                onClick={() => setWishlisted(v => !v)}
+                onClick={handleWishlist}
                 style={{
                   position: 'absolute',
                   top: '14px',
@@ -816,6 +840,7 @@ const handleAddToCart = async() => {
                   {addedToCart ? '✓ ADDED TO CART' : 'ADD TO CART'}
                 </button>
                 <button
+                  onClick={()=>router.push(`/checkout?type=buy-now&productId=${product.id}`)}
                   style={{
                     width: '100%',
                     padding: '13px 0',
