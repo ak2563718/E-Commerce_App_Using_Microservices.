@@ -1,9 +1,11 @@
 'use client'
 import { useAppDispatch } from '@/redux/hooks'
 import { getProductbyId } from '@/redux/product/product.Action'
+import axios from 'axios'
 import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
+import { toast } from 'sonner'
 
 const PINK = '#e91e8c'
 const PINK_DARK = '#c2185b'
@@ -254,8 +256,16 @@ export default function ProductOverview() {
   getproduct()
   },[params])
 
-  console.log('proudct array data',product)
-  console.log('image data',imagedata)
+ console.log(product)
+ const date = new Date();
+const deliveryDate = new Date(date);
+deliveryDate.setDate(date.getDate() + product?.deliveryDays);
+const formattedDate = deliveryDate.toLocaleDateString('en-GB', {
+  day: 'numeric',
+  month: 'short',
+});
+ const discount = product ? Math.round(((product.variants?.[0].price - product.variants?.[0].costPrice)/product.variants?.[0].price)*100):0;
+
 
   return (
     <div style={{ minHeight: '100vh', background: '#fdf0f8', fontFamily: 'Inter, sans-serif' }}>
@@ -280,17 +290,12 @@ export default function ProductOverview() {
             </div>
             <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: '22px', fontWeight: 700, color: '#fff', letterSpacing: '-0.3px' }}>ShopHub</span>
           </div>
-          <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
-            {['Home', 'Products', 'Cart'].map(item => (
-              <span key={item} style={{ color: 'rgba(255,255,255,0.85)', fontSize: '13px', fontWeight: 500, cursor: 'pointer' }}>{item}</span>
-            ))}
-          </div>
         </div>
       </div>
 
       {/* Breadcrumb */}
       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '12px 28px', display: 'flex', gap: '6px', alignItems: 'center', fontSize: '12px', color: '#aaa' }}>
-        {['Home', 'Smartphones', 'Apple', 'iPhone 15 Pro Max'].map((crumb, i, arr) => (
+        {['Home', `${product?.category.name}`, `${product?.brand.name}`, `${product?.name}`].map((crumb, i, arr) => (
           <span key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <span style={{ cursor: i < arr.length - 1 ? 'pointer' : 'default', color: i === arr.length - 1 ? '#555' : PINK, fontWeight: i === arr.length - 1 ? 500 : 400 }}>
               {crumb}
@@ -322,7 +327,7 @@ export default function ProductOverview() {
             >
               <img
                 src={imagedata[selectedImage]}
-                alt={PRODUCT?.name}
+                alt={product?.name}
                 style={{ width: '300px', height: '300px', objectFit: 'contain', transition: 'opacity 0.2s' }}
               />
               {/* Wishlist */}
@@ -363,7 +368,7 @@ export default function ProductOverview() {
                   borderRadius: '20px',
                 }}
               >
-                {PRODUCT.discount}% OFF
+                {discount}% OFF
               </div>
             </div>
 
@@ -396,17 +401,17 @@ export default function ProductOverview() {
           <div>
             <div style={{ background: '#fff', borderRadius: '16px', border: '1.5px solid #f3e0ed', padding: '24px', marginBottom: '16px' }}>
               <p style={{ margin: '0 0 4px', fontSize: '12px', color: PINK, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                {PRODUCT.brand}
+                {product?.brand?.name}
               </p>
               <h1 style={{ fontFamily: 'Poppins, sans-serif', fontSize: '22px', fontWeight: 700, color: '#1a1a2e', margin: '0 0 10px', lineHeight: 1.3 }}>
-                {PRODUCT.name}
+                {product?.name}
               </h1>
 
               {/* Rating */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
                 <StarRating rating={PRODUCT.rating} size={14} />
                 <span style={{ fontSize: '13px', color: '#888' }}>
-                  {PRODUCT.reviewCount.toLocaleString('en-IN')} ratings & reviews
+                  {PRODUCT?.reviewCount?.toLocaleString('en-IN')} ratings & reviews
                 </span>
                 <span style={{ color: '#ddd' }}>|</span>
                 <AssuredBadge />
@@ -415,17 +420,17 @@ export default function ProductOverview() {
               {/* Price */}
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px', marginBottom: '6px', flexWrap: 'wrap' }}>
                 <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: '28px', fontWeight: 800, color: '#1a1a2e' }}>
-                  {fmt(PRODUCT.price)}
+                  {fmt(Number(product?.variants?.[0].costPrice))}
                 </span>
                 <span style={{ fontSize: '15px', color: '#bbb', textDecoration: 'line-through' }}>
-                  {fmt(PRODUCT.originalPrice)}
+                  {fmt(Number(product?.variants?.[0].price))}
                 </span>
                 <span style={{ fontSize: '14px', fontWeight: 700, color: '#27ae60' }}>
-                  {PRODUCT.discount}% off
+                  {discount}% off
                 </span>
               </div>
               <p style={{ margin: '0 0 20px', fontSize: '13px', color: '#27ae60', fontWeight: 600 }}>
-                You save {fmt(PRODUCT.originalPrice - PRODUCT.price)}
+                You save {fmt(Number(product?.variants?.[0].price-product?.variants?.[0].costPrice))}
               </p>
 
               {/* Color picker */}
@@ -688,8 +693,8 @@ export default function ProductOverview() {
               <div style={{ marginBottom: '16px' }}>
                 <p style={{ margin: '0 0 2px', fontSize: '12px', color: '#aaa', fontWeight: 500 }}>Price</p>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-                  <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: '24px', fontWeight: 800, color: '#1a1a2e' }}>{fmt(PRODUCT.price)}</span>
-                  <span style={{ fontSize: '13px', color: '#bbb', textDecoration: 'line-through' }}>{fmt(PRODUCT.originalPrice)}</span>
+                  <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: '24px', fontWeight: 800, color: '#1a1a2e' }}>{fmt(Number(product?.variants?.[0].costPrice))}</span>
+                  <span style={{ fontSize: '13px', color: '#bbb', textDecoration: 'line-through' }}>{fmt(Number(product?.variants?.[0].price))}</span>
                 </div>
               </div>
 
@@ -700,11 +705,11 @@ export default function ProductOverview() {
                     <rect x="1" y="3" width="15" height="13" /><polygon points="16 8 20 8 23 11 23 16 16 16 16 8" /><circle cx="5.5" cy="18.5" r="2.5" /><circle cx="18.5" cy="18.5" r="2.5" />
                   </svg>
                   <span style={{ fontSize: '13px', fontWeight: 600, color: '#1a1a2e' }}>
-                    {PRODUCT.freeDelivery ? 'Free Delivery' : 'Standard Delivery ₹49'}
+                    {product?.freeDelivery ? 'Free Delivery' : 'Standard Delivery ₹49'}
                   </span>
                 </div>
                 <p style={{ margin: '0 0 10px', fontSize: '12px', color: '#555' }}>
-                  Delivery by <strong>{PRODUCT.deliveryDate}</strong> if ordered now
+                  Delivery by <strong>{formattedDate}</strong> if ordered now
                 </p>
                 <div style={{ display: 'flex', gap: '6px' }}>
                   <input
@@ -723,7 +728,21 @@ export default function ProductOverview() {
                     }}
                   />
                   <button
-                    onClick={() => pincode.length === 6 && setDeliveryChecked(true)}
+                    onClick={async() => {
+                     try {
+                        const res = await axios.get(
+                          `http://localhost:6002/api/pincode/${pincode}`
+                        );
+                        if (res.data.success) {
+                          setDeliveryChecked(true);
+                        } else {
+                          setDeliveryChecked(false);
+                        }
+                      } catch (error: any) {
+                        setDeliveryChecked(false);
+                        toast.error(error.response?.data.message)
+                      }
+                    }}
                     style={{
                       padding: '7px 12px',
                       background: pincode.length === 6 ? `linear-gradient(135deg, ${PINK}, ${PINK_DARK})` : '#f0e0eb',
