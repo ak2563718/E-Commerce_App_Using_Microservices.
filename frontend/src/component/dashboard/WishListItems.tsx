@@ -1,6 +1,6 @@
 'use client'
 import { useAppDispatch } from '@/redux/hooks'
-import { getWishlist } from '@/redux/product/product.Type.Action'
+import { getFullWishlist, getWishlist } from '@/redux/product/product.Type.Action'
 import { useEffect, useState } from 'react'
 
 const PINK = '#e91e8c'
@@ -551,7 +551,7 @@ export default function WishListItems() {
 
   useEffect(()=>{
     const wishlistitems =async()=>{
-      const res = await dispatch(getWishlist()).unwrap();
+      const res = await dispatch(getFullWishlist()).unwrap();
       console.log(res.data)
     }
     wishlistitems()

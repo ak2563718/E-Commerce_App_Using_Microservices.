@@ -256,3 +256,21 @@ export const getWishlist = createAsyncThunk<any, void, {rejectValue:string}>(
         }
     }
 )
+
+export const getFullWishlist = createAsyncThunk<any, void, {rejectValue:string}>(
+    'get/fullwihslistitem',
+    async(_, { rejectWithValue })=>{
+        try {
+            const { data } = await api.get(`${type_uri}/products/wishlist/product`,{
+                headers:{'Content-Type':'application/json'},
+                withCredentials:true,
+            })
+            return data;
+        } catch (error) {
+            if(axios.isAxiosError(error)){
+                return rejectWithValue(error.response?.data.message)
+            }
+            return rejectWithValue('something went wrong!')
+        }
+    }
+)
