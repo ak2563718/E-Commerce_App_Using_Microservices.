@@ -1,5 +1,7 @@
 'use client'
-import { useState } from 'react'
+import { useAppDispatch } from '@/redux/hooks'
+import { getWishlist } from '@/redux/product/product.Type.Action'
+import { useEffect, useState } from 'react'
 
 const PINK = '#e91e8c'
 const PINK_DARK = '#c2185b'
@@ -236,15 +238,6 @@ function WishlistCard({
     >
       {/* Badges */}
       <div style={{ position: 'absolute', top: '10px', left: '10px', display: 'flex', flexDirection: 'column', gap: '4px', zIndex: 2 }}>
-        {item.badge && (
-          <span style={{
-            background: item.badge === 'New' ? '#7c3aed' : item.badge === 'Top Rated' ? '#059669' : PINK,
-            color: '#fff', fontSize: '9px', fontWeight: 700,
-            padding: '3px 8px', borderRadius: '20px', letterSpacing: '0.05em',
-          }}>
-            {item.badge}
-          </span>
-        )}
         {!item.inStock && (
           <span style={{
             background: '#ff5252', color: '#fff', fontSize: '9px',
@@ -502,6 +495,7 @@ export default function WishListItems() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [selectMode, setSelectMode] = useState(false)
   const [selected, setSelected] = useState<number[]>([])
+  const dispatch = useAppDispatch();
 
   const showToast = (message: string) => {
     setToast({ visible: true, message })
@@ -554,6 +548,14 @@ export default function WishListItems() {
 
   const outOfStockCount = items.filter(i => !i.inStock).length
   const totalSavings = items.filter(i => i.inStock).reduce((s, i) => s + (i.originalPrice - i.price), 0)
+
+  useEffect(()=>{
+    const wishlistitems =async()=>{
+      const res = await dispatch(getWishlist()).unwrap();
+      console.log(res.data)
+    }
+    wishlistitems()
+  },[])
 
   return (
     <div style={{ minHeight: '100vh', background: '#fdf0f8', fontFamily: 'Inter, sans-serif' }}>

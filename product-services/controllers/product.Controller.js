@@ -2,6 +2,7 @@ import { prisma } from "../src/db.js";
 import {asyncHandler} from '../utils/asyncHandler.js';
 import { AppError } from '../utils/AppError.js';
 import slugify from 'slugify'
+import axios from 'axios'
 
 // 1. Add Product (protected controller)
 export const createProduct = asyncHandler(async(req, res, next)=>{
@@ -381,3 +382,60 @@ export const getWishlist = asyncHandler(async(req, res, next)=>{
         data:wishlist,
     })
 })
+
+
+// 10. get full wishlist items 
+export const getFullWishlist = asyncHandler(async (req, res, next) => {
+  const userId = req.user.id;
+
+  const wishlist = await prisma.wishlist.findMany({
+    where: { userId }
+  });
+
+  if (!wishlist || wishlist.length === 0) {
+    return next(
+      new AppError("No items found in wishlist", 404)
+    );
+  }
+
+  const data = [];
+
+  for (const wishlistItem of wishlist) {
+    const product = await prisma.product.findUnique({
+      where: {
+        id: wishlistItem.productId
+      },
+      include:{
+        brand:true,
+        category:true,
+        images:true,
+        variants:true,
+      }
+    });
+
+    if (product) {
+      data.push({
+        id:product.id,
+        name:product.name,
+        brand:product?.brand.name,
+        category:product?.category.name,
+        image:product?.images?.[0]?.url,
+        price:product.variants?.[0]?.costPrice,
+        originalPrice:product?.variants?.[0].price,
+        discount:Math.floor(((product?.variants?.[0].price-product.variants?.[0]?.costPrice)/product?.variants?.[0].price)*100),
+        rating:product?.averageRating,
+        reviewCount:product?.totalReviews,
+        inStock:product?.variants?.[0]?.stock,
+        assured:true,
+        freeDelivery:product?.freeDelivery,
+        addedOn:wishlistItem.createdAt,
+      });
+    }
+  }
+
+  res.status(200).json({
+    message: "Products fetched from wishlist",
+    data,
+    success: true,
+  });
+});
