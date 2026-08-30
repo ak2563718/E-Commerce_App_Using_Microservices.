@@ -1,8 +1,9 @@
 'use client'
+import { createCart, createCartItems, getCart } from '@/redux/cart/cart.Action'
 import { useAppDispatch } from '@/redux/hooks'
 import { getProductbyId } from '@/redux/product/product.Action'
 import axios from 'axios'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { toast } from 'sonner'
@@ -240,23 +241,30 @@ export default function ProductOverview() {
   const [helpfulClicked, setHelpfulClicked] = useState<number[]>([])
   const [product, setProduct] = useState<any>(null)
   const [imagedata, setImageData] = useState<any[]>([])
+  const [cartId, setCartId] = useState('')
   const dispatch = useAppDispatch();
-  const handleAddToCart = () => {
-    setAddedToCart(true)
-    setTimeout(() => setAddedToCart(false), 2200)
-  }
+  const router = useRouter();
 
   const params = useParams<{slug:string,id:string}>()
+
   useEffect(()=>{
   const getproduct =async()=>{
     const res = await dispatch(getProductbyId(params.id)).unwrap();
+    const cart = await dispatch(getCart()).unwrap();
     setProduct(res.data)
     setImageData(res.data.images.map((img:any)=>img.url))
+    setCartId(cart.data.id)
   }
   getproduct()
   },[params])
-
- console.log(product)
+  
+  const data ={
+    cartId,
+    productId:product?.id,
+    variantId:product?.variants?.[0].id,
+    quantity:1,
+  }
+ 
  const date = new Date();
 const deliveryDate = new Date(date);
 deliveryDate.setDate(date.getDate() + product?.deliveryDays);
@@ -264,8 +272,16 @@ const formattedDate = deliveryDate.toLocaleDateString('en-GB', {
   day: 'numeric',
   month: 'short',
 });
- const discount = product ? Math.round(((product.variants?.[0].price - product.variants?.[0].costPrice)/product.variants?.[0].price)*100):0;
+const discount = product ? Math.round(((product.variants?.[0].price - product.variants?.[0].costPrice)/product.variants?.[0].price)*100):0;
 
+const handleAddToCart = async() => {
+    setAddedToCart(true)
+    const res = await dispatch(createCartItems(data)).unwrap();
+    console.log(res.data)
+    if(res.data.success){
+      setTimeout(() => setAddedToCart(false), 2200)
+    }
+  }
 
   return (
     <div style={{ minHeight: '100vh', background: '#fdf0f8', fontFamily: 'Inter, sans-serif' }}>
@@ -281,7 +297,7 @@ const formattedDate = deliveryDate.toLocaleDateString('en-GB', {
         }}
       >
         <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div onClick={()=>router.replace('/')} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{ background: '#fff', borderRadius: '10px', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke={PINK} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
