@@ -4,6 +4,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import axios from 'axios'
 
+
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));
@@ -71,11 +72,81 @@ app.use('/api',async(req, res)=>{
       url:`${process.env.PRODUCT_URL}${req.originalUrl}`,
       data:req.body,
       headers:{
-        
-      }
+        ...req.headers,
+      },
      })
+     return res.status(response.status).json(response.data)
   } catch (error) {
      // Auth service returned an HTTP error (400, 401, 404, etc.)
+    if (error.response) {
+      return res.status(error.response.status).json(error.response.data);
+    }
+    // Network error or auth service is down
+    if (error.request) {
+      return res.status(503).json({
+        success: false,
+        message: "Auth service is unavailable",
+      });
+    }
+    // Unexpected error
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+      error: error.message,
+    });
+  }
+})
+
+app.use('/profile',async(req, res)=>{
+  try {
+    const response = await axios({
+       method:req.method,
+       url:`${process.env.PROFILE_URL}${req.originalUrl}`,
+       req:req.data,
+       headers: {
+        "Content-Type": "application/json",
+         Authorization: req.headers.authorization,
+         Cookie: req.headers.cookie,
+      },
+    })
+    return res.status(response.status).json(response.data);
+  } catch (error) {
+        // Auth service returned an HTTP error (400, 401, 404, etc.)
+    if (error.response) {
+      return res.status(error.response.status).json(error.response.data);
+    }
+    // Network error or auth service is down
+    if (error.request) {
+      return res.status(503).json({
+        success: false,
+        message: "Auth service is unavailable",
+      });
+    }
+    // Unexpected error
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+      error: error.message,
+    });
+  }
+})
+
+app.use('/cart',async(req, res)=>{
+  console.log(`${process.env.CART_URL}${req.originalUrl}`)
+  try {
+    const response = await axios({
+      method:req.method,
+      url:`${process.env.CART_URL}${req.originalUrl}`,
+      req:req.data,
+      headers: {
+        "Content-Type": "application/json",
+         Authorization: req.headers.authorization,
+         Cookie: req.headers.cookie,
+      },
+    })
+    return res.status(response.status).json(response.data)
+  } catch (error) {
+         // Auth service returned an HTTP error (400, 401, 404, etc.)
     if (error.response) {
       return res.status(error.response.status).json(error.response.data);
     }
