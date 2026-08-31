@@ -96,6 +96,7 @@ model OrderItem {
 
 model ShippingAddress {
   id           String  @id @default(cuid())
+  userId       String  @unique
   fullName     String
   phone        String
   addressLine1 String

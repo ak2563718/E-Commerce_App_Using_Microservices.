@@ -161,6 +161,7 @@ exports.Prisma.OrderItemScalarFieldEnum = {
 
 exports.Prisma.ShippingAddressScalarFieldEnum = {
   id: 'id',
+  userId: 'userId',
   fullName: 'fullName',
   phone: 'phone',
   addressLine1: 'addressLine1',

@@ -3904,6 +3904,7 @@ export namespace Prisma {
 
   export type ShippingAddressMinAggregateOutputType = {
     id: string | null
+    userId: string | null
     fullName: string | null
     phone: string | null
     addressLine1: string | null
@@ -3917,6 +3918,7 @@ export namespace Prisma {
 
   export type ShippingAddressMaxAggregateOutputType = {
     id: string | null
+    userId: string | null
     fullName: string | null
     phone: string | null
     addressLine1: string | null
@@ -3930,6 +3932,7 @@ export namespace Prisma {
 
   export type ShippingAddressCountAggregateOutputType = {
     id: number
+    userId: number
     fullName: number
     phone: number
     addressLine1: number
@@ -3945,6 +3948,7 @@ export namespace Prisma {
 
   export type ShippingAddressMinAggregateInputType = {
     id?: true
+    userId?: true
     fullName?: true
     phone?: true
     addressLine1?: true
@@ -3958,6 +3962,7 @@ export namespace Prisma {
 
   export type ShippingAddressMaxAggregateInputType = {
     id?: true
+    userId?: true
     fullName?: true
     phone?: true
     addressLine1?: true
@@ -3971,6 +3976,7 @@ export namespace Prisma {
 
   export type ShippingAddressCountAggregateInputType = {
     id?: true
+    userId?: true
     fullName?: true
     phone?: true
     addressLine1?: true
@@ -4057,6 +4063,7 @@ export namespace Prisma {
 
   export type ShippingAddressGroupByOutputType = {
     id: string
+    userId: string
     fullName: string
     phone: string
     addressLine1: string
@@ -4087,6 +4094,7 @@ export namespace Prisma {
 
   export type ShippingAddressSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    userId?: boolean
     fullName?: boolean
     phone?: boolean
     addressLine1?: boolean
@@ -4102,6 +4110,7 @@ export namespace Prisma {
 
   export type ShippingAddressSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    userId?: boolean
     fullName?: boolean
     phone?: boolean
     addressLine1?: boolean
@@ -4115,6 +4124,7 @@ export namespace Prisma {
 
   export type ShippingAddressSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    userId?: boolean
     fullName?: boolean
     phone?: boolean
     addressLine1?: boolean
@@ -4128,6 +4138,7 @@ export namespace Prisma {
 
   export type ShippingAddressSelectScalar = {
     id?: boolean
+    userId?: boolean
     fullName?: boolean
     phone?: boolean
     addressLine1?: boolean
@@ -4139,7 +4150,7 @@ export namespace Prisma {
     landmark?: boolean
   }
 
-  export type ShippingAddressOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fullName" | "phone" | "addressLine1" | "addressLine2" | "city" | "state" | "country" | "postalCode" | "landmark", ExtArgs["result"]["shippingAddress"]>
+  export type ShippingAddressOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "fullName" | "phone" | "addressLine1" | "addressLine2" | "city" | "state" | "country" | "postalCode" | "landmark", ExtArgs["result"]["shippingAddress"]>
   export type ShippingAddressInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orders?: boolean | ShippingAddress$ordersArgs<ExtArgs>
     _count?: boolean | ShippingAddressCountOutputTypeDefaultArgs<ExtArgs>
@@ -4154,6 +4165,7 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
+      userId: string
       fullName: string
       phone: string
       addressLine1: string
@@ -4588,6 +4600,7 @@ export namespace Prisma {
    */
   interface ShippingAddressFieldRefs {
     readonly id: FieldRef<"ShippingAddress", 'String'>
+    readonly userId: FieldRef<"ShippingAddress", 'String'>
     readonly fullName: FieldRef<"ShippingAddress", 'String'>
     readonly phone: FieldRef<"ShippingAddress", 'String'>
     readonly addressLine1: FieldRef<"ShippingAddress", 'String'>
@@ -6169,6 +6182,7 @@ export namespace Prisma {
 
   export const ShippingAddressScalarFieldEnum: {
     id: 'id',
+    userId: 'userId',
     fullName: 'fullName',
     phone: 'phone',
     addressLine1: 'addressLine1',
@@ -6579,6 +6593,7 @@ export namespace Prisma {
     OR?: ShippingAddressWhereInput[]
     NOT?: ShippingAddressWhereInput | ShippingAddressWhereInput[]
     id?: StringFilter<"ShippingAddress"> | string
+    userId?: StringFilter<"ShippingAddress"> | string
     fullName?: StringFilter<"ShippingAddress"> | string
     phone?: StringFilter<"ShippingAddress"> | string
     addressLine1?: StringFilter<"ShippingAddress"> | string
@@ -6593,6 +6608,7 @@ export namespace Prisma {
 
   export type ShippingAddressOrderByWithRelationInput = {
     id?: SortOrder
+    userId?: SortOrder
     fullName?: SortOrder
     phone?: SortOrder
     addressLine1?: SortOrder
@@ -6607,6 +6623,7 @@ export namespace Prisma {
 
   export type ShippingAddressWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    userId?: string
     AND?: ShippingAddressWhereInput | ShippingAddressWhereInput[]
     OR?: ShippingAddressWhereInput[]
     NOT?: ShippingAddressWhereInput | ShippingAddressWhereInput[]
@@ -6620,10 +6637,11 @@ export namespace Prisma {
     postalCode?: StringFilter<"ShippingAddress"> | string
     landmark?: StringNullableFilter<"ShippingAddress"> | string | null
     orders?: OrderListRelationFilter
-  }, "id">
+  }, "id" | "userId">
 
   export type ShippingAddressOrderByWithAggregationInput = {
     id?: SortOrder
+    userId?: SortOrder
     fullName?: SortOrder
     phone?: SortOrder
     addressLine1?: SortOrder
@@ -6643,6 +6661,7 @@ export namespace Prisma {
     OR?: ShippingAddressScalarWhereWithAggregatesInput[]
     NOT?: ShippingAddressScalarWhereWithAggregatesInput | ShippingAddressScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"ShippingAddress"> | string
+    userId?: StringWithAggregatesFilter<"ShippingAddress"> | string
     fullName?: StringWithAggregatesFilter<"ShippingAddress"> | string
     phone?: StringWithAggregatesFilter<"ShippingAddress"> | string
     addressLine1?: StringWithAggregatesFilter<"ShippingAddress"> | string
@@ -6995,6 +7014,7 @@ export namespace Prisma {
 
   export type ShippingAddressCreateInput = {
     id?: string
+    userId: string
     fullName: string
     phone: string
     addressLine1: string
@@ -7009,6 +7029,7 @@ export namespace Prisma {
 
   export type ShippingAddressUncheckedCreateInput = {
     id?: string
+    userId: string
     fullName: string
     phone: string
     addressLine1: string
@@ -7023,6 +7044,7 @@ export namespace Prisma {
 
   export type ShippingAddressUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
     fullName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     addressLine1?: StringFieldUpdateOperationsInput | string
@@ -7037,6 +7059,7 @@ export namespace Prisma {
 
   export type ShippingAddressUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
     fullName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     addressLine1?: StringFieldUpdateOperationsInput | string
@@ -7051,6 +7074,7 @@ export namespace Prisma {
 
   export type ShippingAddressCreateManyInput = {
     id?: string
+    userId: string
     fullName: string
     phone: string
     addressLine1: string
@@ -7064,6 +7088,7 @@ export namespace Prisma {
 
   export type ShippingAddressUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
     fullName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     addressLine1?: StringFieldUpdateOperationsInput | string
@@ -7077,6 +7102,7 @@ export namespace Prisma {
 
   export type ShippingAddressUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
     fullName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     addressLine1?: StringFieldUpdateOperationsInput | string
@@ -7567,6 +7593,7 @@ export namespace Prisma {
 
   export type ShippingAddressCountOrderByAggregateInput = {
     id?: SortOrder
+    userId?: SortOrder
     fullName?: SortOrder
     phone?: SortOrder
     addressLine1?: SortOrder
@@ -7580,6 +7607,7 @@ export namespace Prisma {
 
   export type ShippingAddressMaxOrderByAggregateInput = {
     id?: SortOrder
+    userId?: SortOrder
     fullName?: SortOrder
     phone?: SortOrder
     addressLine1?: SortOrder
@@ -7593,6 +7621,7 @@ export namespace Prisma {
 
   export type ShippingAddressMinOrderByAggregateInput = {
     id?: SortOrder
+    userId?: SortOrder
     fullName?: SortOrder
     phone?: SortOrder
     addressLine1?: SortOrder
@@ -8092,6 +8121,7 @@ export namespace Prisma {
 
   export type ShippingAddressCreateWithoutOrdersInput = {
     id?: string
+    userId: string
     fullName: string
     phone: string
     addressLine1: string
@@ -8105,6 +8135,7 @@ export namespace Prisma {
 
   export type ShippingAddressUncheckedCreateWithoutOrdersInput = {
     id?: string
+    userId: string
     fullName: string
     phone: string
     addressLine1: string
@@ -8200,6 +8231,7 @@ export namespace Prisma {
 
   export type ShippingAddressUpdateWithoutOrdersInput = {
     id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
     fullName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     addressLine1?: StringFieldUpdateOperationsInput | string
@@ -8213,6 +8245,7 @@ export namespace Prisma {
 
   export type ShippingAddressUncheckedUpdateWithoutOrdersInput = {
     id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
     fullName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     addressLine1?: StringFieldUpdateOperationsInput | string
