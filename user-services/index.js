@@ -14,7 +14,7 @@ app.use(cors({
     credentials:true,
 }))
 app.use(helmet())
-app.use('/profile',userRoutes)
+app.use('/api/user',userRoutes)
 app.use(errorMiddleware)
 const port = process.env.PORT;
 app.listen(port,()=>{

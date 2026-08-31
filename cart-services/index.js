@@ -15,7 +15,7 @@ app.use(cors({
     credentials:true,
 }));
 app.use(helmet())
-app.use('/cart',cart)
+app.use('/api/cart',cart)
 app.use(errorMiddleware)
 const port = process.env.PORT;
 app.listen(port, ()=>{

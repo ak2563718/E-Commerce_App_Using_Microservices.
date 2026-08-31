@@ -16,7 +16,7 @@ app.use(cors({
 }))
 app.use(helmet())
 
-app.use('/api',category)
+app.use('/api/product',category)
 app.use(errorMiddleware)
 const port = process.env.PORT;
 app.listen(port,()=>{
