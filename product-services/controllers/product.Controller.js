@@ -416,6 +416,8 @@ export const getFullWishlist = asyncHandler(async (req, res, next) => {
     if (product) {
       data.push({
         id:product.id,
+        wishlistId:wishlistItem.id,
+        slug:product.slug,
         name:product.name,
         brand:product?.brand.name,
         category:product?.category.name,
@@ -439,3 +441,18 @@ export const getFullWishlist = asyncHandler(async (req, res, next) => {
     success: true,
   });
 });
+
+// 11. delete wishlist items
+export const deleteWishlist = asyncHandler(async(req, res, next)=>{
+    const id = req.params.id;
+    const wishlistItem = await prisma.wishlist.findUnique({where:{id}})
+    if(!wishlistItem){
+        return next(new AppError("Items not found", 404))
+    }
+    const item = await prisma.wishlist.delete({where:{id}})
+    res.status(200).json({
+        message:"Items deleted successfully",
+        success:true,
+        data:item
+    })
+})

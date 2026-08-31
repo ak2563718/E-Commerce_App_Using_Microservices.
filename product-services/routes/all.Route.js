@@ -1,7 +1,7 @@
 import express from 'express';
 import { categorybyId, createCategories, deleteCategory, getCategory } from '../controllers/category.Controller.js';
 import { createBrand, deleteBrand, getBrand, getbyId, updateBrand } from '../controllers/brand.Controller.js';
-import { createProduct, deleteProductbyId, getFullWishlist, getProdctbyId, getProduct, getProductbySlug, getProductofSeller, getWishlist, manageWhislist, serachProduct, updateProduct } from '../controllers/product.Controller.js';
+import { createProduct, deleteProductbyId, deleteWishlist, getFullWishlist, getProdctbyId, getProduct, getProductbySlug, getProductofSeller, getWishlist, manageWhislist, serachProduct, updateProduct } from '../controllers/product.Controller.js';
 import { createVariant, deleteVariant, getVariants, updateVariant } from '../controllers/variant.Controller.js';
 import { createAttributes, createAttributesvalue, deleteAttributes, deleteAttributesvalue, updateAttributes, updateAttributesValue } from '../controllers/attribute.Controller.js';
 import { deleteProductImage, updateProductImage, uploadProductImages, uploadVariantImages } from '../controllers/image.Controller.js';
@@ -62,6 +62,7 @@ router.delete('/images/:id',deleteProductImage)
 router.get('/products/:id/wishlist',authMiddleware,manageWhislist);
 router.get('/products/wishlist/items',authMiddleware,getWishlist);
 router.get('/products/wishlist/product',authMiddleware,getFullWishlist)
+router.delete('/products/:id/wishlist',authMiddleware,deleteWishlist)
 
 // 10.mange Pincode
 router.post('/pincode', createAddressess)

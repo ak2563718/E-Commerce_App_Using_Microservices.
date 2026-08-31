@@ -1,7 +1,9 @@
 'use client'
 import { useAppDispatch } from '@/redux/hooks'
-import { getFullWishlist, getWishlist } from '@/redux/product/product.Type.Action'
+import { deleteWishlist, getFullWishlist, getWishlist } from '@/redux/product/product.Type.Action'
 import { useEffect, useState } from 'react'
+import WishlistSkeleton from './WishListSkeleton'
+import { useRouter } from 'next/navigation'
 
 const PINK = '#e91e8c'
 const PINK_DARK = '#c2185b'
@@ -15,6 +17,8 @@ function fmt(n: number) {
 interface WishlistItem {
   id: number
   name: string
+  wishlistId: string | number
+  slug: string
   brand: string
   category: string
   image: string
@@ -47,6 +51,8 @@ const INITIAL_WISHLIST: WishlistItem[] = [
     freeDelivery: true,
     addedOn: '14 Aug 2026',
     badge: 'Top Rated',
+    slug:'gramin-forerunner',
+    wishlistId:'1'
   },
   {
     id: 2,
@@ -64,6 +70,8 @@ const INITIAL_WISHLIST: WishlistItem[] = [
     freeDelivery: true,
     addedOn: '12 Aug 2026',
     badge: 'Bestseller',
+    slug:'gramin-forerunner',
+    wishlistId:'2'
   },
   {
     id: 3,
@@ -81,6 +89,8 @@ const INITIAL_WISHLIST: WishlistItem[] = [
     freeDelivery: true,
     addedOn: '10 Aug 2026',
     badge: 'New',
+    slug:'gramin-forerunner',
+    wishlistId:'3'
   },
   {
     id: 4,
@@ -97,6 +107,8 @@ const INITIAL_WISHLIST: WishlistItem[] = [
     assured: true,
     freeDelivery: true,
     addedOn: '9 Aug 2026',
+    slug:'gramin-forerunner',
+    wishlistId:'4'
   },
   {
     id: 5,
@@ -113,6 +125,8 @@ const INITIAL_WISHLIST: WishlistItem[] = [
     assured: false,
     freeDelivery: true,
     addedOn: '7 Aug 2026',
+    slug:'gramin-forerunner',
+    wishlistId:'5'
   },
   {
     id: 6,
@@ -130,6 +144,8 @@ const INITIAL_WISHLIST: WishlistItem[] = [
     freeDelivery: true,
     addedOn: '5 Aug 2026',
     badge: 'Top Rated',
+    slug:'gramin-forerunner',
+    wishlistId:'6'
   },
   {
     id: 7,
@@ -146,6 +162,8 @@ const INITIAL_WISHLIST: WishlistItem[] = [
     assured: true,
     freeDelivery: true,
     addedOn: '2 Aug 2026',
+    slug:'gramin-forerunner',
+    wishlistId:'7'
   },
   {
     id: 8,
@@ -162,6 +180,8 @@ const INITIAL_WISHLIST: WishlistItem[] = [
     assured: false,
     freeDelivery: true,
     addedOn: '29 Jul 2026',
+    slug:'gramin-forerunner',
+    wishlistId:'8'
   },
 ]
 
@@ -206,14 +226,14 @@ function WishlistCard({
   onShare,
 }: {
   item: WishlistItem
-  onRemove: (id: number) => void
+  onRemove: (id: string|number) => void
   onMoveToCart: (id: number) => void
   onShare: (id: number) => void
 }) {
   const [imgErr, setImgErr] = useState(false)
   const [hovered, setHovered] = useState(false)
   const [addedToCart, setAddedToCart] = useState(false)
-
+  const router = useRouter();
   const handleCart = () => {
     setAddedToCart(true)
     onMoveToCart(item.id)
@@ -250,7 +270,7 @@ function WishlistCard({
 
       {/* Remove button */}
       <button
-        onClick={() => onRemove(item.id)}
+        onClick={() => onRemove(item?.wishlistId)}
         title="Remove from wishlist"
         style={{
           position: 'absolute', top: '10px', right: '10px', zIndex: 2,
@@ -278,7 +298,7 @@ function WishlistCard({
       </button>
 
       {/* Image */}
-      <div style={{
+      <div onClick={()=>router.push(`/product/${item.slug}/${item.id}`)} style={{
         height: '200px', background: '#fdf4fa',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         overflow: 'hidden', cursor: 'pointer',
@@ -487,14 +507,15 @@ function ShareModal({ item, onClose }: { item: WishlistItem | null; onClose: () 
 
 /* ── Main ── */
 export default function WishListItems() {
-  const [items, setItems] = useState<WishlistItem[]>(INITIAL_WISHLIST)
+  const [items, setItems] = useState<WishlistItem[]>([])
   const [filterCategory, setFilterCategory] = useState('All')
   const [sortBy, setSortBy] = useState('date')
   const [shareItem, setShareItem] = useState<WishlistItem | null>(null)
-  const [toast, setToast] = useState({ visible: false, message: '' })
+  const [toast, setToast] = useState<{ visible: boolean; message: string }>({ visible: false, message: '' })
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [selectMode, setSelectMode] = useState(false)
   const [selected, setSelected] = useState<number[]>([])
+  const [loading, setLoading] = useState(true)
   const dispatch = useAppDispatch();
 
   const showToast = (message: string) => {
@@ -502,8 +523,9 @@ export default function WishListItems() {
     setTimeout(() => setToast(t => ({ ...t, visible: false })), 2500)
   }
 
-  const handleRemove = (id: number) => {
-    setItems(prev => prev.filter(i => i.id !== id))
+  const handleRemove = async(id: string|number) => {
+    setItems(prev => prev.filter(i => i.wishlistId !== id))
+    const res = await dispatch(deleteWishlist(id)).unwrap();
     showToast('Removed from wishlist')
   }
 
@@ -552,10 +574,15 @@ export default function WishListItems() {
   useEffect(()=>{
     const wishlistitems =async()=>{
       const res = await dispatch(getFullWishlist()).unwrap();
-      console.log(res.data)
+      setItems(res.data)
+      setLoading(false)
     }
     wishlistitems()
   },[])
+
+  if(loading){
+    return <WishlistSkeleton/>
+  }
 
   return (
     <div style={{ minHeight: '100vh', background: '#fdf0f8', fontFamily: 'Inter, sans-serif' }}>
