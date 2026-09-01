@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios  from "axios";
 
-const variant_uri = process.env.NEXT_PUBLIC_PRODUCT_URI;
+const variant_uri = process.env.NEXT_PUBLIC_API_URI;
 
 type Variant = {
     id:string,
@@ -39,7 +39,7 @@ export const createVariants = createAsyncThunk<ApiResponse<Variant>, ProductVari
     'post/variants',
     async(form, { rejectWithValue })=>{
         try {
-            const { data } = await axios.post(`${variant_uri}/products/${form.id}/variants`,form,{
+            const { data } = await axios.post(`${variant_uri}/product/products/${form.id}/variants`,form,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -58,7 +58,7 @@ export const getVariats = createAsyncThunk<ApiResponse<Variant[]>, string, {reje
     'get/varinats',
     async(id, { rejectWithValue})=>{
         try {
-           const { data } = await axios.get(`${variant_uri}/products/${id}/variants`,{
+           const { data } = await axios.get(`${variant_uri}/product/products/${id}/variants`,{
             headers:{'Content-Type':'application/json'},
             withCredentials:true,
            })  
@@ -77,7 +77,7 @@ export const updateVariants = createAsyncThunk<ApiResponse<Variant>, UpdateVaria
     'patch/variants',
     async({id, form}, {rejectWithValue})=>{
         try {
-            const { data } = await axios.patch(`${variant_uri}/variants/${id}`,form,{
+            const { data } = await axios.patch(`${variant_uri}/product/variants/${id}`,form,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -96,7 +96,7 @@ export const deleteVariants = createAsyncThunk<ApiResponse<Variant>, string, {re
     'delete/variants',
     async(id, {rejectWithValue})=>{
         try {
-            const { data } = await axios.delete(`${variant_uri}/variants/${id}`,{
+            const { data } = await axios.delete(`${variant_uri}/product/variants/${id}`,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })

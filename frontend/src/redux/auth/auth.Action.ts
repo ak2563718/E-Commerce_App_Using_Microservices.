@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios, { AxiosError } from "axios";
 
 
-const authuri = process.env.NEXT_PUBLIC_AUTH_URI;
+const authuri = process.env.NEXT_PUBLIC_API_URI;
 
 interface signuprequest{
     email:string,
@@ -18,7 +18,7 @@ export const authSignup = createAsyncThunk<any,signuprequest,{rejectValue:string
     'auth/signup',
     async( formData, { rejectWithValue})=>{
         try {
-            const { data } = await axios.post(`${authuri}/register`,formData,{
+            const { data } = await axios.post(`${authuri}/auth/register`,formData,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -37,7 +37,7 @@ export const sellerSignup = createAsyncThunk<any, any, {rejectValue:string}>(
     'post/seller',
     async({formData,accessToken}, { rejectWithValue })=>{
         try {
-            const { data } = await axios.post(`${authuri}/seller-register`,formData,{
+            const { data } = await axios.post(`${authuri}/auth/seller-register`,formData,{
                 headers:{'Content-Type':'application/json',Authorization:`Bearer ${accessToken}`},
                 withCredentials:true,
             })
@@ -56,7 +56,7 @@ export const authVerifyEmail = createAsyncThunk<any,string,{rejectValue:string}>
     'auth/verifyemail',
     async(token, {rejectWithValue})=>{
         try {
-            const { data } = await axios.get(`${authuri}/verify-email/?token=${token}`,{
+            const { data } = await axios.get(`${authuri}/auth/verify-email/?token=${token}`,{
             })
             return data;
         } catch (error) {
@@ -73,7 +73,7 @@ export const authLogin = createAsyncThunk<any,loginrequest,{rejectValue:string}>
     'auth/login',
     async(formData, {rejectWithValue})=>{
         try {
-            const { data } = await axios.post(`${authuri}/login`, formData,{
+            const { data } = await axios.post(`${authuri}/auth/login`, formData,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -92,7 +92,7 @@ export const authLogout = createAsyncThunk<any,void,{rejectValue:string}>(
     "auth/logout",
     async( _, {rejectWithValue})=>{
         try {
-            const { data } = await axios.get(`${authuri}/logout`,{
+            const { data } = await axios.get(`${authuri}/auth/logout`,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -111,7 +111,7 @@ export const authCheckSession = createAsyncThunk<any,void,{rejectValue:string}>(
     'auth/checksession',
     async( _, {rejectWithValue})=>{
         try {
-            const { data } = await axios.get(`${authuri}/check-session`,{
+            const { data } = await axios.get(`${authuri}/auth/check-session`,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -130,7 +130,7 @@ export const auth_ForgotPassword = createAsyncThunk<any,any,{rejectValue:string}
     "auth/forgotPassword",
     async(email , {rejectWithValue})=>{
         try {
-            const { data } = await axios.post(`${authuri}/forgot-password`,{email},{
+            const { data } = await axios.post(`${authuri}/auth/forgot-password`,{email},{
                 headers:{'Content-Type':"application/json"},
                 withCredentials:true,
             })
@@ -149,7 +149,7 @@ export const auth_ResetPassword = createAsyncThunk<any,any,{rejectValue:string}>
     'auth/resetPassword',
     async({password,token}, {rejectWithValue})=>{
         try {
-            const { data } = await axios.patch(`${authuri}/reset-password?token=${token}`,{password},{
+            const { data } = await axios.patch(`${authuri}/auth/reset-password?token=${token}`,{password},{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })

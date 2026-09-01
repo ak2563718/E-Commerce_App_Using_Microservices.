@@ -2,14 +2,14 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import api from "@/lib/axios";
 
-const user_uri = process.env.NEXT_PUBLIC_USER_URI;
+const user_uri = process.env.NEXT_PUBLIC_API_URI;
 
 // 1. create user address 
 export const createAddress = createAsyncThunk<any, any, {rejectValue:string}>(
     'post/address',
     async( info, { rejectWithValue })=>{
         try {
-            const { data } = await api.post(`${user_uri}/address`,info,{
+            const { data } = await api.post(`${user_uri}/user/address`,info,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -28,7 +28,7 @@ export const getAddresswithUserId = createAsyncThunk<any, void, {rejectValue:str
     'get/addresswithuserId',
     async( _ , {rejectWithValue} )=>{
         try {
-            const { data } = await api.get(`${user_uri}/address`,{
+            const { data } = await api.get(`${user_uri}/user/address`,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -47,7 +47,7 @@ export const getAddressbyId = createAsyncThunk<any, string, {rejectValue:string}
     'get/addressbyId',
     async(id, { rejectWithValue})=>{
         try {
-            const { data } = await axios.get(`${user_uri}/address/${id}`,{
+            const { data } = await axios.get(`${user_uri}/user/address/${id}`,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -66,7 +66,7 @@ export const updateAddress = createAsyncThunk<any, any, {rejectValue:string}>(
     'patch/address',
     async({id,info}, {rejectWithValue})=>{
         try {
-            const { data } = await axios.patch(`${user_uri}/address/${id}`,info,{
+            const { data } = await axios.patch(`${user_uri}/user/address/${id}`,info,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -85,7 +85,7 @@ export const deleteAddress = createAsyncThunk<any, string, {rejectValue:string}>
     'delete/address',
     async(id, {rejectWithValue})=>{
         try {
-            const { data } = await axios.delete(`${user_uri}/address/${id}`,{
+            const { data } = await axios.delete(`${user_uri}/user/address/${id}`,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -104,7 +104,7 @@ export const updateDefaultAddress = createAsyncThunk<any, any, {rejectValue:stri
     'patch/default',
     async({id, value}, {rejectWithValue})=>{
         try {
-            const { data } = await axios.patch(`${user_uri}/address/${id}/default`,value,{
+            const { data } = await axios.patch(`${user_uri}/user/address/${id}/default`,value,{
                 headers:{'Content-Type':'application/json'}
             })
             return data;

@@ -2,13 +2,13 @@ import api from "@/lib/axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const product_uri = process.env.NEXT_PUBLIC_PRODUCT_URI;
+const product_uri = process.env.NEXT_PUBLIC_API_URI;
 // 1. create a product details
 export const createProduct = createAsyncThunk<any,any,{rejectValue:string}>(
     'post/product',
     async(form, { rejectWithValue })=>{
         try {
-            const { data } = await api.post(`${product_uri}/products`,form,{
+            const { data } = await api.post(`${product_uri}/product/products`,form,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -27,7 +27,7 @@ export const sellerProduct = createAsyncThunk<any, void, {rejectValue:string}>(
     'get/sellerProduct',
     async(_, { rejectWithValue})=>{
         try {
-            const { data } = await api.get(`${product_uri}/products/seller`,{
+            const { data } = await api.get(`${product_uri}/product/products/seller`,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -46,7 +46,7 @@ export const getAllProducts = createAsyncThunk<any,void,{rejectValue:string}>(
     'get/Allproduct',
     async(_, { rejectWithValue })=>{
         try {
-            const { data } = await axios.get(`${product_uri}/products`,{
+            const { data } = await axios.get(`${product_uri}/product/products`,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -65,7 +65,7 @@ export const getProductbyId = createAsyncThunk<any,string,{rejectValue:string}>(
     'get/productbyId',
     async(id, { rejectWithValue })=>{
         try {
-            const { data } = await axios.get(`${product_uri}/products/${id}`,{
+            const { data } = await axios.get(`${product_uri}/product/products/${id}`,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -84,7 +84,7 @@ export const getProductWithSlug = createAsyncThunk<any,string,{rejectValue:strin
     'get/productbyslug',
     async(slug, { rejectWithValue })=>{
         try {
-            const { data } = await axios.get(`${product_uri}/products/slug/${slug}`,{
+            const { data } = await axios.get(`${product_uri}/product/products/slug/${slug}`,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -103,7 +103,7 @@ export const updateProductbyId = createAsyncThunk<any,any,{rejectValue:string}>(
     'update/product',
     async({id,form}, { rejectWithValue })=>{
         try {
-            const {data} = await api.patch(`${product_uri}/products/${id}`,form,{
+            const {data} = await api.patch(`${product_uri}/product/products/${id}`,form,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -122,7 +122,7 @@ export const deleteProductbyId = createAsyncThunk<any,string,{rejectValue:string
     'delete/products',
     async(id, {rejectWithValue})=>{
         try {
-           const { data } = await api.delete(`${product_uri}/products/${id}`,{
+           const { data } = await api.delete(`${product_uri}/product/products/${id}`,{
             headers:{'Content-Type':'application/json'},
             withCredentials:true,
            }) 
@@ -141,7 +141,7 @@ export const searchProduct = createAsyncThunk<any, any, {rejectValue:string}>(
     'search/product',
     async(search, { rejectWithValue })=>{
         try {
-            const { data } = await axios.get(`${product_uri}/searchproduct`,{
+            const { data } = await axios.get(`${product_uri}/product/searchproduct`,{
                 params:{
                     search:search,
                 },

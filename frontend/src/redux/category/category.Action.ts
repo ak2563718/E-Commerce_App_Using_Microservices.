@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const product_uri = process.env.NEXT_PUBLIC_PRODUCT_URI;
+const product_uri = process.env.NEXT_PUBLIC_API_URI;
 
 // Categories all apis
 // 1. create categories api
@@ -9,7 +9,7 @@ export const createCategories = createAsyncThunk<any,any,{rejectValue:string}>(
     'post/categories',
     async(form, { rejectWithValue })=>{
         try {
-            const { data } = await axios.post(`${product_uri}/categories`,form,{
+            const { data } = await axios.post(`${product_uri}/product/categories`,form,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -28,7 +28,7 @@ export const getAllCategories = createAsyncThunk<any,void,{rejectValue:string}>(
     'get/categories',
     async(_, { rejectWithValue })=>{
         try {
-            const { data } = await axios.get(`${product_uri}/categories`,{
+            const { data } = await axios.get(`${product_uri}/product/categories`,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -47,7 +47,7 @@ export const getCategorybyId = createAsyncThunk<any,string,{rejectValue:string}>
     'get/categorybyId',
     async(id, { rejectWithValue })=>{
         try {
-            const { data } = await axios.get(`${product_uri}/categories/${id}`,{
+            const { data } = await axios.get(`${product_uri}/product/categories/${id}`,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -66,7 +66,7 @@ export const deletecategorybyId = createAsyncThunk<any, string, {rejectValue:str
     'delete/categoriesId',
     async( id, { rejectWithValue })=>{
         try {
-           const { data } = await axios.delete(`${product_uri}/categories/${id}`,{
+           const { data } = await axios.delete(`${product_uri}/product/categories/${id}`,{
             headers:{'Content-Type':'application/json'},
             withCredentials:true,
            }) 

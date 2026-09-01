@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import api from "@/lib/axios";
 
-const type_uri = process.env.NEXT_PUBLIC_PRODUCT_URI;
+const type_uri = process.env.NEXT_PUBLIC_API_URI;
 
 type data={
     id:string,
@@ -17,7 +17,7 @@ export const createAttributeName = createAsyncThunk<any, data, {rejectValue:stri
     'post/attributename',
     async({id,name},{rejectWithValue})=>{
         try {
-            const { data } = await axios.post(`${type_uri}/products/${id}/attributes`,name,{
+            const { data } = await axios.post(`${type_uri}/product/products/${id}/attributes`,name,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -36,7 +36,7 @@ export const updateAttributeName = createAsyncThunk<any, data, {rejectValue:stri
     'patch/attributesName',
     async({id,name},{ rejectWithValue })=>{
         try {
-            const { data } = await axios.patch(`${type_uri}/attributes/${id}`,name,{
+            const { data } = await axios.patch(`${type_uri}/product/attributes/${id}`,name,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -55,7 +55,7 @@ export const deleteAttributesName = createAsyncThunk<any, string, {rejectValue:s
     'delete/attributesName',
     async(id, { rejectWithValue})=>{
         try {
-            const { data } = await axios.delete(`${type_uri}/attributes/${id}`,{
+            const { data } = await axios.delete(`${type_uri}/product/attributes/${id}`,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -74,7 +74,7 @@ export const createAttributeValue = createAsyncThunk<any, value,{rejectValue:str
     'post/attributesvalue',
     async({id,value},{ rejectWithValue })=>{
         try {
-            const { data } = await axios.post(`${type_uri}/attributes/${id}/values`,value,{
+            const { data } = await axios.post(`${type_uri}/product/attributes/${id}/values`,value,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -93,7 +93,7 @@ export const updateAttributeValue = createAsyncThunk<any, value, {rejectValue:st
     'patch/attributesvalue',
     async({id, value},{ rejectWithValue})=>{
         try {
-            const { data } = await axios.patch(`${type_uri}/values/${id}`,value,{
+            const { data } = await axios.patch(`${type_uri}/product/values/${id}`,value,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -112,7 +112,7 @@ export const deleteAttributesValue = createAsyncThunk<any, string, {rejectValue:
     'delete/attributesvalue',
     async(id, {rejectWithValue})=>{
         try {
-            const { data } = await axios.delete(`${type_uri}/values/${id}`,{
+            const { data } = await axios.delete(`${type_uri}/product/values/${id}`,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -131,7 +131,7 @@ export const uploadProductImage = createAsyncThunk<any, any, { rejectValue:strin
     'post/images',
     async({id,formData}, {rejectWithValue})=>{
         try {
-            const { data } = await axios.post(`${type_uri}/products/${id}/images`,formData,{
+            const { data } = await axios.post(`${type_uri}/product/products/${id}/images`,formData,{
                 headers:{'Content-Type':'multipart/form-data'},
                 withCredentials:true,
             })
@@ -150,7 +150,7 @@ export const updateProudctImage = createAsyncThunk<any, any, {rejectValue:string
     'update/productImage',
     async({id, formData}, { rejectWithValue })=>{
         try {
-            const { data } = await api.patch(`${type_uri}/images/${id}`,formData,{
+            const { data } = await api.patch(`${type_uri}/product/images/${id}`,formData,{
                 withCredentials:true,
             })
             return data;
@@ -168,7 +168,7 @@ export const deleteProductImage = createAsyncThunk<any, string, {rejectValue:str
     'delete/productImage',
     async(id, { rejectWithValue })=>{
         try {
-            const { data } = await api.delete(`${type_uri}/images/${id}`,{
+            const { data } = await api.delete(`${type_uri}/product/images/${id}`,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
         })
@@ -186,7 +186,7 @@ export const uploadProductVariantImages = createAsyncThunk<any, any, {rejectValu
     'post/variantimages',
     async({id,formData},{rejectWithValue})=>{
         try {
-            const { data } = await axios.post(`${type_uri}/variants/${id}/images`,formData,{
+            const { data } = await axios.post(`${type_uri}/product/variants/${id}/images`,formData,{
                 headers:{'Content-Type':'multipart/form-data'},
                 withCredentials:true,
             })
@@ -206,7 +206,7 @@ export const getAllBrands = createAsyncThunk<any, void, {rejectValue:string}>(
     'get/brands',
     async(_, {rejectWithValue})=>{
         try {
-            const { data } = await axios.get(`${type_uri}/brands`,{
+            const { data } = await axios.get(`${type_uri}/product/brands`,{
                 headers:{'Content-Type':"application/json"},
                 withCredentials:true,
             })
@@ -225,7 +225,7 @@ export const manageWishlist = createAsyncThunk<any, string, { rejectValue:string
     'post/wishlist',
     async(productId, { rejectWithValue })=>{
         try {
-            const { data } = await api.get(`${type_uri}/products/${productId}/wishlist`,{
+            const { data } = await api.get(`${type_uri}/product/products/${productId}/wishlist`,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -243,7 +243,7 @@ export const getWishlist = createAsyncThunk<any, void, {rejectValue:string}>(
     'get/wishlist',
     async(_, { rejectWithValue})=>{
         try {
-            const { data } = await api.get(`${type_uri}/products/wishlist/items`,{
+            const { data } = await api.get(`${type_uri}/product/products/wishlist/items`,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -261,7 +261,7 @@ export const getFullWishlist = createAsyncThunk<any, void, {rejectValue:string}>
     'get/fullwihslistitem',
     async(_, { rejectWithValue })=>{
         try {
-            const { data } = await api.get(`${type_uri}/products/wishlist/product`,{
+            const { data } = await api.get(`${type_uri}/product/products/wishlist/product`,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -279,7 +279,7 @@ export const deleteWishlist = createAsyncThunk<any, string |number , { rejectVal
     'delete/wishlist',
     async(id, { rejectWithValue })=>{
         try {
-            const { data } = await api.delete(`${type_uri}/products/${id}/wishlist`,{
+            const { data } = await api.delete(`${type_uri}/product/products/${id}/wishlist`,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
