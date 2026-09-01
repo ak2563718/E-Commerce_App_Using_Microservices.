@@ -21,7 +21,9 @@ export default function Login() {
         email:'',
         password:'',
       })
-      router.replace('/')
+      setTimeout(()=>{
+        router.replace('/')
+      },1000)
     } catch (err:any) {
       setData({
         email:'',

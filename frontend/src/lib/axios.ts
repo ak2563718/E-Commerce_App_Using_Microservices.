@@ -6,7 +6,7 @@ import axios, {
 import store from "@/redux/store";
 import { setAuthAccessToken } from "@/redux/auth/auth.Slice";
 
-const authURL = process.env.NEXT_PUBLIC_AUTH_URI;
+const authURL = process.env.NEXT_PUBLIC_API_URI;
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -88,7 +88,7 @@ api.interceptors.response.use(
 
       try {
         const response = await axios.get(
-          `${authURL}/refresh-token`,
+          `${authURL}/auth/refresh-token`,
           {
             withCredentials: true,
           }

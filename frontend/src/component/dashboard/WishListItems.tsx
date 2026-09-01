@@ -571,14 +571,20 @@ export default function WishListItems() {
   const outOfStockCount = items.filter(i => !i.inStock).length
   const totalSavings = items.filter(i => i.inStock).reduce((s, i) => s + (i.originalPrice - i.price), 0)
 
-  useEffect(()=>{
-    const wishlistitems =async()=>{
+  useEffect(() => {
+  const wishlistItems = async () => {
+    try {
       const res = await dispatch(getFullWishlist()).unwrap();
-      setItems(res.data)
-      setLoading(false)
+
+      setItems(res.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
     }
-    wishlistitems()
-  },[])
+  };
+  wishlistItems();
+}, [dispatch]);
 
   if(loading){
     return <WishlistSkeleton/>
