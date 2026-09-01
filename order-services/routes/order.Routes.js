@@ -12,7 +12,7 @@ import {
   updateShippingAddress,
   cancelOrder,
   getOrderStatusHistory,
-} from "../controllers/order.controller.js";
+} from "../controller/order.Controller.js";
 
 const router = express.Router();
 
@@ -21,7 +21,7 @@ const router = express.Router();
 // Orders
 // =============================
 
-router.post("/", createOrder);
+router.post("/order", createOrder);
 
 router.get("/", getAllOrders);
 

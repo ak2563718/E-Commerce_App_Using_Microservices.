@@ -149,3 +149,37 @@ export const cartProxy = async(req, res)=>{
     });
   }
 }
+
+export const orderProxy = async(req, res)=>{
+  try {
+    const response = await axios({
+      method:req.method,
+      url:`${process.env.ORDER_URL}${req.originalUrl}`,
+      data:req.data,
+      headers: {
+        "Content-Type": "application/json",
+         Authorization: req.headers.authorization,
+         Cookie: req.headers.cookie,
+      },
+    })
+    return res.status(response.status).json(response.data)
+  } catch (error) {
+         // Auth service returned an HTTP error (400, 401, 404, etc.)
+    if (error.response) {
+      return res.status(error.response.status).json(error.response.data);
+    }
+    // Network error or auth service is down
+    if (error.request) {
+      return res.status(503).json({
+        success: false,
+        message: "Auth service is unavailable",
+      });
+    }
+    // Unexpected error
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+      error: error.message,
+    });
+  }
+}

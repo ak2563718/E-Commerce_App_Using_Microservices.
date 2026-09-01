@@ -9,6 +9,7 @@ import { prisma } from '../src/db.js'
 export const createOrder = asyncHandler(async (req, res) => {
   const {
     userId,
+    addressId,
     paymentMethod,
     subtotal,
     discountAmount = 0,
@@ -30,10 +31,7 @@ export const createOrder = asyncHandler(async (req, res) => {
     !items ||
     !items.length
   ) {
-    throw new ApiError(
-      400,
-      "userId, paymentMethod, subtotal, totalAmount and items are required"
-    );
+    return next(new AppError('userId, paymentMethod, subtotal, totalAmount and items are required',400))
   }
 
   // ----------------------------------------------------------
@@ -47,7 +45,7 @@ export const createOrder = asyncHandler(async (req, res) => {
     Number(shippingAmount) < 0 ||
     Number(totalAmount) <= 0
   ) {
-    throw new ApiError(400, "Invalid order amount");
+    return next(new AppError('Invalid order amount',400))
   }
 
   // ----------------------------------------------------------
@@ -63,27 +61,6 @@ export const createOrder = asyncHandler(async (req, res) => {
   // ----------------------------------------------------------
 
   const order = await prisma.$transaction(async (tx) => {
-    // Create shipping address
-    let shippingAddressId = null;
-
-    if (shippingAddress) {
-      const address = await tx.shippingAddress.create({
-        data: {
-          fullName: shippingAddress.fullName,
-          phone: shippingAddress.phone,
-          addressLine1: shippingAddress.addressLine1,
-          addressLine2: shippingAddress.addressLine2,
-          city: shippingAddress.city,
-          state: shippingAddress.state,
-          country: shippingAddress.country,
-          postalCode: shippingAddress.postalCode,
-          landmark: shippingAddress.landmark,
-        },
-      });
-
-      shippingAddressId = address.id;
-    }
-
     // Create order
     const newOrder = await tx.order.create({
       data: {
@@ -99,7 +76,7 @@ export const createOrder = asyncHandler(async (req, res) => {
 
         currency,
         couponCode,
-        shippingAddressId,
+        shippingAddressId:addressId,
         notes,
 
         // Create order items
@@ -138,15 +115,11 @@ export const createOrder = asyncHandler(async (req, res) => {
     return newOrder;
   });
 
-  return res.status(201).json(
-    new ApiResponse(
-      201,
-      order,
-      "Order created successfully"
-    )
-  );
-});
-
+  res.status(201).json({
+    message:"Order placed",
+    data:order,
+  })
+})
 
 // ============================================================
 // GET ORDER BY ID
@@ -171,15 +144,14 @@ export const getOrderById = asyncHandler(async (req, res) => {
   });
 
   if (!order) {
-    throw new ApiError(404, "Order not found");
+    return next(new AppError("Order not found",404));
   }
 
-  return res.status(200).json(
-    new ApiResponse(
-      200,
-      order,
-      "Order fetched successfully"
-    )
+  return res.status(200).json({
+    message:'order fetched successfully',
+    data:order,
+    success:true,
+  }
   );
 });
 
@@ -207,15 +179,14 @@ export const getOrderByNumber = asyncHandler(async (req, res) => {
   });
 
   if (!order) {
-    throw new ApiError(404, "Order not found");
+    return next(new AppError( "Order not found",404));
   }
 
-  return res.status(200).json(
-    new ApiResponse(
-      200,
-      order,
-      "Order fetched successfully"
-    )
+  return res.status(200).json({
+    message:"Order fetched successfully",
+    data:order,
+    success:true,
+  }
   );
 });
 
@@ -242,13 +213,11 @@ export const getUserOrders = asyncHandler(async (req, res) => {
     },
   });
 
-  return res.status(200).json(
-    new ApiResponse(
-      200,
-      orders,
-      "User orders fetched successfully"
-    )
-  );
+  return res.status(200).json({
+      data:orders,
+      message:"User orders fetched successfully",
+      success:true,
+});
 });
 
 
@@ -301,10 +270,7 @@ export const getAllOrders = asyncHandler(async (req, res) => {
     }),
   ]);
 
-  return res.status(200).json(
-    new ApiResponse(
-      200,
-      {
+  return res.status(200).json({
         orders,
         pagination: {
           page: pageNumber,
@@ -312,10 +278,8 @@ export const getAllOrders = asyncHandler(async (req, res) => {
           totalOrders,
           totalPages: Math.ceil(totalOrders / limitNumber),
         },
-      },
-      "Orders fetched successfully"
-    )
-  );
+        message:"Orders fetched successfully",
+})
 });
 
 
@@ -333,7 +297,7 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
   } = req.body;
 
   if (!status) {
-    throw new ApiError(400, "Order status is required");
+    return next(new AppError("Order status is required",400));
   }
 
   const order = await prisma.order.findUnique({
@@ -343,15 +307,14 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
   });
 
   if (!order) {
-    throw new ApiError(404, "Order not found");
+    return next( new AppError("Order not found",404));
   }
 
   // Don't update if status is already the same
   if (order.status === status) {
-    throw new ApiError(
-      400,
-      `Order is already ${status}`
-    );
+    return next(new AppError(
+      `Order is already ${status}`,404
+    ));
   }
 
   const updatedOrder = await prisma.$transaction(async (tx) => {
@@ -379,13 +342,11 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
     return updated;
   });
 
-  return res.status(200).json(
-    new ApiResponse(
-      200,
-      updatedOrder,
-      "Order status updated successfully"
-    )
-  );
+  return res.status(200).json({
+      data:updatedOrder,
+      success:true,
+      message:"Order status updated successfully"
+});
 });
 
 
@@ -402,10 +363,9 @@ export const updatePaymentStatus = asyncHandler(async (req, res) => {
   } = req.body;
 
   if (!paymentStatus) {
-    throw new ApiError(
-      400,
-      "Payment status is required"
-    );
+    return next(new AppError(
+      "Payment status is required",400
+    ));
   }
 
   const order = await prisma.order.findUnique({
@@ -415,7 +375,7 @@ export const updatePaymentStatus = asyncHandler(async (req, res) => {
   });
 
   if (!order) {
-    throw new ApiError(404, "Order not found");
+    return next(new AppError( "Order not found",404));
   }
 
   const updatedOrder = await prisma.order.update({
@@ -473,13 +433,11 @@ export const updateShippingDetails = asyncHandler(
       },
     });
 
-    return res.status(200).json(
-      new ApiResponse(
-        200,
+    return res.status(200).json({
         updatedOrder,
-        "Shipping details updated successfully"
-      )
-    );
+        success:true,
+        message:"Shipping details updated successfully"
+    });
   }
 );
 
@@ -511,14 +469,13 @@ export const updateShippingAddress = asyncHandler(
     });
 
     if (!order) {
-      throw new ApiError(404, "Order not found");
+      return next(new AppError("Order not found",404));
     }
 
     if (!order.shippingAddressId) {
-      throw new ApiError(
-        404,
-        "Shipping address not found"
-      );
+      return next(new AppError(
+        "Shipping address not found",404
+      ));
     }
 
     const address = await prisma.shippingAddress.update({
@@ -539,13 +496,11 @@ export const updateShippingAddress = asyncHandler(
       },
     });
 
-    return res.status(200).json(
-      new ApiResponse(
-        200,
-        address,
-        "Shipping address updated successfully"
-      )
-    );
+    return res.status(200).json({
+        data:address,
+        message:"Shipping address updated successfully"
+      
+  });
   }
 );
 
@@ -566,7 +521,7 @@ export const cancelOrder = asyncHandler(async (req, res) => {
   });
 
   if (!order) {
-    throw new ApiError(404, "Order not found");
+    return next(new AppError("Order not found", 404));
   }
 
   // Orders that cannot be cancelled
@@ -580,10 +535,9 @@ export const cancelOrder = asyncHandler(async (req, res) => {
   ];
 
   if (nonCancellableStatuses.includes(order.status)) {
-    throw new ApiError(
-      400,
-      `Order cannot be cancelled when status is ${order.status}`
-    );
+    return next(new AppError(
+      `Order cannot be cancelled when status is ${order.status}`,404
+    ));
   }
 
   const cancelledOrder = await prisma.$transaction(
@@ -611,13 +565,11 @@ export const cancelOrder = asyncHandler(async (req, res) => {
     }
   );
 
-  return res.status(200).json(
-    new ApiResponse(
-      200,
-      cancelledOrder,
-      "Order cancelled successfully"
-    )
-  );
+  return res.status(200).json({
+      success:true,
+      data:cancelledOrder,
+      message:"Order cancelled successfully"
+});
 });
 
 
@@ -636,7 +588,7 @@ export const getOrderStatusHistory = asyncHandler(
     });
 
     if (!order) {
-      throw new ApiError(404, "Order not found");
+      return next(new AppError("Order not found",404));
     }
 
     const history = await prisma.orderStatusHistory.findMany({
@@ -649,12 +601,9 @@ export const getOrderStatusHistory = asyncHandler(
       },
     });
 
-    return res.status(200).json(
-      new ApiResponse(
-        200,
-        history,
-        "Order status history fetched successfully"
-      )
-    );
+    return res.status(200).json({
+        data:history,
+        message:"Order status history fetched successfully"
+  });
   }
 );
