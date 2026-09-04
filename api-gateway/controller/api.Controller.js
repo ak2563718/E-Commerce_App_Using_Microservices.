@@ -55,7 +55,7 @@ export const userProxy = async(req, res)=>{
     const response = await axios({
        method:req.method,
        url:`${process.env.PROFILE_URL}${req.originalUrl}`,
-       req:req.data,
+       data:req.body,
        headers: {
         "Content-Type": "application/json",
          Authorization: req.headers.authorization,
@@ -121,7 +121,7 @@ export const cartProxy = async(req, res)=>{
     const response = await axios({
       method:req.method,
       url:`${process.env.CART_URL}${req.originalUrl}`,
-      req:req.data,
+      data:req.body,
       headers: {
         "Content-Type": "application/json",
          Authorization: req.headers.authorization,
@@ -155,7 +155,7 @@ export const orderProxy = async(req, res)=>{
     const response = await axios({
       method:req.method,
       url:`${process.env.ORDER_URL}${req.originalUrl}`,
-      data:req.data,
+      data:req.body,
       headers: {
         "Content-Type": "application/json",
          Authorization: req.headers.authorization,

@@ -45,6 +45,7 @@ export const getUser = asyncHandler(async(req, res, next)=>{
 
 // 3. Update user info
 export const updateUser = asyncHandler(async(req, res, next)=>{
+    console.log(req.body)
     const id = req.user.id;
     const {firstName, lastName, phone, gender, dob } = req.body;
     if(!firstName && !lastName && !phone && !gender && !dob){
