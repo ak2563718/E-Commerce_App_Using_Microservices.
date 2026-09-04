@@ -132,7 +132,6 @@ export const uploadProductImage = createAsyncThunk<any, any, { rejectValue:strin
     async({id,formData}, {rejectWithValue})=>{
         try {
             const { data } = await axios.post(`${type_uri}/product/products/${id}/images`,formData,{
-                headers:{'Content-Type':'multipart/form-data'},
                 withCredentials:true,
             })
             return data;

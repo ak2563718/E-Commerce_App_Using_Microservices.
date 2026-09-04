@@ -540,6 +540,7 @@ function StepMedia({ onBack, onClose }: { onBack: () => void; onClose: () => voi
     })
     const uploadPIRes = await dispatch(uploadProductImage({id:aproduct.id,formData})).unwrap() 
     const response1 = await dispatch(createVariants(form)).unwrap()
+    console.log(uploadPIRes)
     console.log(response1)
     if(variants.length >0){
     for (const variant of variants) {
@@ -569,7 +570,6 @@ function StepMedia({ onBack, onClose }: { onBack: () => void; onClose: () => voi
     onClose()
     } catch (error:any) {
       console.log(error)
-      toast.error(error)
     }
   }
 
