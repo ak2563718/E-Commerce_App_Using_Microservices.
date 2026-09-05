@@ -1,5 +1,5 @@
 import express from 'express';
-import { authProxy, cartProxy, productProxy, userProxy } from '../controller/api.Controller.js';
+import { authProxy, cartProxy, orderProxy, productProxy, userProxy } from '../controller/api.Controller.js';
 import { createProxyMiddleware } from 'http-proxy-middleware'
 
 const router = express.Router();
@@ -39,5 +39,6 @@ router.use("/product/images/:id",
 )
 router.use('/product',productProxy)
 router.use('/user',userProxy)
+router.use('/order', orderProxy)
 
 export default router;

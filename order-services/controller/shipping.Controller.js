@@ -5,8 +5,8 @@ import validator from 'validator'
 
 export const createShippingAddress = asyncHandler(async(req, res, next)=>{
     const id = req.user.id;
-    const { fullName, phone, addressLine1, addressLine2, city, state, country, postalCode, landmark} = req.body;
-    if(!fullName || !phone || !addressLine1  ||!city ||!state ||!country ||!postalCode ){
+    const { fullName, phone, addressLine1, homeDetails , city, state, postalCode, landmark, type} = req.body;
+    if(!fullName || !phone || !addressLine1 ||!homeDetails  ||!city ||!state  ||!postalCode ||!type){
         return next(new AppError('Please provide all required field',400))
     }
     const address = await prisma.shippingAddress.create({
@@ -15,11 +15,11 @@ export const createShippingAddress = asyncHandler(async(req, res, next)=>{
             fullName,
             phone,
             addressLine1,
-            addressLine2:addressLine2?addressLine2:'null',
+            homeDetails,
             city,
             state,
-            country,
             postalCode,
+            type,
             landmark:landmark?landmark:'null',
         }
     })
@@ -62,8 +62,8 @@ export const deleteShippingAddress = asyncHandler(async(req, res, next)=>{
 
 export const updateAddress = asyncHandler(async(req, res, next)=>{
     const id = req.params.id;
-    const { fullName, phone, addressLine1, addressLine2, city, state, country, postalCode, landmark}= req.body;
-    if(!fullName && !phone && !addressLine1 && !addressLine2 && !city && !state && !country &&!postalCode && landmark){
+    const { fullName, phone, addressLine1, homeDetails, city, state, type, postalCode, landmark}= req.body;
+    if(!fullName && !phone && !addressLine1 && !homeDetails && !city && !state && !type &&!postalCode && landmark){
         return next(new AppError("Nothing to update address", 400))
     }
     const data = {};
@@ -76,10 +76,10 @@ export const updateAddress = asyncHandler(async(req, res, next)=>{
         data.phone = trimmed;
     }
     if(addressLine1) data.addressLine1 = addressLine1.trim();
-    if(addressLine2) data.addressLine2 = addressLine2.trim();
+    if(homeDetails) data.homeDetails = homeDetails.trim();
     if(city) data.city = city.trim();
     if(state) data.state = state.trim();
-    if(country) data.country = country.trim();
+    if(type) data.type = type.trim();
     if(postalCode){
         const trimmed = postalCode.trim();
         if(!validator.isPostalCode(trimmed, 'IN')){
