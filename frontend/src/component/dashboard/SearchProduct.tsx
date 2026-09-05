@@ -478,6 +478,7 @@ export default function SearchProduct() {
         variantId,
         quantity:1,
     }
+    console.log(data)
     try {
       const res = await dispatch(createCartItems(data)).unwrap();
       toast.success(res.message)

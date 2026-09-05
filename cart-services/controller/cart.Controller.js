@@ -39,7 +39,6 @@ export const createCart = asyncHandler(async(req, res, next)=>{
 // 2. Get Cart
 export const getCart = asyncHandler(async(req, res, next)=>{
     const userId = req.user.id;
-    console.log(userId)
     const cart = await prisma.cart.findUnique({
         where:{
             userId
@@ -91,7 +90,7 @@ export const createCartItems = asyncHandler(async (req, res, next) => {
 
     // Fetch product from Product Service
     const response = await axios.get(
-        `http://localhost:6002/api/products/${productId}`
+        `http://localhost:6002/api/product/products/${productId}`
     );
 
     const product = response.data.data;
@@ -216,7 +215,7 @@ export const getCartitems = asyncHandler(async (req, res, next) => {
   const productResponses = await Promise.all(
     cartitems.map((cart) =>
       axios.get(
-        `http://localhost:6002/api/products/${cart.productId}`,
+        `http://localhost:6002/api/product/products/${cart.productId}`,
         {
           headers: {
             "Content-Type": "application/json",
