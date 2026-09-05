@@ -20,7 +20,7 @@ interface Address {
   city: string
   state: string
   pincode: string
-  type: 'Home' | 'Work' | 'Other'
+  type: 'HOME' | 'WORK' | 'OTHER'
   default: boolean
 }
 
@@ -38,7 +38,7 @@ const SAVED_ADDRESSES: Address[] = [
     city: 'Bengaluru',
     state: 'Karnataka',
     pincode: '560034',
-    type: 'Home',
+    type: 'HOME',
     default: true,
   },
   {
@@ -50,7 +50,7 @@ const SAVED_ADDRESSES: Address[] = [
     city: 'Bengaluru',
     state: 'Karnataka',
     pincode: '560071',
-    type: 'Work',
+    type: 'WORK',
     default: false,
   },
 ]
@@ -185,7 +185,7 @@ function TagBadge({ label, color }: { label: string; color: string }) {
 
 /* ─── Address form ───────────────────────────────────────── */
 function AddressForm({ onSave, onCancel }: { onSave: (addr: Address) => void; onCancel: () => void }) {
-  const [form, setForm] = useState({ name: '', phone: '', flat: '', area: '', city: '', state: '', pincode: '', type: 'Home' as Address['type'] })
+  const [form, setForm] = useState({ name: '', phone: '', flat: '', area: '', city: '', state: '', pincode: '',landmark:'', type: 'HOME' as Address['type'] })
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setForm(f => ({ ...f, [k]: e.target.value }))
   const valid = Object.values(form).every(v => v.trim().length > 0)
 
@@ -201,7 +201,6 @@ function AddressForm({ onSave, onCancel }: { onSave: (addr: Address) => void; on
     background: '#fff',
     boxSizing: 'border-box',
   }
-
   return (
     <div style={{ padding: '20px', borderTop: '1px solid #f3e0ed', background: '#fdfafa' }}>
       <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: '14px', fontWeight: 700, color: '#1a1a2e', margin: '0 0 16px' }}>
@@ -225,6 +224,10 @@ function AddressForm({ onSave, onCancel }: { onSave: (addr: Address) => void; on
         <label style={{ fontSize: '11px', color: '#aaa', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Area / Street / Village</label>
         <input style={inputStyle} placeholder="Area, Street, Sector, Village" value={form.area} onChange={set('area')} />
       </div>
+      <div style={{ marginBottom: '12px' }}>
+        <label style={{ fontSize: '11px', color: '#aaa', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Landmark</label>
+        <input style={inputStyle} placeholder="Landmark, famous point" value={form.landmark} onChange={set('landmark')} />
+      </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '12px' }}>
         <div>
           <label style={{ fontSize: '11px', color: '#aaa', fontWeight: 600, display: 'block', marginBottom: '4px' }}>City</label>
@@ -242,7 +245,7 @@ function AddressForm({ onSave, onCancel }: { onSave: (addr: Address) => void; on
       <div style={{ marginBottom: '16px' }}>
         <label style={{ fontSize: '11px', color: '#aaa', fontWeight: 600, display: 'block', marginBottom: '8px' }}>Address Type</label>
         <div style={{ display: 'flex', gap: '10px' }}>
-          {(['Home', 'Work', 'Other'] as const).map(t => (
+          {(['HOME', 'WORK', 'OTHER'] as const).map(t => (
             <button
               key={t}
               onClick={() => setForm(f => ({ ...f, type: t }))}
@@ -259,14 +262,18 @@ function AddressForm({ onSave, onCancel }: { onSave: (addr: Address) => void; on
                 transition: 'all 0.15s',
               }}
             >
-              {t === 'Home' ? '🏠' : t === 'Work' ? '💼' : '📍'} {t}
+              {t === 'HOME' ? '🏠' : t === 'WORK' ? '💼' : '📍'} {t}
             </button>
           ))}
         </div>
       </div>
       <div style={{ display: 'flex', gap: '10px' }}>
         <button
-          onClick={() => onSave({ ...form, id: Date.now(), default: false })}
+          onClick={() =>{ 
+            onSave({ ...form, id: Date.now(), default: false })
+            console.log(form)
+          }
+          }
           disabled={!valid}
           style={{
             padding: '10px 28px',
@@ -479,7 +486,7 @@ export default function ProductCheckout() {
                         <div style={{ flex: 1 }}>
                           <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '6px' }}>
                             <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: '14px', fontWeight: 700, color: '#1a1a2e' }}>{addr.name}</span>
-                            <TagBadge label={addr.type} color={addr.type === 'Home' ? PINK : addr.type === 'Work' ? '#2874f0' : '#888'} />
+                            <TagBadge label={addr.type} color={addr.type === 'HOME' ? PINK : addr.type === 'WORK' ? '#2874f0' : '#888'} />
                             {addr.default && <TagBadge label="Default" color="#27ae60" />}
                             <span style={{ fontSize: '13px', color: '#555', marginLeft: '4px' }}>{addr.phone}</span>
                           </div>

@@ -98,10 +98,9 @@ model ShippingAddress {
   fullName       String
   phone          String
   addressLine1   String
-  addressLine2   String?
+  homeDetails    String?
   city           String
   state          String
-  country        String
   postalCode     String
   landmark       String?
   type           addressType
