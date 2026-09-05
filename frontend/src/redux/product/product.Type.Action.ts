@@ -167,7 +167,7 @@ export const deleteProductImage = createAsyncThunk<any, string, {rejectValue:str
     'delete/productImage',
     async(id, { rejectWithValue })=>{
         try {
-            const { data } = await api.delete(`${type_uri}/product/images/${id}`,{
+            const { data } = await api.delete(`${type_uri}/product/remove/images/${id}`,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
         })

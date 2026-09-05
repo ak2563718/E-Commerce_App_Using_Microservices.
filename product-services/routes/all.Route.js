@@ -51,7 +51,7 @@ router.delete('/values/:id',deleteAttributesvalue)
 // 7. upload product images
 router.post('/products/:id/images',upload.array('images',10),uploadProductImages)
 router.patch('/images/:id',upload.single('newimage'),updateProductImage)
-router.delete('/images/:id',deleteProductImage)
+router.delete('/remove/images/:id',deleteProductImage)
 
 // 8. upload product variant images
 router.post('/variants/:id/images',upload.array('images',10),uploadVariantImages)
