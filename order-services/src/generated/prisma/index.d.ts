@@ -77,6 +77,15 @@ export const PaymentMethod: {
 
 export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod]
 
+
+export const addressType: {
+  HOME: 'HOME',
+  WORK: 'WORK',
+  OTHER: 'OTHER'
+};
+
+export type addressType = (typeof addressType)[keyof typeof addressType]
+
 }
 
 export type OrderStatus = $Enums.OrderStatus
@@ -90,6 +99,10 @@ export const PaymentStatus: typeof $Enums.PaymentStatus
 export type PaymentMethod = $Enums.PaymentMethod
 
 export const PaymentMethod: typeof $Enums.PaymentMethod
+
+export type addressType = $Enums.addressType
+
+export const addressType: typeof $Enums.addressType
 
 /**
  * ##  Prisma Client ʲˢ
@@ -3914,6 +3927,9 @@ export namespace Prisma {
     country: string | null
     postalCode: string | null
     landmark: string | null
+    type: $Enums.addressType | null
+    createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type ShippingAddressMaxAggregateOutputType = {
@@ -3928,6 +3944,9 @@ export namespace Prisma {
     country: string | null
     postalCode: string | null
     landmark: string | null
+    type: $Enums.addressType | null
+    createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type ShippingAddressCountAggregateOutputType = {
@@ -3942,6 +3961,9 @@ export namespace Prisma {
     country: number
     postalCode: number
     landmark: number
+    type: number
+    createdAt: number
+    updatedAt: number
     _all: number
   }
 
@@ -3958,6 +3980,9 @@ export namespace Prisma {
     country?: true
     postalCode?: true
     landmark?: true
+    type?: true
+    createdAt?: true
+    updatedAt?: true
   }
 
   export type ShippingAddressMaxAggregateInputType = {
@@ -3972,6 +3997,9 @@ export namespace Prisma {
     country?: true
     postalCode?: true
     landmark?: true
+    type?: true
+    createdAt?: true
+    updatedAt?: true
   }
 
   export type ShippingAddressCountAggregateInputType = {
@@ -3986,6 +4014,9 @@ export namespace Prisma {
     country?: true
     postalCode?: true
     landmark?: true
+    type?: true
+    createdAt?: true
+    updatedAt?: true
     _all?: true
   }
 
@@ -4073,6 +4104,9 @@ export namespace Prisma {
     country: string
     postalCode: string
     landmark: string | null
+    type: $Enums.addressType
+    createdAt: Date
+    updatedAt: Date
     _count: ShippingAddressCountAggregateOutputType | null
     _min: ShippingAddressMinAggregateOutputType | null
     _max: ShippingAddressMaxAggregateOutputType | null
@@ -4104,6 +4138,9 @@ export namespace Prisma {
     country?: boolean
     postalCode?: boolean
     landmark?: boolean
+    type?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
     orders?: boolean | ShippingAddress$ordersArgs<ExtArgs>
     _count?: boolean | ShippingAddressCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["shippingAddress"]>
@@ -4120,6 +4157,9 @@ export namespace Prisma {
     country?: boolean
     postalCode?: boolean
     landmark?: boolean
+    type?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
   }, ExtArgs["result"]["shippingAddress"]>
 
   export type ShippingAddressSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -4134,6 +4174,9 @@ export namespace Prisma {
     country?: boolean
     postalCode?: boolean
     landmark?: boolean
+    type?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
   }, ExtArgs["result"]["shippingAddress"]>
 
   export type ShippingAddressSelectScalar = {
@@ -4148,9 +4191,12 @@ export namespace Prisma {
     country?: boolean
     postalCode?: boolean
     landmark?: boolean
+    type?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
   }
 
-  export type ShippingAddressOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "fullName" | "phone" | "addressLine1" | "addressLine2" | "city" | "state" | "country" | "postalCode" | "landmark", ExtArgs["result"]["shippingAddress"]>
+  export type ShippingAddressOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "fullName" | "phone" | "addressLine1" | "addressLine2" | "city" | "state" | "country" | "postalCode" | "landmark" | "type" | "createdAt" | "updatedAt", ExtArgs["result"]["shippingAddress"]>
   export type ShippingAddressInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orders?: boolean | ShippingAddress$ordersArgs<ExtArgs>
     _count?: boolean | ShippingAddressCountOutputTypeDefaultArgs<ExtArgs>
@@ -4175,6 +4221,9 @@ export namespace Prisma {
       country: string
       postalCode: string
       landmark: string | null
+      type: $Enums.addressType
+      createdAt: Date
+      updatedAt: Date
     }, ExtArgs["result"]["shippingAddress"]>
     composites: {}
   }
@@ -4610,6 +4659,9 @@ export namespace Prisma {
     readonly country: FieldRef<"ShippingAddress", 'String'>
     readonly postalCode: FieldRef<"ShippingAddress", 'String'>
     readonly landmark: FieldRef<"ShippingAddress", 'String'>
+    readonly type: FieldRef<"ShippingAddress", 'addressType'>
+    readonly createdAt: FieldRef<"ShippingAddress", 'DateTime'>
+    readonly updatedAt: FieldRef<"ShippingAddress", 'DateTime'>
   }
     
 
@@ -6191,7 +6243,10 @@ export namespace Prisma {
     state: 'state',
     country: 'country',
     postalCode: 'postalCode',
-    landmark: 'landmark'
+    landmark: 'landmark',
+    type: 'type',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
   };
 
   export type ShippingAddressScalarFieldEnum = (typeof ShippingAddressScalarFieldEnum)[keyof typeof ShippingAddressScalarFieldEnum]
@@ -6333,6 +6388,20 @@ export namespace Prisma {
    * Reference to a field of type 'Int[]'
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'addressType'
+   */
+  export type EnumaddressTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'addressType'>
+    
+
+
+  /**
+   * Reference to a field of type 'addressType[]'
+   */
+  export type ListEnumaddressTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'addressType[]'>
     
 
 
@@ -6603,6 +6672,9 @@ export namespace Prisma {
     country?: StringFilter<"ShippingAddress"> | string
     postalCode?: StringFilter<"ShippingAddress"> | string
     landmark?: StringNullableFilter<"ShippingAddress"> | string | null
+    type?: EnumaddressTypeFilter<"ShippingAddress"> | $Enums.addressType
+    createdAt?: DateTimeFilter<"ShippingAddress"> | Date | string
+    updatedAt?: DateTimeFilter<"ShippingAddress"> | Date | string
     orders?: OrderListRelationFilter
   }
 
@@ -6618,6 +6690,9 @@ export namespace Prisma {
     country?: SortOrder
     postalCode?: SortOrder
     landmark?: SortOrderInput | SortOrder
+    type?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     orders?: OrderOrderByRelationAggregateInput
   }
 
@@ -6636,6 +6711,9 @@ export namespace Prisma {
     country?: StringFilter<"ShippingAddress"> | string
     postalCode?: StringFilter<"ShippingAddress"> | string
     landmark?: StringNullableFilter<"ShippingAddress"> | string | null
+    type?: EnumaddressTypeFilter<"ShippingAddress"> | $Enums.addressType
+    createdAt?: DateTimeFilter<"ShippingAddress"> | Date | string
+    updatedAt?: DateTimeFilter<"ShippingAddress"> | Date | string
     orders?: OrderListRelationFilter
   }, "id" | "userId">
 
@@ -6651,6 +6729,9 @@ export namespace Prisma {
     country?: SortOrder
     postalCode?: SortOrder
     landmark?: SortOrderInput | SortOrder
+    type?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     _count?: ShippingAddressCountOrderByAggregateInput
     _max?: ShippingAddressMaxOrderByAggregateInput
     _min?: ShippingAddressMinOrderByAggregateInput
@@ -6671,6 +6752,9 @@ export namespace Prisma {
     country?: StringWithAggregatesFilter<"ShippingAddress"> | string
     postalCode?: StringWithAggregatesFilter<"ShippingAddress"> | string
     landmark?: StringNullableWithAggregatesFilter<"ShippingAddress"> | string | null
+    type?: EnumaddressTypeWithAggregatesFilter<"ShippingAddress"> | $Enums.addressType
+    createdAt?: DateTimeWithAggregatesFilter<"ShippingAddress"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ShippingAddress"> | Date | string
   }
 
   export type OrderStatusHistoryWhereInput = {
@@ -7024,6 +7108,9 @@ export namespace Prisma {
     country: string
     postalCode: string
     landmark?: string | null
+    type: $Enums.addressType
+    createdAt?: Date | string
+    updatedAt?: Date | string
     orders?: OrderCreateNestedManyWithoutShippingAddressInput
   }
 
@@ -7039,6 +7126,9 @@ export namespace Prisma {
     country: string
     postalCode: string
     landmark?: string | null
+    type: $Enums.addressType
+    createdAt?: Date | string
+    updatedAt?: Date | string
     orders?: OrderUncheckedCreateNestedManyWithoutShippingAddressInput
   }
 
@@ -7054,6 +7144,9 @@ export namespace Prisma {
     country?: StringFieldUpdateOperationsInput | string
     postalCode?: StringFieldUpdateOperationsInput | string
     landmark?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumaddressTypeFieldUpdateOperationsInput | $Enums.addressType
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orders?: OrderUpdateManyWithoutShippingAddressNestedInput
   }
 
@@ -7069,6 +7162,9 @@ export namespace Prisma {
     country?: StringFieldUpdateOperationsInput | string
     postalCode?: StringFieldUpdateOperationsInput | string
     landmark?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumaddressTypeFieldUpdateOperationsInput | $Enums.addressType
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orders?: OrderUncheckedUpdateManyWithoutShippingAddressNestedInput
   }
 
@@ -7084,6 +7180,9 @@ export namespace Prisma {
     country: string
     postalCode: string
     landmark?: string | null
+    type: $Enums.addressType
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type ShippingAddressUpdateManyMutationInput = {
@@ -7098,6 +7197,9 @@ export namespace Prisma {
     country?: StringFieldUpdateOperationsInput | string
     postalCode?: StringFieldUpdateOperationsInput | string
     landmark?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumaddressTypeFieldUpdateOperationsInput | $Enums.addressType
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ShippingAddressUncheckedUpdateManyInput = {
@@ -7112,6 +7214,9 @@ export namespace Prisma {
     country?: StringFieldUpdateOperationsInput | string
     postalCode?: StringFieldUpdateOperationsInput | string
     landmark?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumaddressTypeFieldUpdateOperationsInput | $Enums.addressType
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type OrderStatusHistoryCreateInput = {
@@ -7581,6 +7686,13 @@ export namespace Prisma {
     _max?: NestedDecimalNullableFilter<$PrismaModel>
   }
 
+  export type EnumaddressTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.addressType | EnumaddressTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.addressType[] | ListEnumaddressTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.addressType[] | ListEnumaddressTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumaddressTypeFilter<$PrismaModel> | $Enums.addressType
+  }
+
   export type OrderListRelationFilter = {
     every?: OrderWhereInput
     some?: OrderWhereInput
@@ -7603,6 +7715,9 @@ export namespace Prisma {
     country?: SortOrder
     postalCode?: SortOrder
     landmark?: SortOrder
+    type?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type ShippingAddressMaxOrderByAggregateInput = {
@@ -7617,6 +7732,9 @@ export namespace Prisma {
     country?: SortOrder
     postalCode?: SortOrder
     landmark?: SortOrder
+    type?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type ShippingAddressMinOrderByAggregateInput = {
@@ -7631,6 +7749,19 @@ export namespace Prisma {
     country?: SortOrder
     postalCode?: SortOrder
     landmark?: SortOrder
+    type?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumaddressTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.addressType | EnumaddressTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.addressType[] | ListEnumaddressTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.addressType[] | ListEnumaddressTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumaddressTypeWithAggregatesFilter<$PrismaModel> | $Enums.addressType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumaddressTypeFilter<$PrismaModel>
+    _max?: NestedEnumaddressTypeFilter<$PrismaModel>
   }
 
   export type OrderStatusHistoryCountOrderByAggregateInput = {
@@ -7834,6 +7965,10 @@ export namespace Prisma {
     connectOrCreate?: OrderCreateOrConnectWithoutShippingAddressInput | OrderCreateOrConnectWithoutShippingAddressInput[]
     createMany?: OrderCreateManyShippingAddressInputEnvelope
     connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+  }
+
+  export type EnumaddressTypeFieldUpdateOperationsInput = {
+    set?: $Enums.addressType
   }
 
   export type OrderUpdateManyWithoutShippingAddressNestedInput = {
@@ -8119,6 +8254,23 @@ export namespace Prisma {
     _max?: NestedDecimalNullableFilter<$PrismaModel>
   }
 
+  export type NestedEnumaddressTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.addressType | EnumaddressTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.addressType[] | ListEnumaddressTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.addressType[] | ListEnumaddressTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumaddressTypeFilter<$PrismaModel> | $Enums.addressType
+  }
+
+  export type NestedEnumaddressTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.addressType | EnumaddressTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.addressType[] | ListEnumaddressTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.addressType[] | ListEnumaddressTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumaddressTypeWithAggregatesFilter<$PrismaModel> | $Enums.addressType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumaddressTypeFilter<$PrismaModel>
+    _max?: NestedEnumaddressTypeFilter<$PrismaModel>
+  }
+
   export type ShippingAddressCreateWithoutOrdersInput = {
     id?: string
     userId: string
@@ -8131,6 +8283,9 @@ export namespace Prisma {
     country: string
     postalCode: string
     landmark?: string | null
+    type: $Enums.addressType
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type ShippingAddressUncheckedCreateWithoutOrdersInput = {
@@ -8145,6 +8300,9 @@ export namespace Prisma {
     country: string
     postalCode: string
     landmark?: string | null
+    type: $Enums.addressType
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type ShippingAddressCreateOrConnectWithoutOrdersInput = {
@@ -8241,6 +8399,9 @@ export namespace Prisma {
     country?: StringFieldUpdateOperationsInput | string
     postalCode?: StringFieldUpdateOperationsInput | string
     landmark?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumaddressTypeFieldUpdateOperationsInput | $Enums.addressType
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ShippingAddressUncheckedUpdateWithoutOrdersInput = {
@@ -8255,6 +8416,9 @@ export namespace Prisma {
     country?: StringFieldUpdateOperationsInput | string
     postalCode?: StringFieldUpdateOperationsInput | string
     landmark?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumaddressTypeFieldUpdateOperationsInput | $Enums.addressType
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type OrderItemUpsertWithWhereUniqueWithoutOrderInput = {

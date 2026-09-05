@@ -95,8 +95,8 @@ model OrderItem {
 }
 
 model ShippingAddress {
-  id           String  @id @default(cuid())
-  userId       String  @unique
+  id           String      @id @default(cuid())
+  userId       String      @unique
   fullName     String
   phone        String
   addressLine1 String
@@ -106,7 +106,16 @@ model ShippingAddress {
   country      String
   postalCode   String
   landmark     String?
+  type         addressType
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
   orders       Order[]
+}
+
+enum addressType {
+  HOME
+  WORK
+  OTHER
 }
 
 model OrderStatusHistory {

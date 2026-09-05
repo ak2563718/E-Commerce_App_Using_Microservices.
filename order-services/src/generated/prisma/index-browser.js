@@ -170,7 +170,10 @@ exports.Prisma.ShippingAddressScalarFieldEnum = {
   state: 'state',
   country: 'country',
   postalCode: 'postalCode',
-  landmark: 'landmark'
+  landmark: 'landmark',
+  type: 'type',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.OrderStatusHistoryScalarFieldEnum = {
@@ -225,6 +228,12 @@ exports.PaymentMethod = exports.$Enums.PaymentMethod = {
   CARD: 'CARD',
   NET_BANKING: 'NET_BANKING',
   WALLET: 'WALLET'
+};
+
+exports.addressType = exports.$Enums.addressType = {
+  HOME: 'HOME',
+  WORK: 'WORK',
+  OTHER: 'OTHER'
 };
 
 exports.Prisma.ModelName = {

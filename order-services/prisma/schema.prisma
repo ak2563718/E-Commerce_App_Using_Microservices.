@@ -104,7 +104,15 @@ model ShippingAddress {
   country        String
   postalCode     String
   landmark       String?
+  type           addressType
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
   orders         Order[]
+}
+enum addressType {
+  HOME
+  WORK
+  OTHER
 }
 
 model OrderStatusHistory {
