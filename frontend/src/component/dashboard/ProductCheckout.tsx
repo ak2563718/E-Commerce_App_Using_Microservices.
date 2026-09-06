@@ -338,21 +338,6 @@ export default function ProductCheckout() {
   const dispatch = useAppDispatch();
   const params = useSearchParams()
   const productid = params.get('productId')
-
-  const subtotal = ORDER_ITEMS.reduce((s, i) => s + i.price * i.qty, 0)
-  const originalTotal = ORDER_ITEMS.reduce((s, i) => s + i.originalPrice * i.qty, 0)
-  const discount = originalTotal - subtotal
-  const couponDiscount = couponApplied ? 1500 : 0
-  const delivery = 0
-  const total = subtotal - couponDiscount + delivery
-
-  const canProceedAddress = selectedAddress !== null
-  const canProceedPayment =
-    paymentMethod === 'cod' ||
-    (paymentMethod === 'upi' && (upiId.includes('@') || upiApp !== '')) ||
-    (paymentMethod === 'card' && cardNumber.length === 19 && cardName && cardExpiry && cardCvv.length === 3) ||
-    (paymentMethod === 'netbanking' && selectedBank !== '') ||
-    (paymentMethod === 'wallet' && selectedWallet !== '')
   useEffect(() => {
   const getData = async () => {
     try {
@@ -360,13 +345,14 @@ export default function ProductCheckout() {
       const addressRes =await dispatch(getShippingAddress()).unwrap();
       if (productid) {
        const product = await dispatch(getProductbyId(productid)).unwrap();
+       console.log("product info", product?.data?.variants?.[0]?.price)
        setORDER_ITEMS([{
         id:product?.data?.id,
         name:product?.data?.name,
-        image:product?.data?.variants?.[0]?.url,
-        price:product?.data?.variants?.[0]?.costPrice,
-        origianlPrice:product?.data?.variants?.[0]?.price,
-        discount:product?.data?.variants?.[0]?.price-product?.data?.variants?.[0]?.costPrice,
+        image:product?.data?.images?.[0]?.url,
+        price:Number(product?.data?.variants?.[0]?.costPrice),
+        originalPrice:Number(product?.data?.variants?.[0]?.price),
+        discount:Number(product?.data?.variants?.[0]?.price)-Number(product?.data?.variants?.[0]?.costPrice),
         qty:params.get('qty')||1,
         deliveryDate:Date.now(),
        }])
@@ -381,10 +367,24 @@ export default function ProductCheckout() {
 
   getData();
 }, [productid, params]);
-  console.log(ORDER_ITEMS)
+  
+  const subtotal = ORDER_ITEMS.reduce((s, i) => s + i.price * i.qty, 0)
+  const originalTotal = ORDER_ITEMS.reduce((s, i) => s + i.originalPrice * i.qty, 0)
+  const discount = originalTotal - subtotal
+  const couponDiscount = couponApplied ? 1500 : 0
+  const delivery = 0
+  const total = subtotal - couponDiscount + delivery
+
+  const canProceedAddress = selectedAddress !== null
+  const canProceedPayment =
+    paymentMethod === 'cod' ||
+    (paymentMethod === 'upi' && (upiId.includes('@') || upiApp !== '')) ||
+    (paymentMethod === 'card' && cardNumber.length === 19 && cardName && cardExpiry && cardCvv.length === 3) ||
+    (paymentMethod === 'netbanking' && selectedBank !== '') ||
+    (paymentMethod === 'wallet' && selectedWallet !== '')
+  
   const handleSaveAddress = async(addr: Address) => {
     const res = await dispatch(createShippingAddress(addr)).unwrap();
-    console.log(res)
     setAddresses(prev => [...prev, addr])
     setSelectedAddress(addr.id)
     setShowAddressForm(false)
