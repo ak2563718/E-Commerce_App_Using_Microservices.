@@ -324,7 +324,7 @@ export default function ProductCheckout() {
   const [couponApplied, setCouponApplied] = useState(false)
   const [orderPlaced, setOrderPlaced] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [ORDER_ITEMS,setORDER_ITEMS] =useState<any>({
+  const [ORDER_ITEMS,setORDER_ITEMS] =useState<any[]>([{
     id:'',
     name:'',
     image:'',
@@ -333,11 +333,11 @@ export default function ProductCheckout() {
     discount:'',
     qty:'',
     deliverDate:'',
-  })
+  }])
   const router = useRouter();
   const dispatch = useAppDispatch();
   const params = useSearchParams()
-  const id = params.get('productId')
+  const productid = params.get('productId')
 
   const subtotal = ORDER_ITEMS.reduce((s, i) => s + i.price * i.qty, 0)
   const originalTotal = ORDER_ITEMS.reduce((s, i) => s + i.originalPrice * i.qty, 0)
@@ -353,31 +353,25 @@ export default function ProductCheckout() {
     (paymentMethod === 'card' && cardNumber.length === 19 && cardName && cardExpiry && cardCvv.length === 3) ||
     (paymentMethod === 'netbanking' && selectedBank !== '') ||
     (paymentMethod === 'wallet' && selectedWallet !== '')
-useEffect(() => {
+  useEffect(() => {
   const getData = async () => {
     try {
       setLoading(true);
-
-      if (!id) {
-        return;
+      const addressRes =await dispatch(getShippingAddress()).unwrap();
+      if (productid) {
+       const product = await dispatch(getProductbyId(productid)).unwrap();
+       setORDER_ITEMS([{
+        id:product?.data?.id,
+        name:product?.data?.name,
+        image:product?.data?.variants?.[0]?.url,
+        price:product?.data?.variants?.[0]?.costPrice,
+        origianlPrice:product?.data?.variants?.[0]?.price,
+        discount:product?.data?.variants?.[0]?.price-product?.data?.variants?.[0]?.costPrice,
+        qty:params.get('qty')||1,
+        deliveryDate:Date.now(),
+       }])
       }
-
-      const [addressRes, product] = await Promise.all([
-        dispatch(getShippingAddress()).unwrap(),
-        dispatch(getProductbyId(id)).unwrap(),
-      ]);
-      console.log('product data is',product.data)
       setAddresses(addressRes.data);
-
-      setORDER_ITEMS({
-        id:product?.data.id,
-        name:product?.data.name,
-        image:product?.data?.variants?.[0].url,
-        price:product?.data?.variants?.[0].costPrice,
-        originalPrice:product?.data?.variants?.[0].price,
-        discount:product?.data?.variants?.[0].price-product?.data?.variants?.[0].costPrice,
-      }
-      );
     } catch (error) {
       console.log(error);
     } finally {
@@ -386,7 +380,7 @@ useEffect(() => {
   };
 
   getData();
-}, [id, params]);
+}, [productid, params]);
   console.log(ORDER_ITEMS)
   const handleSaveAddress = async(addr: Address) => {
     const res = await dispatch(createShippingAddress(addr)).unwrap();
