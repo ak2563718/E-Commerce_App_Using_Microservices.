@@ -94,14 +94,14 @@ model OrderItem {
 
 model ShippingAddress {
   id             String @id @default(cuid())
-  userId         String @unique
-  fullName       String
+  userId         String 
+  name         String
   phone          String
-  addressLine1   String
-  homeDetails    String?
+  area           String
+  flat           String?
   city           String
   state          String
-  postalCode     String
+  pincode        String
   landmark       String?
   type           addressType
   createdAt      DateTime @default(now())

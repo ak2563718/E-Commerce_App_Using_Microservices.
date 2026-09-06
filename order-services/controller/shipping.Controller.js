@@ -5,20 +5,24 @@ import validator from 'validator'
 
 export const createShippingAddress = asyncHandler(async(req, res, next)=>{
     const id = req.user.id;
-    const { fullName, phone, addressLine1, homeDetails , city, state, postalCode, landmark, type} = req.body;
-    if(!fullName || !phone || !addressLine1 ||!homeDetails  ||!city ||!state  ||!postalCode ||!type){
+    const { name, phone, area, flat , city, state, pincode, landmark, type} = req.body;
+    if(!name || !phone || !area ||!flat  ||!city ||!state  ||!pincode ||!type){
         return next(new AppError('Please provide all required field',400))
     }
+    if(!validator.isMobilePhone(phone.trim(),"en-IN")){
+        return next(new AppError('Invalid phone number', 400))
+    }
+    
     const address = await prisma.shippingAddress.create({
         data:{
             userId:id,
-            fullName,
+            name,
             phone,
-            addressLine1,
-            homeDetails,
+            area,
+            flat,
             city,
             state,
-            postalCode,
+            pincode,
             type,
             landmark:landmark?landmark:'null',
         }
@@ -62,12 +66,12 @@ export const deleteShippingAddress = asyncHandler(async(req, res, next)=>{
 
 export const updateAddress = asyncHandler(async(req, res, next)=>{
     const id = req.params.id;
-    const { fullName, phone, addressLine1, homeDetails, city, state, type, postalCode, landmark}= req.body;
-    if(!fullName && !phone && !addressLine1 && !homeDetails && !city && !state && !type &&!postalCode && landmark){
+    const { name, phone, area, flat, city, state, type, pincode, landmark}= req.body;
+    if(!name && !phone && !area && !flat && !city && !state && !type &&!pincode && landmark){
         return next(new AppError("Nothing to update address", 400))
     }
     const data = {};
-    if(fullName) data.fullName = fullName.trim();
+    if(name) data.name = name.trim();
     if(phone) {
         const trimmed = phone.trim()
         if(!validator.isMobilePhone(trimmed, 'en-IN')){
@@ -75,17 +79,17 @@ export const updateAddress = asyncHandler(async(req, res, next)=>{
         }
         data.phone = trimmed;
     }
-    if(addressLine1) data.addressLine1 = addressLine1.trim();
-    if(homeDetails) data.homeDetails = homeDetails.trim();
+    if(area) data.area = area.trim();
+    if(flat) data.flat = flat.trim();
     if(city) data.city = city.trim();
     if(state) data.state = state.trim();
     if(type) data.type = type.trim();
-    if(postalCode){
-        const trimmed = postalCode.trim();
-        if(!validator.isPostalCode(trimmed, 'IN')){
+    if(pincode){
+        const trimmed = pincode.trim();
+        if(!validator.ispincode(trimmed, 'IN')){
             return next(new AppError('Postal code invalid', 400))
         }
-        data.postalCode = trimmed;
+        data.pincode = trimmed;
     }
     if(landmark) data.landmark = landmark.trim();
     const found = await prisma.shippingAddress.findUnique({where:{id}});

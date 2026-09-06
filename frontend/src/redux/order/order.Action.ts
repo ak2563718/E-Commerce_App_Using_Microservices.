@@ -25,7 +25,7 @@ export const createShippingAddress = createAsyncThunk<any, any, {rejectValue:str
 )
 
 // 2. Get Shipping Address
-export const getShippingAddress = createAsyncThunk<any, any, {rejectValue:string}>(
+export const getShippingAddress = createAsyncThunk<any, void, {rejectValue:string}>(
     'get/Address',
     async( _, { rejectWithValue })=>{
         try {
@@ -63,7 +63,7 @@ export const updateShippingAddress = createAsyncThunk<any, any, { rejectValue:st
 )
 
 // 4. delete shipping address
-export const deleteShippingAddress = createAsyncThunk<any, any, { rejectValue:string}>(
+export const deleteShippingAddress = createAsyncThunk<any, string, { rejectValue:string}>(
     'delete/address',
     async( id, { rejectWithValue })=>{
         try {

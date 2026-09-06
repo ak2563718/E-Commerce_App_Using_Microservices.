@@ -1,5 +1,9 @@
 'use client'
-import { useState } from 'react'
+import { useAppDispatch } from '@/redux/hooks'
+import { createShippingAddress, getShippingAddress } from '@/redux/order/order.Action'
+import { Loader } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 const PINK = '#e91e8c'
 const PINK_DARK = '#c2185b'
@@ -271,7 +275,6 @@ function AddressForm({ onSave, onCancel }: { onSave: (addr: Address) => void; on
         <button
           onClick={() =>{ 
             onSave({ ...form, id: Date.now(), default: false })
-            console.log(form)
           }
           }
           disabled={!valid}
@@ -303,7 +306,7 @@ function AddressForm({ onSave, onCancel }: { onSave: (addr: Address) => void; on
 /* ─── Main component ─────────────────────────────────────── */
 export default function ProductCheckout() {
   const [step, setStep] = useState<Step>('address')
-  const [addresses, setAddresses] = useState<Address[]>(SAVED_ADDRESSES)
+  const [addresses, setAddresses] = useState<Address[]>([])
   const [selectedAddress, setSelectedAddress] = useState<number>(SAVED_ADDRESSES[0].id)
   const [showAddressForm, setShowAddressForm] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(null)
@@ -319,6 +322,9 @@ export default function ProductCheckout() {
   const [coupon, setCoupon] = useState('')
   const [couponApplied, setCouponApplied] = useState(false)
   const [orderPlaced, setOrderPlaced] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const router = useRouter();
+  const dispatch = useAppDispatch();
 
   const subtotal = ORDER_ITEMS.reduce((s, i) => s + i.price * i.qty, 0)
   const originalTotal = ORDER_ITEMS.reduce((s, i) => s + i.originalPrice * i.qty, 0)
@@ -335,7 +341,20 @@ export default function ProductCheckout() {
     (paymentMethod === 'netbanking' && selectedBank !== '') ||
     (paymentMethod === 'wallet' && selectedWallet !== '')
 
-  const handleSaveAddress = (addr: Address) => {
+    useEffect(()=>{
+    const getaddress = async()=>{
+      setLoading(true)
+      const res = await dispatch(getShippingAddress()).unwrap();
+      console.log(res.data)
+      setAddresses(res.data)
+      setLoading(false)
+    }
+    getaddress()
+  },[])
+
+  const handleSaveAddress = async(addr: Address) => {
+    const res = await dispatch(createShippingAddress(addr)).unwrap();
+    console.log(res)
     setAddresses(prev => [...prev, addr])
     setSelectedAddress(addr.id)
     setShowAddressForm(false)
@@ -348,6 +367,10 @@ export default function ProductCheckout() {
     { key: 'payment', label: 'Payment' },
     { key: 'review', label: 'Review & Place Order' },
   ]
+
+  if(loading){
+    return <Loader/>
+  }
 
   if (orderPlaced) {
     return (
@@ -491,10 +514,10 @@ export default function ProductCheckout() {
                             <span style={{ fontSize: '13px', color: '#555', marginLeft: '4px' }}>{addr.phone}</span>
                           </div>
                           <p style={{ margin: '0 0 4px', fontSize: '13px', color: '#555', lineHeight: 1.5 }}>
-                            {addr.flat}, {addr.area}
+                            {addr?.flat}, {addr?.area}
                           </p>
                           <p style={{ margin: 0, fontSize: '13px', color: '#555' }}>
-                            {addr.city}, {addr.state} — <strong>{addr.pincode}</strong>
+                            {addr.city}, {addr.state} — <strong>{addr?.pincode}</strong>
                           </p>
                         </div>
                         {selectedAddress === addr.id && (
