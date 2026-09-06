@@ -951,49 +951,6 @@ export default function ProductCheckout() {
 
           {/* Right — order summary */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', position: 'sticky', top: '80px' }}>
-            {/* Coupon */}
-            <div style={{ background: '#fff', borderRadius: '16px', border: '1.5px solid #f3e0ed', padding: '18px' }}>
-              <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: '12px', fontWeight: 700, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 12px' }}>
-                Apply Coupon
-              </p>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <input
-                  value={coupon}
-                  onChange={e => { setCoupon(e.target.value.toUpperCase()); setCouponApplied(false) }}
-                  placeholder="Enter coupon code"
-                  style={{ flex: 1, border: `1.5px solid ${couponApplied ? '#27ae60' : '#f0e0eb'}`, borderRadius: '8px', padding: '9px 12px', fontSize: '13px', outline: 'none', color: '#1a1a2e', background: '#fff' }}
-                />
-                <button
-                  onClick={() => coupon.length > 0 && setCouponApplied(true)}
-                  style={{
-                    padding: '9px 14px', background: coupon ? `linear-gradient(135deg, ${PINK}, ${PINK_DARK})` : '#f0e0eb',
-                    color: coupon ? '#fff' : '#ccc', border: 'none', borderRadius: '8px',
-                    fontSize: '12px', fontWeight: 700, cursor: coupon ? 'pointer' : 'not-allowed',
-                  }}
-                >
-                  Apply
-                </button>
-              </div>
-              {couponApplied && (
-                <p style={{ margin: '8px 0 0', fontSize: '12px', color: '#27ae60', fontWeight: 600 }}>
-                  ✓ Coupon applied! You save {fmt(couponDiscount)}
-                </p>
-              )}
-              <div style={{ display: 'flex', gap: '6px', marginTop: '10px', flexWrap: 'wrap' }}>
-                {['SAVE1500', 'SHOPHUB10', 'WELCOME5'].map(c => (
-                  <button
-                    key={c}
-                    onClick={() => { setCoupon(c); setCouponApplied(false) }}
-                    style={{
-                      border: `1px dashed ${PINK_MID}`, borderRadius: '6px', background: PINK_LIGHT,
-                      color: PINK_DARK, fontSize: '10px', fontWeight: 700, padding: '3px 10px', cursor: 'pointer',
-                    }}
-                  >
-                    {c}
-                  </button>
-                ))}
-              </div>
-            </div>
 
             {/* Price summary */}
             <div style={{ background: '#fff', borderRadius: '16px', border: '1.5px solid #f3e0ed', padding: '20px', boxShadow: '0 2px 12px rgba(233,30,140,0.06)' }}>
