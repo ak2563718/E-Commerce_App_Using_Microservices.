@@ -840,7 +840,7 @@ if(loading){
                   {addedToCart ? '✓ ADDED TO CART' : 'ADD TO CART'}
                 </button>
                 <button
-                  onClick={()=>router.push(`/checkout?type=buy-now&productId=${product.id}`)}
+                  onClick={()=>router.push(`/checkout?type=buy-now&qty=1&productId=${product.id}`)}
                   style={{
                     width: '100%',
                     padding: '13px 0',

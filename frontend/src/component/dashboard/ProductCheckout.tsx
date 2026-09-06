@@ -1,8 +1,9 @@
 'use client'
 import { useAppDispatch } from '@/redux/hooks'
 import { createShippingAddress, getShippingAddress } from '@/redux/order/order.Action'
+import { getProductbyId } from '@/redux/product/product.Action'
 import { Loader } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 const PINK = '#e91e8c'
@@ -16,7 +17,7 @@ function fmt(n: number) {
 
 /* ─── Types ─────────────────────────────────────────────── */
 interface Address {
-  id: number
+  id: string
   name: string
   phone: string
   flat: string
@@ -32,55 +33,55 @@ type PaymentMethod = 'upi' | 'card' | 'netbanking' | 'wallet' | 'cod' | null
 type Step = 'address' | 'payment' | 'review'
 
 /* ─── Static data ────────────────────────────────────────── */
-const SAVED_ADDRESSES: Address[] = [
-  {
-    id: 1,
-    name: 'Priya Sharma',
-    phone: '9876543210',
-    flat: '42, Sunshine Apartments, MG Road',
-    area: 'Koramangala',
-    city: 'Bengaluru',
-    state: 'Karnataka',
-    pincode: '560034',
-    type: 'HOME',
-    default: true,
-  },
-  {
-    id: 2,
-    name: 'Priya Sharma',
-    phone: '9876543210',
-    flat: 'WeWork, 3rd Floor, Embassy Golf Links',
-    area: 'Intermediate Ring Road',
-    city: 'Bengaluru',
-    state: 'Karnataka',
-    pincode: '560071',
-    type: 'WORK',
-    default: false,
-  },
-]
+// const SAVED_ADDRESSES: Address[] = [
+//   {
+//     id: 1,
+//     name: 'Priya Sharma',
+//     phone: '9876543210',
+//     flat: '42, Sunshine Apartments, MG Road',
+//     area: 'Koramangala',
+//     city: 'Bengaluru',
+//     state: 'Karnataka',
+//     pincode: '560034',
+//     type: 'HOME',
+//     default: true,
+//   },
+//   {
+//     id: 2,
+//     name: 'Priya Sharma',
+//     phone: '9876543210',
+//     flat: 'WeWork, 3rd Floor, Embassy Golf Links',
+//     area: 'Intermediate Ring Road',
+//     city: 'Bengaluru',
+//     state: 'Karnataka',
+//     pincode: '560071',
+//     type: 'WORK',
+//     default: false,
+//   },
+// ]
 
-const ORDER_ITEMS = [
-  {
-    id: 1,
-    name: 'Apple iPhone 15 Pro Max (Natural Titanium, 512GB)',
-    image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=120&h=120&fit=crop&auto=format',
-    price: 159900,
-    originalPrice: 189900,
-    discount: 15,
-    qty: 1,
-    deliveryDate: 'Sat, 16 Aug 2026',
-  },
-  {
-    id: 2,
-    name: 'Sony WH-1000XM5 Wireless Headphones',
-    image: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=120&h=120&fit=crop&auto=format',
-    price: 26990,
-    originalPrice: 34990,
-    discount: 22,
-    qty: 1,
-    deliveryDate: 'Sun, 17 Aug 2026',
-  },
-]
+// const ORDER_ITEMS = [
+//   {
+//     id: 1,
+//     name: 'Apple iPhone 15 Pro Max (Natural Titanium, 512GB)',
+//     image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=120&h=120&fit=crop&auto=format',
+//     price: 159900,
+//     originalPrice: 189900,
+//     discount: 15,
+//     qty: 1,
+//     deliveryDate: 'Sat, 16 Aug 2026',
+//   },
+//   {
+//     id: 2,
+//     name: 'Sony WH-1000XM5 Wireless Headphones',
+//     image: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=120&h=120&fit=crop&auto=format',
+//     price: 26990,
+//     originalPrice: 34990,
+//     discount: 22,
+//     qty: 1,
+//     deliveryDate: 'Sun, 17 Aug 2026',
+//   },
+// ]
 
 const BANKS = ['HDFC Bank', 'ICICI Bank', 'State Bank of India', 'Axis Bank', 'Kotak Mahindra Bank', 'Punjab National Bank', 'Yes Bank', 'IndusInd Bank']
 const WALLETS = [
@@ -274,7 +275,7 @@ function AddressForm({ onSave, onCancel }: { onSave: (addr: Address) => void; on
       <div style={{ display: 'flex', gap: '10px' }}>
         <button
           onClick={() =>{ 
-            onSave({ ...form, id: Date.now(), default: false })
+            onSave({ ...form, id: String(Date.now()), default: false })
           }
           }
           disabled={!valid}
@@ -307,7 +308,7 @@ function AddressForm({ onSave, onCancel }: { onSave: (addr: Address) => void; on
 export default function ProductCheckout() {
   const [step, setStep] = useState<Step>('address')
   const [addresses, setAddresses] = useState<Address[]>([])
-  const [selectedAddress, setSelectedAddress] = useState<number>(SAVED_ADDRESSES[0].id)
+  const [selectedAddress, setSelectedAddress] = useState<string>('')
   const [showAddressForm, setShowAddressForm] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(null)
   const [upiId, setUpiId] = useState('')
@@ -323,8 +324,20 @@ export default function ProductCheckout() {
   const [couponApplied, setCouponApplied] = useState(false)
   const [orderPlaced, setOrderPlaced] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [ORDER_ITEMS,setORDER_ITEMS] =useState<any>({
+    id:'',
+    name:'',
+    image:'',
+    price:'',
+    originalPrice:'',
+    discount:'',
+    qty:'',
+    deliverDate:'',
+  })
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const params = useSearchParams()
+  const id = params.get('productId')
 
   const subtotal = ORDER_ITEMS.reduce((s, i) => s + i.price * i.qty, 0)
   const originalTotal = ORDER_ITEMS.reduce((s, i) => s + i.originalPrice * i.qty, 0)
@@ -340,18 +353,41 @@ export default function ProductCheckout() {
     (paymentMethod === 'card' && cardNumber.length === 19 && cardName && cardExpiry && cardCvv.length === 3) ||
     (paymentMethod === 'netbanking' && selectedBank !== '') ||
     (paymentMethod === 'wallet' && selectedWallet !== '')
+useEffect(() => {
+  const getData = async () => {
+    try {
+      setLoading(true);
 
-    useEffect(()=>{
-    const getaddress = async()=>{
-      setLoading(true)
-      const res = await dispatch(getShippingAddress()).unwrap();
-      console.log(res.data)
-      setAddresses(res.data)
-      setLoading(false)
+      if (!id) {
+        return;
+      }
+
+      const [addressRes, product] = await Promise.all([
+        dispatch(getShippingAddress()).unwrap(),
+        dispatch(getProductbyId(id)).unwrap(),
+      ]);
+      console.log('product data is',product.data)
+      setAddresses(addressRes.data);
+
+      setORDER_ITEMS({
+        id:product?.data.id,
+        name:product?.data.name,
+        image:product?.data?.variants?.[0].url,
+        price:product?.data?.variants?.[0].costPrice,
+        originalPrice:product?.data?.variants?.[0].price,
+        discount:product?.data?.variants?.[0].price-product?.data?.variants?.[0].costPrice,
+      }
+      );
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
     }
-    getaddress()
-  },[])
+  };
 
+  getData();
+}, [id, params]);
+  console.log(ORDER_ITEMS)
   const handleSaveAddress = async(addr: Address) => {
     const res = await dispatch(createShippingAddress(addr)).unwrap();
     console.log(res)
@@ -359,7 +395,6 @@ export default function ProductCheckout() {
     setSelectedAddress(addr.id)
     setShowAddressForm(false)
   }
-
   const handlePlaceOrder = () => setOrderPlaced(true)
 
   const STEPS: { key: Step; label: string }[] = [
