@@ -137,6 +137,7 @@ exports.Prisma.OrderScalarFieldEnum = {
   paymentTransactionId: 'paymentTransactionId',
   shippingAddressId: 'shippingAddressId',
   trackingNumber: 'trackingNumber',
+  deliveryDate: 'deliveryDate',
   carrier: 'carrier',
   notes: 'notes',
   createdAt: 'createdAt',

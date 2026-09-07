@@ -1352,6 +1352,7 @@ export namespace Prisma {
     paymentTransactionId: string | null
     shippingAddressId: string | null
     trackingNumber: string | null
+    deliveryDate: Date | null
     carrier: string | null
     notes: string | null
     createdAt: Date | null
@@ -1375,6 +1376,7 @@ export namespace Prisma {
     paymentTransactionId: string | null
     shippingAddressId: string | null
     trackingNumber: string | null
+    deliveryDate: Date | null
     carrier: string | null
     notes: string | null
     createdAt: Date | null
@@ -1398,6 +1400,7 @@ export namespace Prisma {
     paymentTransactionId: number
     shippingAddressId: number
     trackingNumber: number
+    deliveryDate: number
     carrier: number
     notes: number
     createdAt: number
@@ -1439,6 +1442,7 @@ export namespace Prisma {
     paymentTransactionId?: true
     shippingAddressId?: true
     trackingNumber?: true
+    deliveryDate?: true
     carrier?: true
     notes?: true
     createdAt?: true
@@ -1462,6 +1466,7 @@ export namespace Prisma {
     paymentTransactionId?: true
     shippingAddressId?: true
     trackingNumber?: true
+    deliveryDate?: true
     carrier?: true
     notes?: true
     createdAt?: true
@@ -1485,6 +1490,7 @@ export namespace Prisma {
     paymentTransactionId?: true
     shippingAddressId?: true
     trackingNumber?: true
+    deliveryDate?: true
     carrier?: true
     notes?: true
     createdAt?: true
@@ -1595,6 +1601,7 @@ export namespace Prisma {
     paymentTransactionId: string | null
     shippingAddressId: string | null
     trackingNumber: string | null
+    deliveryDate: Date | null
     carrier: string | null
     notes: string | null
     createdAt: Date
@@ -1637,6 +1644,7 @@ export namespace Prisma {
     paymentTransactionId?: boolean
     shippingAddressId?: boolean
     trackingNumber?: boolean
+    deliveryDate?: boolean
     carrier?: boolean
     notes?: boolean
     createdAt?: boolean
@@ -1664,6 +1672,7 @@ export namespace Prisma {
     paymentTransactionId?: boolean
     shippingAddressId?: boolean
     trackingNumber?: boolean
+    deliveryDate?: boolean
     carrier?: boolean
     notes?: boolean
     createdAt?: boolean
@@ -1688,6 +1697,7 @@ export namespace Prisma {
     paymentTransactionId?: boolean
     shippingAddressId?: boolean
     trackingNumber?: boolean
+    deliveryDate?: boolean
     carrier?: boolean
     notes?: boolean
     createdAt?: boolean
@@ -1712,13 +1722,14 @@ export namespace Prisma {
     paymentTransactionId?: boolean
     shippingAddressId?: boolean
     trackingNumber?: boolean
+    deliveryDate?: boolean
     carrier?: boolean
     notes?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "orderNumber" | "status" | "paymentStatus" | "paymentMethod" | "subtotal" | "discountAmount" | "taxAmount" | "shippingAmount" | "totalAmount" | "currency" | "couponCode" | "paymentTransactionId" | "shippingAddressId" | "trackingNumber" | "carrier" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
+  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "orderNumber" | "status" | "paymentStatus" | "paymentMethod" | "subtotal" | "discountAmount" | "taxAmount" | "shippingAmount" | "totalAmount" | "currency" | "couponCode" | "paymentTransactionId" | "shippingAddressId" | "trackingNumber" | "deliveryDate" | "carrier" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
   export type OrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     shippingAddress?: boolean | Order$shippingAddressArgs<ExtArgs>
     items?: boolean | Order$itemsArgs<ExtArgs>
@@ -1756,6 +1767,7 @@ export namespace Prisma {
       paymentTransactionId: string | null
       shippingAddressId: string | null
       trackingNumber: string | null
+      deliveryDate: Date | null
       carrier: string | null
       notes: string | null
       createdAt: Date
@@ -2202,6 +2214,7 @@ export namespace Prisma {
     readonly paymentTransactionId: FieldRef<"Order", 'String'>
     readonly shippingAddressId: FieldRef<"Order", 'String'>
     readonly trackingNumber: FieldRef<"Order", 'String'>
+    readonly deliveryDate: FieldRef<"Order", 'DateTime'>
     readonly carrier: FieldRef<"Order", 'String'>
     readonly notes: FieldRef<"Order", 'String'>
     readonly createdAt: FieldRef<"Order", 'DateTime'>
@@ -6191,6 +6204,7 @@ export namespace Prisma {
     paymentTransactionId: 'paymentTransactionId',
     shippingAddressId: 'shippingAddressId',
     trackingNumber: 'trackingNumber',
+    deliveryDate: 'deliveryDate',
     carrier: 'carrier',
     notes: 'notes',
     createdAt: 'createdAt',
@@ -6428,6 +6442,7 @@ export namespace Prisma {
     paymentTransactionId?: StringNullableFilter<"Order"> | string | null
     shippingAddressId?: StringNullableFilter<"Order"> | string | null
     trackingNumber?: StringNullableFilter<"Order"> | string | null
+    deliveryDate?: DateTimeNullableFilter<"Order"> | Date | string | null
     carrier?: StringNullableFilter<"Order"> | string | null
     notes?: StringNullableFilter<"Order"> | string | null
     createdAt?: DateTimeFilter<"Order"> | Date | string
@@ -6454,6 +6469,7 @@ export namespace Prisma {
     paymentTransactionId?: SortOrderInput | SortOrder
     shippingAddressId?: SortOrderInput | SortOrder
     trackingNumber?: SortOrderInput | SortOrder
+    deliveryDate?: SortOrderInput | SortOrder
     carrier?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -6483,6 +6499,7 @@ export namespace Prisma {
     paymentTransactionId?: StringNullableFilter<"Order"> | string | null
     shippingAddressId?: StringNullableFilter<"Order"> | string | null
     trackingNumber?: StringNullableFilter<"Order"> | string | null
+    deliveryDate?: DateTimeNullableFilter<"Order"> | Date | string | null
     carrier?: StringNullableFilter<"Order"> | string | null
     notes?: StringNullableFilter<"Order"> | string | null
     createdAt?: DateTimeFilter<"Order"> | Date | string
@@ -6509,6 +6526,7 @@ export namespace Prisma {
     paymentTransactionId?: SortOrderInput | SortOrder
     shippingAddressId?: SortOrderInput | SortOrder
     trackingNumber?: SortOrderInput | SortOrder
+    deliveryDate?: SortOrderInput | SortOrder
     carrier?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -6540,6 +6558,7 @@ export namespace Prisma {
     paymentTransactionId?: StringNullableWithAggregatesFilter<"Order"> | string | null
     shippingAddressId?: StringNullableWithAggregatesFilter<"Order"> | string | null
     trackingNumber?: StringNullableWithAggregatesFilter<"Order"> | string | null
+    deliveryDate?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
     carrier?: StringNullableWithAggregatesFilter<"Order"> | string | null
     notes?: StringNullableWithAggregatesFilter<"Order"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Order"> | Date | string
@@ -6814,6 +6833,7 @@ export namespace Prisma {
     couponCode?: string | null
     paymentTransactionId?: string | null
     trackingNumber?: string | null
+    deliveryDate?: Date | string | null
     carrier?: string | null
     notes?: string | null
     createdAt?: Date | string
@@ -6840,6 +6860,7 @@ export namespace Prisma {
     paymentTransactionId?: string | null
     shippingAddressId?: string | null
     trackingNumber?: string | null
+    deliveryDate?: Date | string | null
     carrier?: string | null
     notes?: string | null
     createdAt?: Date | string
@@ -6864,6 +6885,7 @@ export namespace Prisma {
     couponCode?: NullableStringFieldUpdateOperationsInput | string | null
     paymentTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
     trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     carrier?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6890,6 +6912,7 @@ export namespace Prisma {
     paymentTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
     shippingAddressId?: NullableStringFieldUpdateOperationsInput | string | null
     trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     carrier?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6915,6 +6938,7 @@ export namespace Prisma {
     paymentTransactionId?: string | null
     shippingAddressId?: string | null
     trackingNumber?: string | null
+    deliveryDate?: Date | string | null
     carrier?: string | null
     notes?: string | null
     createdAt?: Date | string
@@ -6937,6 +6961,7 @@ export namespace Prisma {
     couponCode?: NullableStringFieldUpdateOperationsInput | string | null
     paymentTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
     trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     carrier?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6960,6 +6985,7 @@ export namespace Prisma {
     paymentTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
     shippingAddressId?: NullableStringFieldUpdateOperationsInput | string | null
     trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     carrier?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7317,6 +7343,17 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -7375,6 +7412,7 @@ export namespace Prisma {
     paymentTransactionId?: SortOrder
     shippingAddressId?: SortOrder
     trackingNumber?: SortOrder
+    deliveryDate?: SortOrder
     carrier?: SortOrder
     notes?: SortOrder
     createdAt?: SortOrder
@@ -7406,6 +7444,7 @@ export namespace Prisma {
     paymentTransactionId?: SortOrder
     shippingAddressId?: SortOrder
     trackingNumber?: SortOrder
+    deliveryDate?: SortOrder
     carrier?: SortOrder
     notes?: SortOrder
     createdAt?: SortOrder
@@ -7429,6 +7468,7 @@ export namespace Prisma {
     paymentTransactionId?: SortOrder
     shippingAddressId?: SortOrder
     trackingNumber?: SortOrder
+    deliveryDate?: SortOrder
     carrier?: SortOrder
     notes?: SortOrder
     createdAt?: SortOrder
@@ -7523,6 +7563,20 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -7824,6 +7878,10 @@ export namespace Prisma {
     set?: string | null
   }
 
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
   }
@@ -8044,6 +8102,17 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type NestedDateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -8155,6 +8224,20 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -8467,6 +8550,7 @@ export namespace Prisma {
     couponCode?: string | null
     paymentTransactionId?: string | null
     trackingNumber?: string | null
+    deliveryDate?: Date | string | null
     carrier?: string | null
     notes?: string | null
     createdAt?: Date | string
@@ -8492,6 +8576,7 @@ export namespace Prisma {
     paymentTransactionId?: string | null
     shippingAddressId?: string | null
     trackingNumber?: string | null
+    deliveryDate?: Date | string | null
     carrier?: string | null
     notes?: string | null
     createdAt?: Date | string
@@ -8531,6 +8616,7 @@ export namespace Prisma {
     couponCode?: NullableStringFieldUpdateOperationsInput | string | null
     paymentTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
     trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     carrier?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8556,6 +8642,7 @@ export namespace Prisma {
     paymentTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
     shippingAddressId?: NullableStringFieldUpdateOperationsInput | string | null
     trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     carrier?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8579,6 +8666,7 @@ export namespace Prisma {
     couponCode?: string | null
     paymentTransactionId?: string | null
     trackingNumber?: string | null
+    deliveryDate?: Date | string | null
     carrier?: string | null
     notes?: string | null
     createdAt?: Date | string
@@ -8603,6 +8691,7 @@ export namespace Prisma {
     couponCode?: string | null
     paymentTransactionId?: string | null
     trackingNumber?: string | null
+    deliveryDate?: Date | string | null
     carrier?: string | null
     notes?: string | null
     createdAt?: Date | string
@@ -8657,6 +8746,7 @@ export namespace Prisma {
     paymentTransactionId?: StringNullableFilter<"Order"> | string | null
     shippingAddressId?: StringNullableFilter<"Order"> | string | null
     trackingNumber?: StringNullableFilter<"Order"> | string | null
+    deliveryDate?: DateTimeNullableFilter<"Order"> | Date | string | null
     carrier?: StringNullableFilter<"Order"> | string | null
     notes?: StringNullableFilter<"Order"> | string | null
     createdAt?: DateTimeFilter<"Order"> | Date | string
@@ -8679,6 +8769,7 @@ export namespace Prisma {
     couponCode?: string | null
     paymentTransactionId?: string | null
     trackingNumber?: string | null
+    deliveryDate?: Date | string | null
     carrier?: string | null
     notes?: string | null
     createdAt?: Date | string
@@ -8704,6 +8795,7 @@ export namespace Prisma {
     paymentTransactionId?: string | null
     shippingAddressId?: string | null
     trackingNumber?: string | null
+    deliveryDate?: Date | string | null
     carrier?: string | null
     notes?: string | null
     createdAt?: Date | string
@@ -8743,6 +8835,7 @@ export namespace Prisma {
     couponCode?: NullableStringFieldUpdateOperationsInput | string | null
     paymentTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
     trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     carrier?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8768,6 +8861,7 @@ export namespace Prisma {
     paymentTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
     shippingAddressId?: NullableStringFieldUpdateOperationsInput | string | null
     trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     carrier?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8883,6 +8977,7 @@ export namespace Prisma {
     couponCode?: string | null
     paymentTransactionId?: string | null
     trackingNumber?: string | null
+    deliveryDate?: Date | string | null
     carrier?: string | null
     notes?: string | null
     createdAt?: Date | string
@@ -8905,6 +9000,7 @@ export namespace Prisma {
     couponCode?: NullableStringFieldUpdateOperationsInput | string | null
     paymentTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
     trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     carrier?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8929,6 +9025,7 @@ export namespace Prisma {
     couponCode?: NullableStringFieldUpdateOperationsInput | string | null
     paymentTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
     trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     carrier?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8953,6 +9050,7 @@ export namespace Prisma {
     couponCode?: NullableStringFieldUpdateOperationsInput | string | null
     paymentTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
     trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     carrier?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

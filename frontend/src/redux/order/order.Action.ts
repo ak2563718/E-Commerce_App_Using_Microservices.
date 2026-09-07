@@ -80,3 +80,23 @@ export const deleteShippingAddress = createAsyncThunk<any, string, { rejectValue
         }
     }
 )
+
+
+// 1. create order
+export const createOrder = createAsyncThunk<any, any, {rejectValue:string}>(
+    'post/order',
+    async(form, { rejectWithValue })=>{
+        try {
+            const { data } = await api.post(`http://localhost:6004/api/product/order/`,form,{
+                headers:{'Content-Type':'application/json'},
+                withCredentials:true,
+            })
+            return data;
+        } catch (error) {
+            if(axios.isAxiosError(error)){
+                return rejectWithValue(error.response?.data.message)
+            }
+            return rejectWithValue("something went wrong")
+        }
+    }
+)

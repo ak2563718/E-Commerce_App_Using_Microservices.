@@ -6,9 +6,11 @@ import { prisma } from '../src/db.js'
 // CREATE ORDER
 // ============================================================
 
-export const createOrder = asyncHandler(async (req, res) => {
+export const createOrder = asyncHandler(async (req, res, next) => {
+  const userId = req.user.id;
+  console.log(userId)
+  console.log(req.body)
   const {
-    userId,
     addressId,
     paymentMethod,
     subtotal,
@@ -18,7 +20,6 @@ export const createOrder = asyncHandler(async (req, res) => {
     totalAmount,
     currency = "INR",
     couponCode,
-    shippingAddress,
     items,
     notes,
   } = req.body;
@@ -28,8 +29,7 @@ export const createOrder = asyncHandler(async (req, res) => {
     !paymentMethod ||
     !subtotal ||
     !totalAmount ||
-    !items ||
-    !items.length
+    !items
   ) {
     return next(new AppError('userId, paymentMethod, subtotal, totalAmount and items are required',400))
   }
@@ -88,7 +88,7 @@ export const createOrder = asyncHandler(async (req, res) => {
             productSlug: item.productSlug,
             sku: item.sku,
             image: item.image,
-            quantity: item.quantity,
+            quantity: Number(item.quantity),
             unitPrice: item.unitPrice,
             discountPrice: item.discountPrice,
             totalPrice: item.totalPrice,

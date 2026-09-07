@@ -1,7 +1,7 @@
 'use client'
 import { getCartItems } from '@/redux/cart/cart.Action'
 import { useAppDispatch } from '@/redux/hooks'
-import { createShippingAddress, getShippingAddress } from '@/redux/order/order.Action'
+import { createOrder, createShippingAddress, getShippingAddress } from '@/redux/order/order.Action'
 import { getProductbyId } from '@/redux/product/product.Action'
 import { Loader } from 'lucide-react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
@@ -32,7 +32,7 @@ interface Address {
   default: boolean
 }
 
-type PaymentMethod = 'upi' | 'card' | 'netbanking' | 'wallet' | 'cod' | null
+type PaymentMethod = 'UPI' | 'CARD' | 'NET_BANKING' | 'WALLET' | 'COD' | null
 type Step = 'address' | 'payment' | 'review'
 
 /* ─── Static data ────────────────────────────────────────── */
@@ -327,6 +327,7 @@ export default function ProductCheckout() {
   const [couponApplied, setCouponApplied] = useState(false)
   const [orderPlaced, setOrderPlaced] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [product, setProduct] = useState<any>({})
   const [ORDER_ITEMS,setORDER_ITEMS] =useState<any[]>([{
     id:'',
     name:'',
@@ -337,6 +338,12 @@ export default function ProductCheckout() {
     qty:'',
     deliverDate:'',
   }])
+const date = new Date();
+date.setDate(date.getDate() + 7);
+const formattedDate = date.toLocaleDateString('en-IN', {
+  day: 'numeric',
+  month: 'short'
+});
   const router = useRouter();
   const dispatch = useAppDispatch();
   const params = useSearchParams()
@@ -349,7 +356,7 @@ export default function ProductCheckout() {
       const addressRes =await dispatch(getShippingAddress()).unwrap();
       if (productid) {
        const product = await dispatch(getProductbyId(productid)).unwrap();
-       console.log("product info", product?.data?.variants?.[0]?.price)
+       setProduct(product.data)
        setORDER_ITEMS([{
         id:product?.data?.id,
         name:product?.data?.name,
@@ -358,7 +365,7 @@ export default function ProductCheckout() {
         originalPrice:Number(product?.data?.variants?.[0]?.price),
         discount:Number(product?.data?.variants?.[0]?.price)-Number(product?.data?.variants?.[0]?.costPrice),
         qty:params.get('qty')||1,
-        deliveryDate:Date.now(),
+        deliveryDate:formattedDate,
        }])
       }
       if(cartId){
@@ -371,7 +378,7 @@ export default function ProductCheckout() {
           originalPrice:Number(item?.originalPrice),
           discount:Number(item?.originalPrice)-Number(item?.price),
           qty:item?.quantity,
-          deliveryDate:Date.now(),
+          deliveryDate:formattedDate,
         })))
       }
       setAddresses(addressRes.data);
@@ -391,14 +398,14 @@ export default function ProductCheckout() {
   const couponDiscount = couponApplied ? 1500 : 0
   const delivery = 0
   const total = subtotal - couponDiscount + delivery
-
+  
   const canProceedAddress = selectedAddress !== null
   const canProceedPayment =
-    paymentMethod === 'cod' ||
-    (paymentMethod === 'upi' && (upiId.includes('@') || upiApp !== '')) ||
-    (paymentMethod === 'card' && cardNumber.length === 19 && cardName && cardExpiry && cardCvv.length === 3) ||
-    (paymentMethod === 'netbanking' && selectedBank !== '') ||
-    (paymentMethod === 'wallet' && selectedWallet !== '')
+    paymentMethod === 'COD' ||
+    (paymentMethod === 'UPI' && (upiId.includes('@') || upiApp !== '')) ||
+    (paymentMethod === 'CARD' && cardNumber.length === 19 && cardName && cardExpiry && cardCvv.length === 3) ||
+    (paymentMethod === 'NET_BANKING' && selectedBank !== '') ||
+    (paymentMethod === 'WALLET' && selectedWallet !== '')
   
   const handleSaveAddress = async(addr: Address) => {
     const res = await dispatch(createShippingAddress(addr)).unwrap();
@@ -406,14 +413,35 @@ export default function ProductCheckout() {
     setSelectedAddress(addr.id)
     setShowAddressForm(false)
   }
-  const handlePlaceOrder = () => setOrderPlaced(true)
-
+  const handlePlaceOrder = async() =>{ 
+    const form ={
+      addressId:selectedAddress,
+      paymentMethod:paymentMethod,
+      subtotal:subtotal,
+      totalAmount:total,
+      items:[{
+        productId:product.id,
+        variantId:product.variants?.[0].id,
+        productName:product.name,
+        productSlug:product.slug,
+        sku:product.sku,
+        image:product.images?.[0].url,
+        quantity:params.get('qty')|| 1,
+        unitPrice:product.variants?.[0].price,
+        discountPrice:product.variants?.[0].price-product.variants?.[0].costPrice,
+        totalPrice:total,
+      }],
+    }
+    const order = await dispatch(createOrder(form)).unwrap();
+    console.log(order.data)
+    setOrderPlaced(true)
+  }
   const STEPS: { key: Step; label: string }[] = [
     { key: 'address', label: 'Delivery Address' },
     { key: 'payment', label: 'Payment' },
     { key: 'review', label: 'Review & Place Order' },
   ]
-
+  
   if(loading){
     return <LoadingSpinner/>
   }
@@ -448,7 +476,7 @@ export default function ProductCheckout() {
             </div>
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
               <button
-                onClick={() => setOrderPlaced(false)}
+                onClick={() => router.replace('/')}
                 style={{
                   padding: '11px 28px', background: `linear-gradient(135deg, ${PINK}, ${PINK_DARK})`,
                   color: '#fff', border: 'none', borderRadius: '10px',
@@ -616,11 +644,11 @@ export default function ProductCheckout() {
                   {/* Method list */}
                   <div style={{ borderRight: '1px solid #f3e0ed', padding: '16px 0' }}>
                     {([
-                      { key: 'upi', label: 'UPI', icon: '📲' },
-                      { key: 'card', label: 'Credit / Debit Card', icon: '💳' },
-                      { key: 'netbanking', label: 'Net Banking', icon: '🏦' },
-                      { key: 'wallet', label: 'Wallets', icon: '👛' },
-                      { key: 'cod', label: 'Cash on Delivery', icon: '💵' },
+                      { key: 'UPI', label: 'UPI', icon: '/payment-method/upilogo.png' },
+                      { key: 'CARD', label: 'Credit / Debit Card', icon: '/payment-method/creditcardlogo.png' },
+                      { key: 'NET_BANKING', label: 'Net Banking', icon: '/payment-method/netbankinglog.png' },
+                      { key: 'WALLET', label: 'Wallets', icon: '/payment-method/walletlogo.png' },
+                      { key: 'COD', label: 'Cash on Delivery', icon: '/payment-method/codlogo.png' },
                     ] as { key: PaymentMethod; label: string; icon: string }[]).map(m => (
                       <button
                         key={m.key}
@@ -639,7 +667,7 @@ export default function ProductCheckout() {
                           transition: 'all 0.15s',
                         }}
                       >
-                        <span style={{ fontSize: '16px' }}>{m.icon}</span>
+                        <img src={m.icon} alt={m.label} width={20} height={20}/>
                         <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: '12px', fontWeight: paymentMethod === m.key ? 700 : 500, color: paymentMethod === m.key ? PINK_DARK : '#444' }}>
                           {m.label}
                         </span>
@@ -657,7 +685,7 @@ export default function ProductCheckout() {
                     )}
 
                     {/* UPI */}
-                    {paymentMethod === 'upi' && (
+                    {paymentMethod === 'UPI' && (
                       <div>
                         <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: '13px', fontWeight: 700, color: '#1a1a2e', margin: '0 0 14px' }}>Pay via UPI</p>
                         <p style={{ fontSize: '12px', color: '#888', margin: '0 0 10px' }}>Select UPI App</p>
@@ -709,7 +737,7 @@ export default function ProductCheckout() {
                     )}
 
                     {/* Card */}
-                    {paymentMethod === 'card' && (
+                    {paymentMethod === 'CARD' && (
                       <div>
                         <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: '13px', fontWeight: 700, color: '#1a1a2e', margin: '0 0 16px' }}>
                           Credit / Debit Card
@@ -781,7 +809,7 @@ export default function ProductCheckout() {
                     )}
 
                     {/* Net Banking */}
-                    {paymentMethod === 'netbanking' && (
+                    {paymentMethod === 'NET_BANKING' && (
                       <div>
                         <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: '13px', fontWeight: 700, color: '#1a1a2e', margin: '0 0 14px' }}>Select Your Bank</p>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '14px' }}>
@@ -818,7 +846,7 @@ export default function ProductCheckout() {
                     )}
 
                     {/* Wallets */}
-                    {paymentMethod === 'wallet' && (
+                    {paymentMethod === 'WALLET' && (
                       <div>
                         <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: '13px', fontWeight: 700, color: '#1a1a2e', margin: '0 0 14px' }}>Select Wallet</p>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -853,7 +881,7 @@ export default function ProductCheckout() {
                     )}
 
                     {/* COD */}
-                    {paymentMethod === 'cod' && (
+                    {paymentMethod === 'COD' && (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                         <div style={{ background: PINK_LIGHT, border: `1px solid ${PINK_MID}`, borderRadius: '12px', padding: '16px 18px', display: 'flex', gap: '12px' }}>
                           <span style={{ fontSize: '28px' }}>💵</span>
@@ -912,7 +940,7 @@ export default function ProductCheckout() {
             {/* ── STEP 3: Review ── */}
             {step === 'review' && (() => {
               const addr = addresses.find(a => a.id === selectedAddress)!
-              const methodLabel: Record<string, string> = { upi: upiApp || upiId, card: `Card ending ···· ${cardNumber.replace(/\s/g, '').slice(-4)}`, netbanking: selectedBank, wallet: selectedWallet, cod: 'Cash on Delivery' }
+              const methodLabel: Record<string, string> = { UPI: upiApp || upiId, CARD: `Card ending ···· ${cardNumber.replace(/\s/g, '').slice(-4)}`, NET_BANKING: selectedBank, WALLET: selectedWallet, COD: 'Cash on Delivery' }
               return (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                   {/* Delivery address summary */}
@@ -961,7 +989,7 @@ export default function ProductCheckout() {
                           <p style={{ margin: '0 0 6px', fontSize: '12px', color: '#888' }}>Qty: {item.qty}</p>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: '15px', fontWeight: 700, color: '#1a1a2e' }}>{fmt(item.price)}</span>
-                            <span style={{ fontSize: '11px', color: '#27ae60', fontWeight: 600 }}>{item.discount}% off</span>
+                            <span style={{ fontSize: '11px', color: '#27ae60', fontWeight: 600 }}>{Math.floor((item.discount*100)/item.originalPrice)}% off</span>
                           </div>
                           <p style={{ margin: '4px 0 0', fontSize: '11px', color: '#27ae60', fontWeight: 600 }}>Delivery by {item.deliveryDate}</p>
                         </div>

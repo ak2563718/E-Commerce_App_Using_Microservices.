@@ -30,6 +30,7 @@ model Order {
   shippingAddressId    String?
   shippingAddress      ShippingAddress?     @relation(fields: [shippingAddressId], references: [id])
   trackingNumber       String?
+  deliveryDate         DateTime?
   carrier              String?
   notes                String?
   items                OrderItem[]

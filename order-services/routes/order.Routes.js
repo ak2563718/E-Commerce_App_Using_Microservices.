@@ -13,6 +13,7 @@ import {
   cancelOrder,
   getOrderStatusHistory,
 } from "../controller/order.Controller.js";
+import { authMiddleware } from "../middleware/auth.Middleware.js";
 
 const router = express.Router();
 
@@ -21,11 +22,11 @@ const router = express.Router();
 // Orders
 // =============================
 
-router.post("/order", createOrder);
+router.post("/order", authMiddleware,createOrder);
 
-router.get("/", getAllOrders);
+router.get("/", authMiddleware ,getAllOrders);
 
-router.get("/user/:userId", getUserOrders);
+router.get("/user/:userId",authMiddleware, getUserOrders);
 
 router.get("/number/:orderNumber", getOrderByNumber);
 
