@@ -6,6 +6,8 @@ import { getProductbyId } from '@/redux/product/product.Action'
 import { Loader } from 'lucide-react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import LoadingSpinner from './Spinner'
+import googlePay from "@/assets/google-pay.svg";
 
 const PINK = '#e91e8c'
 const PINK_DARK = '#c2185b'
@@ -92,10 +94,10 @@ const WALLETS = [
   { name: 'Mobikwik', icon: '🔵', color: '#1B64F1' },
 ]
 const UPI_APPS = [
-  { name: 'Google Pay', icon: '🔵' },
-  { name: 'PhonePe', icon: '💜' },
-  { name: 'Paytm UPI', icon: '💙' },
-  { name: 'BHIM UPI', icon: '🟢' },
+  { name: 'Google Pay', icon: '/payment-icon/googlepay.png' },
+  { name: 'PhonePe', icon: '/payment-icon/phonePe.png' },
+  { name: 'Paytm UPI', icon: '/payment-icon/paytm.png' },
+  { name: 'BHIM UPI', icon: '/payment-icon/bhimUpi.png' },
 ]
 
 /* ─── Small components ───────────────────────────────────── */
@@ -413,7 +415,7 @@ export default function ProductCheckout() {
   ]
 
   if(loading){
-    return <Loader/>
+    return <LoadingSpinner/>
   }
 
   if (orderPlaced) {
@@ -676,7 +678,7 @@ export default function ProductCheckout() {
                                 transition: 'all 0.15s',
                               }}
                             >
-                              <span style={{ fontSize: '18px' }}>{app.icon}</span>
+                              <img src={app.icon} alt={app.name} width={20} height={20}/>
                               <span style={{ fontSize: '12px', fontWeight: 600, color: upiApp === app.name ? PINK_DARK : '#444' }}>{app.name}</span>
                             </button>
                           ))}
