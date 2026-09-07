@@ -1,4 +1,5 @@
 'use client'
+import { getCartItems } from '@/redux/cart/cart.Action'
 import { useAppDispatch } from '@/redux/hooks'
 import { createShippingAddress, getShippingAddress } from '@/redux/order/order.Action'
 import { getProductbyId } from '@/redux/product/product.Action'
@@ -338,6 +339,7 @@ export default function ProductCheckout() {
   const dispatch = useAppDispatch();
   const params = useSearchParams()
   const productid = params.get('productId')
+  const cartId = params.get('cartId')
   useEffect(() => {
   const getData = async () => {
     try {
@@ -356,6 +358,19 @@ export default function ProductCheckout() {
         qty:params.get('qty')||1,
         deliveryDate:Date.now(),
        }])
+      }
+      if(cartId){
+        const cart = await dispatch(getCartItems(cartId)).unwrap();
+        setORDER_ITEMS(cart?.data?.map((item:any)=>({
+          id:item?.id,
+          name:item?.name,
+          image:item?.image,
+          price:Number(item?.price),
+          originalPrice:Number(item?.originalPrice),
+          discount:Number(item?.originalPrice)-Number(item?.price),
+          qty:item?.quantity,
+          deliveryDate:Date.now(),
+        })))
       }
       setAddresses(addressRes.data);
     } catch (error) {

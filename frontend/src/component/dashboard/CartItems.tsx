@@ -738,6 +738,7 @@ export default function CartItems() {
                   Clear Cart
                 </button>
                 <button
+                  onClick={()=>router.push(`/checkout?type=buy-cart&cartId=${cartId}`)}
                   style={{
                     background: `linear-gradient(135deg, ${PINK} 0%, ${PINK_DARK} 100%)`,
                     color: '#fff',
