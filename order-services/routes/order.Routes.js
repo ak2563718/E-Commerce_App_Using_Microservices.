@@ -24,13 +24,13 @@ const router = express.Router();
 
 router.post("/order", authMiddleware,createOrder);
 
-router.get("/", authMiddleware ,getAllOrders);
+router.get("/order/getorder", authMiddleware ,getAllOrders);
 
 router.get("/user/:userId",authMiddleware, getUserOrders);
 
 router.get("/number/:orderNumber", getOrderByNumber);
 
-router.get("/:id", getOrderById);
+router.get("/order/:id", getOrderById);
 
 
 // =============================
