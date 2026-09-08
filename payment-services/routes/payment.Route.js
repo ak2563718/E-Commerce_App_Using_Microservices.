@@ -10,10 +10,11 @@ import express from "express";
 //   getPaymentRefunds,
 //   updateRefundStatus,
 // } from "../controllers/payment.controller.js";
-import { testing } from "../controller/payment.Controller.js";
+import { createUPIQR, testing } from "../controller/payment.Controller.js";
 
 const router = express.Router();
 router.post('/testing',testing)
+router.post('/createqr',createUPIQR)
 
 // // Payments
 // router.post("/", createPayment);

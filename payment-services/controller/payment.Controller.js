@@ -412,3 +412,40 @@ export const testing = async(req, res)=>{
     })
   }
 }
+
+
+export const createUPIQR = async (req, res) => {
+  try {
+     console.log("1. createUPIQR reached");
+    const { amount } = req.body;
+    console.log("2. amount:", amount);
+    if (!amount) {
+      return res.status(400).json({
+        success: false,
+        message: "Amount is required",
+      });
+    }
+     console.log("3. Creating Razorpay QR");
+    const qrCode = await razorpay.qrCode.create({
+      type: "upi_qr",
+      name: "E-Commerce Payment",
+      usage: "single_use",
+      fixed_amount: true,
+      payment_amount: Math.round(Number(amount) * 100),
+    });
+    console.log("4. QR created:", qrCode);
+    return res.status(200).json({
+      success: true,
+      data: qrCode,
+    });
+
+  } catch (error) {
+      console.error("QR ERROR:", error);
+
+  return res.status(error?.statusCode || 500).json({
+    success: false,
+    message: error?.error?.description || "Unable to create QR",
+    razorpayError: error?.error || error,
+  });
+  }
+};
