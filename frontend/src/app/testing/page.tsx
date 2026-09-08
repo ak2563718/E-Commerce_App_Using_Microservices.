@@ -11,10 +11,11 @@ declare global {
 
 function page() {
     const [amount, setAmount]= useState('')
+    const [qrcode, setQrcode] = useState('')
     const handleClick = async () => {
      const response = await axios.post(`http://localhost:6006/createqr`,{amount}
      )
-     console.log(response.data.data)
+     setQrcode(response.data.data.image_url)
     };
 
   return (
@@ -34,6 +35,12 @@ function page() {
             />
             <button onClick={handleClick} className='ml-2 rounded-lg bg-gray-400 px-4 py-1'>Pay-With-Upi </button>
         </div>
+        {qrcode && <div>
+            <img 
+            src={qrcode}
+            alt='qrcode'
+            />
+            </div>}
     </div>
   )
 }

@@ -1,136 +1,489 @@
 'use client'
-import { useState } from 'react'
+import { useState, useMemo } from "react";
+const PINK = "#e91e8c";
+const PINK_DARK = "#c2185b";
+const PINK_LIGHT = "#fce4ec";
+const PINK_MID = "#f8bbd0";
 
-const ORDERS = [
-  { id: '#ORD-8821', item: 'Floral Midi Dress', category: 'Fashion', date: 'Jul 28, 2026', status: 'Delivered', price: 2499, qty: 1, img: '👗' },
-  { id: '#ORD-8754', item: 'Pearl Stud Earrings', category: 'Jewellery', date: 'Jul 20, 2026', status: 'Shipped', price: 899, qty: 2, img: '💎' },
-  { id: '#ORD-8690', item: 'Rose Gold Watch', category: 'Accessories', date: 'Jul 12, 2026', status: 'Processing', price: 5999, qty: 1, img: '⌚' },
-  { id: '#ORD-8601', item: 'Silk Kurti Set', category: 'Fashion', date: 'Jun 30, 2026', status: 'Delivered', price: 1799, qty: 1, img: '👘' },
-  { id: '#ORD-8540', item: 'Moisturiser SPF 50', category: 'Beauty', date: 'Jun 18, 2026', status: 'Delivered', price: 649, qty: 3, img: '🧴' },
-  { id: '#ORD-8499', item: 'Boho Tote Bag', category: 'Bags', date: 'Jun 5, 2026', status: 'Cancelled', price: 1299, qty: 1, img: '👜' },
-]
+type OrderStatus = "Delivered" | "Out for Delivery" | "Processing" | "Shipped" | "Cancelled";
 
-const statusStyles: Record<string, { bg: string; color: string; dot: string }> = {
-  Delivered: { bg: '#f0fdf4', color: '#15803d', dot: '#22c55e' },
-  Shipped:   { bg: '#eff6ff', color: '#1d4ed8', dot: '#3b82f6' },
-  Processing:{ bg: '#fefce8', color: '#a16207', dot: '#eab308' },
-  Cancelled: { bg: '#fff1f2', color: '#be123c', dot: '#fb7185' },
+interface OrderItem {
+  name: string;
+  variant: string;
+  qty: number;
+  price: number;
+  image: string;
 }
 
-const filters = ['All', 'Delivered', 'Shipped', 'Processing', 'Cancelled']
+interface Order {
+  id: string;
+  date: string;
+  status: OrderStatus;
+  total: number;
+  items: OrderItem[];
+  estimatedDelivery?: string;
+}
 
-export default function MyOrders() {
-  const [filter, setFilter] = useState('All')
+const allOrders: Order[] = [
+  {
+    id: "ORD-2026-84710",
+    date: "Sep 3, 2026",
+    status: "Out for Delivery",
+    total: 391.5,
+    estimatedDelivery: "Sep 8, 2026",
+    items: [
+      {
+        name: "Silk Bloom Midi Dress",
+        variant: "Blush Pink · Size M",
+        qty: 1,
+        price: 189,
+        image: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=80&h=80&fit=crop&auto=format",
+      },
+      {
+        name: "Linen Tote Bag",
+        variant: "Ivory · One Size",
+        qty: 2,
+        price: 64.5,
+        image: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=80&h=80&fit=crop&auto=format",
+      },
+      {
+        name: "Pearl Drop Earrings",
+        variant: "Gold · Pair",
+        qty: 1,
+        price: 42,
+        image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=80&h=80&fit=crop&auto=format",
+      },
+    ],
+  },
+  {
+    id: "ORD-2026-79341",
+    date: "Aug 28, 2026",
+    status: "Delivered",
+    total: 128.0,
+    items: [
+      {
+        name: "Wireless Noise-Cancelling Headphones",
+        variant: "Midnight Black",
+        qty: 1,
+        price: 128,
+        image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=80&h=80&fit=crop&auto=format",
+      },
+    ],
+  },
+  {
+    id: "ORD-2026-77820",
+    date: "Aug 21, 2026",
+    status: "Delivered",
+    total: 214.0,
+    items: [
+      {
+        name: "Ceramic Pour-Over Coffee Set",
+        variant: "Matte White",
+        qty: 1,
+        price: 94,
+        image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=80&h=80&fit=crop&auto=format",
+      },
+      {
+        name: "Organic Cotton Throw Blanket",
+        variant: "Oatmeal · 50×60\"",
+        qty: 2,
+        price: 60,
+        image: "https://images.unsplash.com/photo-1600369671236-d1f08c3e0e54?w=80&h=80&fit=crop&auto=format",
+      },
+    ],
+  },
+  {
+    id: "ORD-2026-75108",
+    date: "Aug 15, 2026",
+    status: "Shipped",
+    total: 89.99,
+    estimatedDelivery: "Sep 10, 2026",
+    items: [
+      {
+        name: "Leather Journal Notebook",
+        variant: "Dark Brown · A5",
+        qty: 1,
+        price: 44.99,
+        image: "https://images.unsplash.com/photo-1531346680769-a1d79b57de5c?w=80&h=80&fit=crop&auto=format",
+      },
+      {
+        name: "Botanical Scented Candle",
+        variant: "Jasmine & Sandalwood",
+        qty: 1,
+        price: 45,
+        image: "https://images.unsplash.com/photo-1602028915047-37269d1a73f7?w=80&h=80&fit=crop&auto=format",
+      },
+    ],
+  },
+  {
+    id: "ORD-2026-71233",
+    date: "Aug 8, 2026",
+    status: "Processing",
+    total: 56.0,
+    estimatedDelivery: "Sep 12, 2026",
+    items: [
+      {
+        name: "Vitamin C Serum",
+        variant: "30ml",
+        qty: 2,
+        price: 28,
+        image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=80&h=80&fit=crop&auto=format",
+      },
+    ],
+  },
+  {
+    id: "ORD-2026-68904",
+    date: "Jul 29, 2026",
+    status: "Cancelled",
+    total: 175.0,
+    items: [
+      {
+        name: "Running Shoes",
+        variant: "White/Coral · Size 8",
+        qty: 1,
+        price: 175,
+        image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=80&h=80&fit=crop&auto=format",
+      },
+    ],
+  },
+];
 
-  const filtered = filter === 'All' ? ORDERS : ORDERS.filter((o) => o.status === filter)
+const statusConfig: Record<OrderStatus, { label: string; bg: string; text: string; dot: string }> = {
+  Delivered: { label: "Delivered", bg: "#e8f5e9", text: "#2e7d32", dot: "#43a047" },
+  "Out for Delivery": { label: "Out for Delivery", bg: PINK_LIGHT, text: PINK_DARK, dot: PINK },
+  Shipped: { label: "Shipped", bg: "#e3f2fd", text: "#1565c0", dot: "#1e88e5" },
+  Processing: { label: "Processing", bg: "#f3e5f5", text: "#6a1b9a", dot: "#8e24aa" },
+  Cancelled: { label: "Cancelled", bg: "#fafafa", text: "#757575", dot: "#9e9e9e" },
+};
+
+type Tab = "All" | "Active" | "Delivered" | "Cancelled";
+
+export default function OrdersList() {
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [activeTab, setActiveTab] = useState<Tab>("All");
+
+  const filtered = useMemo(() => {
+    let result = allOrders;
+
+    if (activeTab === "Active") {
+      result = result.filter((o) =>
+        ["Out for Delivery", "Shipped", "Processing"].includes(o.status)
+      );
+    } else if (activeTab === "Delivered") {
+      result = result.filter((o) => o.status === "Delivered");
+    } else if (activeTab === "Cancelled") {
+      result = result.filter((o) => o.status === "Cancelled");
+    }
+
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      result = result.filter(
+        (o) =>
+          o.id.toLowerCase().includes(q) ||
+          o.items.some((item) => item.name.toLowerCase().includes(q) || item.variant.toLowerCase().includes(q))
+      );
+    }
+
+    return result;
+  }, [search, activeTab]);
+
+  const tabs: Tab[] = ["All", "Active", "Delivered", "Cancelled"];
+  const tabCounts: Record<Tab, number> = {
+    All: allOrders.length,
+    Active: allOrders.filter((o) => ["Out for Delivery", "Shipped", "Processing"].includes(o.status)).length,
+    Delivered: allOrders.filter((o) => o.status === "Delivered").length,
+    Cancelled: allOrders.filter((o) => o.status === "Cancelled").length,
+  };
 
   return (
-    <div className="h-full flex flex-col" style={{ background: 'linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%)' }}>
-      {/* Top bar */}
-      <div
-        className="flex items-center justify-between px-8 py-5 flex-shrink-0"
-        style={{ background: '#fff', borderBottom: '1px solid #fbcfe8', boxShadow: '0 1px 8px rgba(190,24,93,0.05)' }}
-      >
-        <div>
-          <h1 className="text-2xl font-900 text-pink-900" style={{ fontFamily: 'Outfit, sans-serif' }}>My Orders</h1>
-          <p className="text-sm font-500 mt-0.5" style={{ color: '#f472b6' }}>
-            {ORDERS.length} orders · {ORDERS.filter((o) => o.status === 'Delivered').length} delivered
-          </p>
+    <div style={{ minHeight: "100vh", background: "#fdf0f8", fontFamily: "Poppins, sans-serif" }}>
+      {/* Page body */}
+      <div style={{ maxWidth: "860px", margin: "0 auto", padding: "28px 20px" }}>
+        {/* Title row */}
+        <div style={{ marginBottom: "20px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px" }}>
+          <h1 style={{ fontFamily: "Poppins, sans-serif", fontSize: "22px", fontWeight: 700, color: "#1a1a2e", margin: 0 }}>
+            My Orders
+            <span style={{ fontSize: "14px", fontWeight: 500, color: "#aaa", marginLeft: "10px" }}>
+              ({allOrders.length} orders)
+            </span>
+          </h1>
         </div>
-        {/* Filter tabs */}
-        <div className="flex gap-1 p-1 rounded-xl" style={{ background: '#fdf2f8', border: '1px solid #fbcfe8' }}>
-          {filters.map((f) => (
+
+        {/* Search bar */}
+        <div
+          style={{
+            background: "#fff",
+            borderRadius: "12px",
+            border: "1.5px solid #f3e0ed",
+            padding: "0 16px",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            marginBottom: "16px",
+            boxShadow: "0 2px 8px rgba(233,30,140,0.06)",
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" stroke={PINK} strokeWidth="2.2" fill="none" strokeLinecap="round" style={{ flexShrink: 0 }}>
+            <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search by product name or order ID…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{
+              flex: 1,
+              border: "none",
+              outline: "none",
+              fontSize: "13.5px",
+              color: "#1a1a2e",
+              fontFamily: "Poppins, sans-serif",
+              padding: "13px 0",
+              background: "transparent",
+            }}
+          />
+          {search && (
             <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className="px-3 py-1.5 rounded-lg text-xs font-600 transition-all duration-200 cursor-pointer"
-              style={
-                filter === f
-                  ? { background: 'linear-gradient(135deg, #be185d, #ec4899)', color: '#fff', fontFamily: 'Outfit, sans-serif' }
-                  : { color: '#be185d', fontFamily: 'Outfit, sans-serif' }
-              }
+              onClick={() => setSearch("")}
+              style={{ background: "none", border: "none", cursor: "pointer", color: "#aaa", padding: "2px", display: "flex" }}
             >
-              {f}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+          )}
+        </div>
+
+        {/* Filter tabs */}
+        <div
+          style={{
+            display: "flex",
+            gap: "6px",
+            marginBottom: "20px",
+            background: "#fff",
+            borderRadius: "12px",
+            padding: "6px",
+            border: "1.5px solid #f3e0ed",
+            width: "fit-content",
+          }}
+        >
+          {tabs.map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              style={{
+                padding: "7px 18px",
+                borderRadius: "8px",
+                border: "none",
+                fontFamily: "Poppins, sans-serif",
+                fontSize: "13px",
+                fontWeight: 600,
+                cursor: "pointer",
+                transition: "all 0.15s",
+                background: activeTab === tab ? `linear-gradient(135deg, ${PINK} 0%, ${PINK_DARK} 100%)` : "transparent",
+                color: activeTab === tab ? "#fff" : "#888",
+                boxShadow: activeTab === tab ? "0 3px 10px rgba(233,30,140,0.28)" : "none",
+              }}
+            >
+              {tab}
+              <span
+                style={{
+                  marginLeft: "6px",
+                  fontSize: "11px",
+                  fontWeight: 700,
+                  background: activeTab === tab ? "rgba(255,255,255,0.25)" : PINK_LIGHT,
+                  color: activeTab === tab ? "#fff" : PINK_DARK,
+                  borderRadius: "999px",
+                  padding: "1px 7px",
+                }}
+              >
+                {tabCounts[tab]}
+              </span>
             </button>
           ))}
         </div>
-      </div>
 
-      {/* Stats row */}
-      <div className="flex-shrink-0 px-8 pt-6 pb-2">
-        <div className="grid grid-cols-4 gap-4">
-          {[
-            { label: 'Total Spent', val: '₹13,144', icon: '💳' },
-            { label: 'Orders Placed', val: '6', icon: '📦' },
-            { label: 'Delivered', val: '4', icon: '✅' },
-            { label: 'Pending', val: '1', icon: '🕐' },
-          ].map(({ label, val, icon }) => (
-            <div
-              key={label}
-              className="rounded-2xl p-5 flex items-center gap-4"
-              style={{ background: '#fff', border: '1px solid #fbcfe8', boxShadow: '0 2px 12px rgba(190,24,93,0.06)' }}
-            >
-              <div
-                className="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
-                style={{ background: 'linear-gradient(135deg, #fce7f3, #fbcfe8)' }}
-              >
-                {icon}
-              </div>
-              <div>
-                <div className="text-xl font-900 text-pink-900" style={{ fontFamily: 'Outfit, sans-serif' }}>{val}</div>
-                <div className="text-xs font-500 mt-0.5" style={{ color: '#f472b6' }}>{label}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* List */}
-      <div className="flex-1 overflow-y-auto px-8 py-4">
-        <div className="flex flex-col gap-3">
-          {filtered.map((o) => {
-            const s = statusStyles[o.status]
-            return (
-              <div
-                key={o.id}
-                className="rounded-2xl p-5 flex items-center gap-5 group transition-all duration-200 hover:-translate-y-0.5 cursor-pointer"
-                style={{ background: '#fff', border: '1px solid #fbcfe8', boxShadow: '0 1px 8px rgba(190,24,93,0.05)' }}
-                onMouseEnter={(e) => ((e.currentTarget as HTMLDivElement).style.boxShadow = '0 4px 20px rgba(190,24,93,0.12)')}
-                onMouseLeave={(e) => ((e.currentTarget as HTMLDivElement).style.boxShadow = '0 1px 8px rgba(190,24,93,0.05)')}
-              >
+        {/* Orders list */}
+        {filtered.length === 0 ? (
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: "16px",
+              padding: "64px 20px",
+              textAlign: "center",
+              border: "1.5px solid #f3e0ed",
+            }}
+          >
+            <div style={{ fontSize: "60px", marginBottom: "14px" }}>📦</div>
+            <h2 style={{ fontFamily: "Poppins, sans-serif", fontSize: "18px", fontWeight: 700, color: "#1a1a2e", margin: "0 0 8px" }}>
+              No orders found
+            </h2>
+            <p style={{ fontSize: "13px", color: "#aaa", margin: 0 }}>
+              {search ? `No results for "${search}"` : "You have no orders in this category."}
+            </p>
+          </div>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {filtered.map((order) => {
+              const sc = statusConfig[order.status];
+              return (
                 <div
-                  className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
-                  style={{ background: 'linear-gradient(135deg, #fdf2f8, #fbcfe8)' }}
+                  key={order.id}
+                  onClick={() => setSelectedOrderId(order.id)}
+                  style={{
+                    background: "#fff",
+                    borderRadius: "16px",
+                    border: "1.5px solid #f3e0ed",
+                    padding: "18px 20px",
+                    cursor: "pointer",
+                    transition: "box-shadow 0.18s, border-color 0.18s",
+                    boxShadow: "0 2px 10px rgba(233,30,140,0.05)",
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLDivElement).style.boxShadow = "0 6px 24px rgba(233,30,140,0.15)";
+                    (e.currentTarget as HTMLDivElement).style.borderColor = PINK_MID;
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLDivElement).style.boxShadow = "0 2px 10px rgba(233,30,140,0.05)";
+                    (e.currentTarget as HTMLDivElement).style.borderColor = "#f3e0ed";
+                  }}
                 >
-                  {o.img}
+                  {/* Top row */}
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px" }}>
+                    <div>
+                      <p style={{ margin: "0 0 2px", fontSize: "13px", fontWeight: 700, color: "#1a1a2e" }}>{order.id}</p>
+                      <p style={{ margin: 0, fontSize: "12px", color: "#aaa" }}>{order.date}</p>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <span
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "5px",
+                          background: sc.bg,
+                          color: sc.text,
+                          borderRadius: "999px",
+                          padding: "4px 12px",
+                          fontSize: "11.5px",
+                          fontWeight: 600,
+                        }}
+                      >
+                        <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: sc.dot, flexShrink: 0 }} />
+                        {sc.label}
+                      </span>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M9 18l6-6-6-6" />
+                      </svg>
+                    </div>
+                  </div>
+
+                  {/* Items preview */}
+                  <div style={{ display: "flex", gap: "10px", alignItems: "center", marginBottom: "14px" }}>
+                    {order.items.slice(0, 3).map((item, i) => (
+                      <div key={i} style={{ position: "relative" }}>
+                        <div
+                          style={{
+                            width: "52px",
+                            height: "52px",
+                            borderRadius: "10px",
+                            overflow: "hidden",
+                            border: "1.5px solid #f3e0ed",
+                            background: PINK_LIGHT,
+                            flexShrink: 0,
+                          }}
+                        >
+                          <img src={item.image} alt={item.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                        </div>
+                      </div>
+                    ))}
+                    {order.items.length > 3 && (
+                      <div
+                        style={{
+                          width: "52px",
+                          height: "52px",
+                          borderRadius: "10px",
+                          background: PINK_LIGHT,
+                          border: `1.5px dashed ${PINK_MID}`,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "12px",
+                          fontWeight: 700,
+                          color: PINK_DARK,
+                          flexShrink: 0,
+                        }}
+                      >
+                        +{order.items.length - 3}
+                      </div>
+                    )}
+                    <div style={{ flex: 1, minWidth: 0, paddingLeft: "4px" }}>
+                      <p style={{ margin: "0 0 2px", fontSize: "13px", fontWeight: 600, color: "#1a1a2e", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                        {order.items[0].name}
+                        {order.items.length > 1 && (
+                          <span style={{ fontWeight: 400, color: "#aaa" }}> +{order.items.length - 1} more</span>
+                        )}
+                      </p>
+                      <p style={{ margin: 0, fontSize: "12px", color: "#aaa" }}>{order.items[0].variant}</p>
+                    </div>
+                  </div>
+
+                  {/* Bottom row */}
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      paddingTop: "12px",
+                      borderTop: "1px solid #f3e0ed",
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                      <span style={{ fontSize: "11px", color: "#aaa", fontWeight: 500 }}>
+                        {order.items.reduce((s, i) => s + i.qty, 0)} item{order.items.reduce((s, i) => s + i.qty, 0) > 1 ? "s" : ""}
+                      </span>
+                      {order.estimatedDelivery && order.status !== "Delivered" && order.status !== "Cancelled" && (
+                        <>
+                          <span style={{ color: "#ddd" }}>·</span>
+                          <span style={{ fontSize: "11px", color: PINK, fontWeight: 600 }}>
+                            Est. {order.estimatedDelivery}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+                      <span style={{ fontSize: "15px", fontWeight: 800, color: "#1a1a2e" }}>
+                        ${order.total.toFixed(2)}
+                      </span>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setSelectedOrderId(order.id); }}
+                        style={{
+                          background: `linear-gradient(135deg, ${PINK} 0%, ${PINK_DARK} 100%)`,
+                          color: "#fff",
+                          border: "none",
+                          borderRadius: "8px",
+                          padding: "7px 18px",
+                          fontSize: "12px",
+                          fontFamily: "Poppins, sans-serif",
+                          fontWeight: 700,
+                          cursor: "pointer",
+                          boxShadow: "0 3px 10px rgba(233,30,140,0.28)",
+                          transition: "opacity 0.15s",
+                          letterSpacing: "0.01em",
+                        }}
+                        onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.88"; }}
+                        onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
+                      >
+                        View Details
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-700 text-pink-900 text-sm truncate" style={{ fontFamily: 'Outfit, sans-serif' }}>{o.item}</p>
-                  <p className="text-xs mt-0.5 font-500" style={{ color: '#f9a8d4' }}>{o.id} · {o.category} · Qty {o.qty}</p>
-                </div>
-                <div className="text-right flex-shrink-0 mr-2">
-                  <p className="font-800 text-pink-900 text-sm" style={{ fontFamily: 'Outfit, sans-serif' }}>₹{o.price.toLocaleString('en-IN')}</p>
-                  <p className="text-xs mt-0.5 font-400" style={{ color: '#f9a8d4' }}>{o.date}</p>
-                </div>
-                <span
-                  className="flex items-center gap-1.5 text-xs font-700 px-3 py-1.5 rounded-full flex-shrink-0"
-                  style={{ background: s.bg, color: s.color, fontFamily: 'Outfit, sans-serif' }}
-                >
-                  <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: s.dot }} />
-                  {o.status}
-                </span>
-                <button
-                  className="opacity-0 group-hover:opacity-100 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-600 transition-all duration-200 flex-shrink-0"
-                  style={{ background: '#fdf2f8', color: '#be185d', border: '1px solid #fbcfe8' }}
-                >
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                  Track
-                </button>
-              </div>
-            )
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
-  )
+  );
 }
