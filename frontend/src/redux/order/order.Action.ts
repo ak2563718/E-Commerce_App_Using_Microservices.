@@ -107,7 +107,7 @@ export const getOrderbyId = createAsyncThunk<any, string, {rejectValue:string}>(
     'get/orderbyId',
     async(id, { rejectWithValue })=>{
         try {
-            const { data } = await api.get(`http://localhost:6004/api/order/${id}`,{
+            const { data } = await axios.get(`http://localhost:6004/api/order/${id}`,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })
@@ -117,6 +117,25 @@ export const getOrderbyId = createAsyncThunk<any, string, {rejectValue:string}>(
                 return rejectWithValue(error.response?.data.message)
             }
             return rejectWithValue('something went wrong')
+        }
+    }
+)
+
+// 3. get user order
+export const getUserOrder = createAsyncThunk<any, void, {rejectValue:string}>(
+    'get/userorder',
+    async(_, { rejectWithValue })=>{
+        try {
+            const { data } = await api.get(`http://localhost:6004/api/user/order`,{
+                headers:{'Content-Type':'application/json'},
+                withCredentials:true,
+            })
+            return data;
+        } catch (error) {
+            if(axios.isAxiosError(error)){
+                return rejectWithValue(error.response?.data.message)
+            }
+            return rejectWithValue("something went wrong")
         }
     }
 )

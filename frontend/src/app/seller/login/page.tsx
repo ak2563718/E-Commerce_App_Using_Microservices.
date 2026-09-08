@@ -1,5 +1,4 @@
 import SellerLogin from '@/component/seller/SellerLogin'
-import React from 'react'
 
 function page() {
   return (

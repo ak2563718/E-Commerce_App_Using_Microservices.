@@ -196,7 +196,7 @@ export const getOrderByNumber = asyncHandler(async (req, res) => {
 // ============================================================
 
 export const getUserOrders = asyncHandler(async (req, res) => {
-  const { userId } = req.params;
+  const  userId  = req.user.id;
 
   const orders = await prisma.order.findMany({
     where: {

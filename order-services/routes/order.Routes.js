@@ -26,7 +26,7 @@ router.post("/order", authMiddleware,createOrder);
 
 router.get("/order/getorder", authMiddleware ,getAllOrders);
 
-router.get("/user/:userId",authMiddleware, getUserOrders);
+router.get("/user/order",authMiddleware, getUserOrders);
 
 router.get("/number/:orderNumber", getOrderByNumber);
 
