@@ -809,7 +809,7 @@ const formattedDate = date.toLocaleDateString('en-IN', {
                     )}
 
                     {/* Net Banking */}
-                    {paymentMethod === 'NET_BANKING' && (
+                    {paymentMethod === 'NET_BANKING' && ( 
                       <div>
                         <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: '13px', fontWeight: 700, color: '#1a1a2e', margin: '0 0 14px' }}>Select Your Bank</p>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '14px' }}>
