@@ -161,6 +161,8 @@ const statusConfig: Record<OrderStatus, { label: string; bg: string; text: strin
 
 type Tab = "All" | "Active" | "DELIVERED" | "CANCELLED";
 
+
+
 export default function OrdersList() {
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const [allOrders, setallOrders] = useState<Order[]>([])
@@ -203,13 +205,21 @@ export default function OrdersList() {
   }, [allOrders,search, activeTab]);
   console.log(filtered)
 
-  // const tabs: Tab[] = ["All", "Active", "DELIVERED", "CANCELLED"];
-  // const tabCounts: Record<Tab, number> = {
-  //   All: allOrders.length,
-  //   Active: allOrders.filter((o) => ["OUT_FOR_DELIVERY", "SHIPPED", "PROCESSING"].includes(o.status)).length,
-  //   DELIVERED: allOrders.filter((o) => o.status === "DELIVERED").length,
-  //   CANCELLED: allOrders.filter((o) => o.status === "CANCELLED").length,
-  // };
+  function formatDate(date: string | Date) {
+  return new Date(date).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+function formatPrice(price: number) {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+  }).format(price);
+}
+
 
   return (
     <div style={{ minHeight: "100vh", background: "#fdf0f8", fontFamily: "Poppins, sans-serif" }}>
@@ -270,54 +280,7 @@ export default function OrdersList() {
           )}
         </div>
 
-        {/* Filter tabs */}
-        {/* <div
-          style={{
-            display: "flex",
-            gap: "6px",
-            marginBottom: "20px",
-            background: "#fff",
-            borderRadius: "12px",
-            padding: "6px",
-            border: "1.5px solid #f3e0ed",
-            width: "fit-content",
-          }}
-        >
-          {tabs.map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              style={{
-                padding: "7px 18px",
-                borderRadius: "8px",
-                border: "none",
-                fontFamily: "Poppins, sans-serif",
-                fontSize: "13px",
-                fontWeight: 600,
-                cursor: "pointer",
-                transition: "all 0.15s",
-                background: activeTab === tab ? `linear-gradient(135deg, ${PINK} 0%, ${PINK_DARK} 100%)` : "transparent",
-                color: activeTab === tab ? "#fff" : "#888",
-                boxShadow: activeTab === tab ? "0 3px 10px rgba(233,30,140,0.28)" : "none",
-              }}
-            >
-              {tab}
-              <span
-                style={{
-                  marginLeft: "6px",
-                  fontSize: "11px",
-                  fontWeight: 700,
-                  background: activeTab === tab ? "rgba(255,255,255,0.25)" : PINK_LIGHT,
-                  color: activeTab === tab ? "#fff" : PINK_DARK,
-                  borderRadius: "999px",
-                  padding: "1px 7px",
-                }}
-              >
-                {tabCounts[tab]}
-              </span>
-            </button>
-          ))}
-        </div> */}
+       
 
         {/* Orders list */}
         {filtered.length === 0 ? (
@@ -368,7 +331,7 @@ export default function OrdersList() {
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px" }}>
                     <div>
                       <p style={{ margin: "0 0 2px", fontSize: "13px", fontWeight: 700, color: "#1a1a2e" }}>{order.id}</p>
-                      <p style={{ margin: 0, fontSize: "12px", color: "#aaa" }}>{order.date}</p>
+                      <p style={{ margin: 0, fontSize: "12px", color: "#aaa" }}>{formatDate(order.date)}</p>
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                       <span
@@ -461,14 +424,14 @@ export default function OrdersList() {
                         <>
                           <span style={{ color: "#ddd" }}>·</span>
                           <span style={{ fontSize: "11px", color: PINK, fontWeight: 600 }}>
-                            Est. {order.estimatedDelivery}
+                            Est. {formatDate(order.estimatedDelivery)}
                           </span>
                         </>
                       )}
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
                       <span style={{ fontSize: "15px", fontWeight: 800, color: "#1a1a2e" }}>
-                        ${order?.total?.toFixed(2)}
+                        {formatPrice(order?.total)}
                       </span>
                       <button
                         onClick={(e) => { e.stopPropagation(); setSelectedOrderId(order.id); }}
