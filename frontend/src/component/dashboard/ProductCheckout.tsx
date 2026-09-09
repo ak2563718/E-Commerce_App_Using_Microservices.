@@ -35,57 +35,6 @@ interface Address {
 type PaymentMethod = 'UPI' | 'CARD' | 'NET_BANKING' | 'WALLET' | 'COD' | null
 type Step = 'address' | 'payment' | 'review'
 
-/* ─── Static data ────────────────────────────────────────── */
-// const SAVED_ADDRESSES: Address[] = [
-//   {
-//     id: 1,
-//     name: 'Priya Sharma',
-//     phone: '9876543210',
-//     flat: '42, Sunshine Apartments, MG Road',
-//     area: 'Koramangala',
-//     city: 'Bengaluru',
-//     state: 'Karnataka',
-//     pincode: '560034',
-//     type: 'HOME',
-//     default: true,
-//   },
-//   {
-//     id: 2,
-//     name: 'Priya Sharma',
-//     phone: '9876543210',
-//     flat: 'WeWork, 3rd Floor, Embassy Golf Links',
-//     area: 'Intermediate Ring Road',
-//     city: 'Bengaluru',
-//     state: 'Karnataka',
-//     pincode: '560071',
-//     type: 'WORK',
-//     default: false,
-//   },
-// ]
-
-// const ORDER_ITEMS = [
-//   {
-//     id: 1,
-//     name: 'Apple iPhone 15 Pro Max (Natural Titanium, 512GB)',
-//     image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=120&h=120&fit=crop&auto=format',
-//     price: 159900,
-//     originalPrice: 189900,
-//     discount: 15,
-//     qty: 1,
-//     deliveryDate: 'Sat, 16 Aug 2026',
-//   },
-//   {
-//     id: 2,
-//     name: 'Sony WH-1000XM5 Wireless Headphones',
-//     image: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=120&h=120&fit=crop&auto=format',
-//     price: 26990,
-//     originalPrice: 34990,
-//     discount: 22,
-//     qty: 1,
-//     deliveryDate: 'Sun, 17 Aug 2026',
-//   },
-// ]
-
 const BANKS = ['HDFC Bank', 'ICICI Bank', 'State Bank of India', 'Axis Bank', 'Kotak Mahindra Bank', 'Punjab National Bank', 'Yes Bank', 'IndusInd Bank']
 const WALLETS = [
   { name: 'Paytm', icon: '💙', color: '#00BAF2' },
@@ -406,13 +355,14 @@ const formattedDate = date.toLocaleDateString('en-IN', {
     (paymentMethod === 'CARD' && cardNumber.length === 19 && cardName && cardExpiry && cardCvv.length === 3) ||
     (paymentMethod === 'NET_BANKING' && selectedBank !== '') ||
     (paymentMethod === 'WALLET' && selectedWallet !== '')
-  
   const handleSaveAddress = async(addr: Address) => {
     const res = await dispatch(createShippingAddress(addr)).unwrap();
-    setAddresses(prev => [...prev, addr])
-    setSelectedAddress(addr.id)
+    console.log(res.data)
+    setAddresses(prev => [...prev, res.data])
+    setSelectedAddress(res.data.id)
     setShowAddressForm(false)
   }
+
   const handlePlaceOrder = async() =>{ 
     const form ={
       addressId:selectedAddress,

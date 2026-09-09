@@ -15,6 +15,7 @@ datasource db {
 model Order {
   id                    String      @id @default(cuid())
   userId                String
+  customerName          String
   orderNumber           String      @unique
   status                OrderStatus @default(PENDING)
   paymentStatus         PaymentStatus @default(PENDING)

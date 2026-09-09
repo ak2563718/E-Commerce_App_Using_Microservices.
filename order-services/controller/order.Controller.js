@@ -8,8 +8,7 @@ import axios from 'axios'
 
 export const createOrder = asyncHandler(async (req, res, next) => {
   const userId = req.user.id;
-  console.log(userId)
-  console.log(req.body)
+  console.log('address id is ',req.body.addressId)
   const {
     addressId,
     paymentMethod,
@@ -59,12 +58,18 @@ export const createOrder = asyncHandler(async (req, res, next) => {
   // ----------------------------------------------------------
   // Create order + address + items + status history
   // ----------------------------------------------------------
-
+  const user = await axios.get('http://localhost:6005/api/user/users/me',{
+    headers:{
+      Authorization:req.headers.authorization
+    }
+  })
+ const users = user.data.data;
   const order = await prisma.$transaction(async (tx) => {
     // Create order
     const newOrder = await tx.order.create({
       data: {
         userId,
+        customerName:users.firstName+" "+users.lastName,
         orderNumber,
         paymentMethod,
 
