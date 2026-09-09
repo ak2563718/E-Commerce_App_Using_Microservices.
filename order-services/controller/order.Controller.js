@@ -1,7 +1,7 @@
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { AppError } from '../utils/AppError.js';
 import { prisma } from '../src/db.js'
-
+import axios from 'axios'
 // ============================================================
 // CREATE ORDER
 // ============================================================
@@ -296,29 +296,50 @@ export const getAllOrders = asyncHandler(async (req, res) => {
 })
 });
 
-// Get All seller order history
-export const getSellerOrder = asyncHandler(async(req, res)=>{
-  const  userId  = req.user.id;
-  const product = await axios.get(`http://localhost:6002/api/product/products/seller`)
-  const order =  product.map(async(p)=>{
-    await prisma.orderItem.findMany({
-      where:{
-        productId:p.id,
+export const getSellerOrder = asyncHandler(async (req, res, next) => {
+
+  const productResponse = await axios.get(
+    "http://localhost:6002/api/product/products/seller",
+    {
+      headers: {
+        Authorization: req.headers.authorization,
       },
-      include:{
-        order:true,
-      }
-    })
-  })
-  if(!order){
-    return next(new AppError("No order found with ProductId", 404))
+    }
+  );
+
+  const products = productResponse.data.data;
+
+  if (!products || products.length === 0) {
+    return next(new AppError("No products found for seller", 404));
   }
+
+  // Extract product IDs
+  const productIds = products.map((product) => product.id);
+
+  // One database query
+  const orders = await prisma.orderItem.findMany({
+    where: {
+      productId: {
+        in: productIds,
+      },
+    },
+    include: {
+      order: true,
+    },
+  });
+
+  if (orders.length === 0) {
+    return next(
+      new AppError("No orders found for seller's products", 404)
+    );
+  }
+
   res.status(200).json({
-    message:"Order found ",
-    data:order,
-    success:true,
-  })
-})
+    message: "Orders found",
+    data: orders,
+    success: true,
+  });
+});
 // ============================================================
 // UPDATE ORDER STATUS
 // ============================================================

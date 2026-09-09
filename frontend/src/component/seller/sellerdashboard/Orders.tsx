@@ -30,7 +30,13 @@ export default function Orders() {
 
   useEffect(()=>{
     const orders=async()=>{
+      try{
       const res = await dispatch(getSellerOrder()).unwrap();
+      console.log(res.data)
+      }
+      catch(error){
+        console.log(error)
+      }
     }
     orders()
   },[])
