@@ -1,7 +1,9 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Search, Filter, Download } from 'lucide-react'
 import { recentOrders } from './data'
+import { useAppDispatch } from '@/redux/hooks'
+import { getSellerOrder } from '@/redux/order/order.Action'
 
 const ALL_STATUSES = ['all', 'delivered', 'shipped', 'processing', 'cancelled']
 
@@ -24,6 +26,14 @@ const ALL_ORDERS = [
 export default function Orders() {
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState('all')
+  const dispatch = useAppDispatch();
+
+  useEffect(()=>{
+    const orders=async()=>{
+      const res = await dispatch(getSellerOrder()).unwrap();
+    }
+    orders()
+  },[])
 
   const filtered = ALL_ORDERS.filter(o => {
     const matchSearch = o.id.toLowerCase().includes(search.toLowerCase()) ||

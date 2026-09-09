@@ -296,7 +296,29 @@ export const getAllOrders = asyncHandler(async (req, res) => {
 })
 });
 
-
+// Get All seller order history
+export const getSellerOrder = asyncHandler(async(req, res)=>{
+  const  userId  = req.user.id;
+  const product = await axios.get(`http://localhost:6002/api/product/products/seller`)
+  const order =  product.map(async(p)=>{
+    await prisma.orderItem.findMany({
+      where:{
+        productId:p.id,
+      },
+      include:{
+        order:true,
+      }
+    })
+  })
+  if(!order){
+    return next(new AppError("No order found with ProductId", 404))
+  }
+  res.status(200).json({
+    message:"Order found ",
+    data:order,
+    success:true,
+  })
+})
 // ============================================================
 // UPDATE ORDER STATUS
 // ============================================================

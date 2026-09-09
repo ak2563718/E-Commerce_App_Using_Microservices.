@@ -12,6 +12,7 @@ import {
   updateShippingAddress,
   cancelOrder,
   getOrderStatusHistory,
+  getSellerOrder,
 } from "../controller/order.Controller.js";
 import { authMiddleware } from "../middleware/auth.Middleware.js";
 
@@ -29,6 +30,7 @@ router.get("/order/getorder", authMiddleware ,getAllOrders);
 router.get("/user/order",authMiddleware, getUserOrders);
 
 router.get("/number/:orderNumber", getOrderByNumber);
+router.get('/order/seller', getSellerOrder)
 
 router.get("/order/:id", getOrderById);
 

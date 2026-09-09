@@ -139,3 +139,21 @@ export const getUserOrder = createAsyncThunk<any, void, {rejectValue:string}>(
         }
     }
 )
+
+export const getSellerOrder = createAsyncThunk<any, void,{rejectValue:string}>(
+    'get/sellerOrder',
+    async(_, {rejectWithValue})=>{
+        try {
+            const { data } = await api.get(`http://localhost:6004/api/product/order/seller`,{
+                headers:{'Content-Type':"application/json"},
+                withCredentials:true,
+            })
+            return data;
+        } catch (error) {
+            if(axios.isAxiosError(error)){
+                return rejectWithValue(error.response?.data.message)
+            }
+            return rejectWithValue("something went wrong")
+        }
+    }
+)

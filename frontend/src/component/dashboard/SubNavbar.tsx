@@ -4,6 +4,7 @@ import LoadingSkeleton from './LoadingSkeleton'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { getAllCategories } from '@/redux/category/category.Action'
 
+
 const categories = [
   {
     id: 'foryou',
@@ -28,6 +29,10 @@ const categories = [
         <line x1="12" y1="17" x2="12" y2="21" />
       </svg>
     ),
+    section:[{
+      title:"Electronics",
+      links:['Trimmer',"Camera","SmartWatches","Laptop","Headphones"]
+    }],
     gradient: 'linear-gradient(135deg, #1565c0 0%, #0d47a1 100%)',
   },
   {
@@ -120,14 +125,13 @@ const categories = [
 interface SubNavbarProps {
   onCategoryChange?: (id: string) => void
 }
-
 export default function SubNavbar({ onCategoryChange }: SubNavbarProps) {
-  const [active, setActive] = useState('foryou')
+    const [active, setActive] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null)
   const [ loading, setLoading] = useState(true)
   const dispatch = useAppDispatch();
   const { category } = useAppSelector((state)=>state.category)
-
+  
   const handleSelect = (id: string) => {
     setActive(id)
     onCategoryChange?.(id)
