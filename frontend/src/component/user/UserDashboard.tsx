@@ -13,9 +13,9 @@ export default function App() {
   const [active, setActive] = useState<NavItem>('profile')
 
   return (
-    <div className="flex min-h-screen" style={{ background: 'linear-gradient(135deg, #fdf2f8 0%, #fce7f3 40%, #fbcfe8 100%)' }}>
-      <Sidebar active={active} setActive={setActive} />
-      <main className="flex-1 p-8 overflow-auto">
+    <div className=" flex min-h-screen" style={{ background: 'linear-gradient(135deg, #fdf2f8 0%, #fce7f3 40%, #fbcfe8 100%)' }}>
+      <Sidebar  active={active} setActive={setActive} />
+      <main className="flex-1 p-8 overflow-auto ml-[200px]">
         {active === 'profile' && <Profile />}
         {active === 'orders' && <Orders />}
         {active === 'wishlist' && <Wishlist />}

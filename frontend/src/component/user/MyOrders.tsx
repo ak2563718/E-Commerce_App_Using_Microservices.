@@ -1,11 +1,13 @@
 'use client'
-import { useState, useMemo } from "react";
+import { useAppDispatch } from "@/redux/hooks";
+import { getUserOrder } from "@/redux/order/order.Action";
+import { useState, useMemo, useEffect } from "react";
 const PINK = "#e91e8c";
 const PINK_DARK = "#c2185b";
 const PINK_LIGHT = "#fce4ec";
 const PINK_MID = "#f8bbd0";
 
-type OrderStatus = "Delivered" | "Out for Delivery" | "Processing" | "Shipped" | "Cancelled";
+type OrderStatus = "DELIVERED" | "OUT_FOR_DELIVERY" | "PROCESSING" | "SHIPPED" | "CANCELLED"|"PENDING";
 
 interface OrderItem {
   name: string;
@@ -28,7 +30,7 @@ const allOrders: Order[] = [
   {
     id: "ORD-2026-84710",
     date: "Sep 3, 2026",
-    status: "Out for Delivery",
+    status: "OUT_FOR_DELIVERY",
     total: 391.5,
     estimatedDelivery: "Sep 8, 2026",
     items: [
@@ -58,7 +60,7 @@ const allOrders: Order[] = [
   {
     id: "ORD-2026-79341",
     date: "Aug 28, 2026",
-    status: "Delivered",
+    status: "DELIVERED",
     total: 128.0,
     items: [
       {
@@ -73,7 +75,7 @@ const allOrders: Order[] = [
   {
     id: "ORD-2026-77820",
     date: "Aug 21, 2026",
-    status: "Delivered",
+    status: "PENDING",
     total: 214.0,
     items: [
       {
@@ -95,7 +97,7 @@ const allOrders: Order[] = [
   {
     id: "ORD-2026-75108",
     date: "Aug 15, 2026",
-    status: "Shipped",
+    status: "SHIPPED",
     total: 89.99,
     estimatedDelivery: "Sep 10, 2026",
     items: [
@@ -118,7 +120,7 @@ const allOrders: Order[] = [
   {
     id: "ORD-2026-71233",
     date: "Aug 8, 2026",
-    status: "Processing",
+    status: "PROCESSING",
     total: 56.0,
     estimatedDelivery: "Sep 12, 2026",
     items: [
@@ -134,7 +136,7 @@ const allOrders: Order[] = [
   {
     id: "ORD-2026-68904",
     date: "Jul 29, 2026",
-    status: "Cancelled",
+    status: "CANCELLED",
     total: 175.0,
     items: [
       {
@@ -149,31 +151,43 @@ const allOrders: Order[] = [
 ];
 
 const statusConfig: Record<OrderStatus, { label: string; bg: string; text: string; dot: string }> = {
-  Delivered: { label: "Delivered", bg: "#e8f5e9", text: "#2e7d32", dot: "#43a047" },
-  "Out for Delivery": { label: "Out for Delivery", bg: PINK_LIGHT, text: PINK_DARK, dot: PINK },
-  Shipped: { label: "Shipped", bg: "#e3f2fd", text: "#1565c0", dot: "#1e88e5" },
-  Processing: { label: "Processing", bg: "#f3e5f5", text: "#6a1b9a", dot: "#8e24aa" },
-  Cancelled: { label: "Cancelled", bg: "#fafafa", text: "#757575", dot: "#9e9e9e" },
+  DELIVERED: { label: "DELIVERED", bg: "#e8f5e9", text: "#2e7d32", dot: "#43a047" },
+  "OUT_FOR_DELIVERY": { label: "OUT_FOR_DELIVERY", bg: PINK_LIGHT, text: PINK_DARK, dot: PINK },
+  SHIPPED: { label: "SHIPPED", bg: "#e3f2fd", text: "#1565c0", dot: "#1e88e5" },
+  PROCESSING: { label: "PROCESSING", bg: "#f3e5f5", text: "#6a1b9a", dot: "#8e24aa" },
+  CANCELLED: { label: "CANCELLED", bg: "#fafafa", text: "#757575", dot: "#9e9e9e" },
+  PENDING:{label:"PENDING",bg:"#ccccdd", text:"#524731",dot:"rgba(67, 77, 67, 0.6)"}
 };
 
-type Tab = "All" | "Active" | "Delivered" | "Cancelled";
+type Tab = "All" | "Active" | "DELIVERED" | "CANCELLED";
 
 export default function OrdersList() {
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [allOrders, setallOrders] = useState<Order[]>([])
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState<Tab>("All");
+  const dispatch = useAppDispatch();
+  
+  useEffect(()=>{
+    const getOrder =async()=>{
+      const res = await dispatch(getUserOrder()).unwrap();
+      setallOrders(res.data)
+    }
+    getOrder()
+  },[])
+
 
   const filtered = useMemo(() => {
     let result = allOrders;
 
     if (activeTab === "Active") {
       result = result.filter((o) =>
-        ["Out for Delivery", "Shipped", "Processing"].includes(o.status)
+        ["OUT_FOR_DELIVERY", "SHIPPED", "PROCESSING"].includes(o.status)
       );
-    } else if (activeTab === "Delivered") {
-      result = result.filter((o) => o.status === "Delivered");
-    } else if (activeTab === "Cancelled") {
-      result = result.filter((o) => o.status === "Cancelled");
+    } else if (activeTab === "DELIVERED") {
+      result = result.filter((o) => o.status === "DELIVERED");
+    } else if (activeTab === "CANCELLED") {
+      result = result.filter((o) => o.status === "CANCELLED");
     }
 
     if (search.trim()) {
@@ -186,15 +200,16 @@ export default function OrdersList() {
     }
 
     return result;
-  }, [search, activeTab]);
+  }, [allOrders,search, activeTab]);
+  console.log(filtered)
 
-  const tabs: Tab[] = ["All", "Active", "Delivered", "Cancelled"];
-  const tabCounts: Record<Tab, number> = {
-    All: allOrders.length,
-    Active: allOrders.filter((o) => ["Out for Delivery", "Shipped", "Processing"].includes(o.status)).length,
-    Delivered: allOrders.filter((o) => o.status === "Delivered").length,
-    Cancelled: allOrders.filter((o) => o.status === "Cancelled").length,
-  };
+  // const tabs: Tab[] = ["All", "Active", "DELIVERED", "CANCELLED"];
+  // const tabCounts: Record<Tab, number> = {
+  //   All: allOrders.length,
+  //   Active: allOrders.filter((o) => ["OUT_FOR_DELIVERY", "SHIPPED", "PROCESSING"].includes(o.status)).length,
+  //   DELIVERED: allOrders.filter((o) => o.status === "DELIVERED").length,
+  //   CANCELLED: allOrders.filter((o) => o.status === "CANCELLED").length,
+  // };
 
   return (
     <div style={{ minHeight: "100vh", background: "#fdf0f8", fontFamily: "Poppins, sans-serif" }}>
@@ -256,7 +271,7 @@ export default function OrdersList() {
         </div>
 
         {/* Filter tabs */}
-        <div
+        {/* <div
           style={{
             display: "flex",
             gap: "6px",
@@ -302,7 +317,7 @@ export default function OrdersList() {
               </span>
             </button>
           ))}
-        </div>
+        </div> */}
 
         {/* Orders list */}
         {filtered.length === 0 ? (
@@ -325,7 +340,7 @@ export default function OrdersList() {
           </div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            {filtered.map((order) => {
+            {filtered?.map((order) => {
               const sc = statusConfig[order.status];
               return (
                 <div
@@ -442,7 +457,7 @@ export default function OrdersList() {
                       <span style={{ fontSize: "11px", color: "#aaa", fontWeight: 500 }}>
                         {order.items.reduce((s, i) => s + i.qty, 0)} item{order.items.reduce((s, i) => s + i.qty, 0) > 1 ? "s" : ""}
                       </span>
-                      {order.estimatedDelivery && order.status !== "Delivered" && order.status !== "Cancelled" && (
+                      {order.estimatedDelivery && order.status !== "DELIVERED" && order.status !== "CANCELLED" && (
                         <>
                           <span style={{ color: "#ddd" }}>·</span>
                           <span style={{ fontSize: "11px", color: PINK, fontWeight: 600 }}>
@@ -453,7 +468,7 @@ export default function OrdersList() {
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
                       <span style={{ fontSize: "15px", fontWeight: 800, color: "#1a1a2e" }}>
-                        ${order.total.toFixed(2)}
+                        ${order?.total?.toFixed(2)}
                       </span>
                       <button
                         onClick={(e) => { e.stopPropagation(); setSelectedOrderId(order.id); }}

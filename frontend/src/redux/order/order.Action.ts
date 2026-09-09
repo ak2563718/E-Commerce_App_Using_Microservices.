@@ -126,7 +126,7 @@ export const getUserOrder = createAsyncThunk<any, void, {rejectValue:string}>(
     'get/userorder',
     async(_, { rejectWithValue })=>{
         try {
-            const { data } = await api.get(`http://localhost:6004/api/user/order`,{
+            const { data } = await api.get(`http://localhost:6004/api/product/user/order`,{
                 headers:{'Content-Type':'application/json'},
                 withCredentials:true,
             })

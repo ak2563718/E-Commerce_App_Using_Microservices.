@@ -32,10 +32,10 @@ export default function Sidebar({ active, setActive }: Props) {
   const { user } = useAppSelector((state)=>state.user)
   const [open, setOpen] = useState(true)
   const unread = NOTIFS.length
-  console.log(typeof user.firstName)
   return (
+    <div className='fixed z-10 h-[650px] w-[280px]'>
     <aside
-      className="flex flex-col shrink-0 h-full relative transition-all duration-300"
+      className=" flex flex-col shrink-0 h-full relative transition-all duration-300 "
       style={{
         width: open ? 228 : 68,
         background: 'linear-gradient(180deg, #4a0020 0%, #7f1d4a 40%, #9d174d 75%, #be185d 100%)',
@@ -249,5 +249,6 @@ export default function Sidebar({ active, setActive }: Props) {
         </button>
       </div>
     </aside>
+    </div>
   )
 }

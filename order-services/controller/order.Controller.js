@@ -212,9 +212,23 @@ export const getUserOrders = asyncHandler(async (req, res) => {
       createdAt: "desc",
     },
   });
+const data = orders.map((order) => ({
+  id: order.orderNumber,
+  date: order.createdAt,
+  estimatedDelivery: order.deliveryDate,
+  status: order.status,
+  total: Number(order.totalAmount),
 
+  items: order.items.map((item) => ({
+    name: item.productName,
+    qty: item.quantity,
+    variant: item.variantId,
+    price: Number(item.totalPrice),
+    image: item.image,
+  })),
+}));
   return res.status(200).json({
-      data:orders,
+      data,
       message:"User orders fetched successfully",
       success:true,
 });
