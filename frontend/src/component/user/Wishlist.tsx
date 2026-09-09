@@ -1,118 +1,803 @@
 'use client'
-import { useState } from 'react'
+import { useAppDispatch } from '@/redux/hooks'
+import { deleteWishlist, getFullWishlist, getWishlist } from '@/redux/product/product.Type.Action'
+import { useEffect, useState } from 'react'
+import WishlistSkeleton from '../dashboard/WishListSkeleton'
+import { useRouter } from 'next/navigation'
 
-const ALL = [
-  { id: 1, name: 'Embroidered Anarkali', cat: 'Fashion', price: 3299, orig: 4500, img: '👗', rating: 4.8, reviews: 124, inStock: true },
-  { id: 2, name: 'Boho Maxi Skirt', cat: 'Fashion', price: 1499, orig: 1999, img: '🩱', rating: 4.5, reviews: 89, inStock: true },
-  { id: 3, name: 'Minimalist Tote Bag', cat: 'Bags', price: 999, orig: 1499, img: '👜', rating: 4.7, reviews: 203, inStock: true },
-  { id: 4, name: 'Pastel Nail Kit', cat: 'Beauty', price: 449, orig: 599, img: '💅', rating: 4.3, reviews: 56, inStock: false },
-  { id: 5, name: 'Rose Quartz Face Roller', cat: 'Beauty', price: 799, orig: 1199, img: '🌸', rating: 4.9, reviews: 311, inStock: true },
-  { id: 6, name: 'Woven Jute Clutch', cat: 'Bags', price: 649, orig: 849, img: '👛', rating: 4.4, reviews: 44, inStock: true },
-]
+const PINK = '#e91e8c'
+const PINK_DARK = '#c2185b'
+const PINK_LIGHT = '#fce4f3'
+const PINK_MID = '#f48ccc'
 
-export default function Wishlist() {
-  const [items, setItems] = useState(ALL)
-  const [search, setSearch] = useState('')
+function fmt(n: number) {
+  return '₹' + n.toLocaleString('en-IN')
+}
 
-  const filtered = items.filter((i) => i.name.toLowerCase().includes(search.toLowerCase()))
+interface WishlistItem {
+  id: number
+  name: string
+  wishlistId: string | number
+  slug: string
+  brand: string
+  category: string
+  image: string
+  price: number
+  originalPrice: number
+  discount: number
+  rating: number
+  reviewCount: number
+  inStock: boolean
+  assured: boolean
+  freeDelivery: boolean
+  addedOn: string
+  badge?: string
+}
+
+function StarRating({ rating }: { rating: number }) {
+  return (
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', gap: '2px',
+      background: rating >= 4 ? '#27ae60' : rating >= 3 ? '#f39c12' : '#e74c3c',
+      color: '#fff', fontSize: '10px', fontWeight: 700,
+      padding: '2px 6px', borderRadius: '4px',
+    }}>
+      {rating.toFixed(1)} ★
+    </span>
+  )
+}
+
+function AssuredBadge() {
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', fontSize: '10px', fontWeight: 700, color: PINK }}>
+      <svg width="11" height="11" viewBox="0 0 24 24" fill={PINK}>
+        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
+        <path d="M10 17l-4-4 1.4-1.4 2.6 2.6 6.6-6.6L18 9l-8 8z" fill="#fff" />
+      </svg>
+      Assured
+    </span>
+  )
+}
+
+function WishlistCard({
+  item,
+  onRemove,
+  onMoveToCart,
+  onShare,
+}: {
+  item: WishlistItem
+  onRemove: (id: string|number) => void
+  onMoveToCart: (id: number) => void
+  onShare: (id: number) => void
+}) {
+  const [imgErr, setImgErr] = useState(false)
+  const [hovered, setHovered] = useState(false)
+  const [addedToCart, setAddedToCart] = useState(false)
+  const router = useRouter();
+  const handleCart = () => {
+    setAddedToCart(true)
+    onMoveToCart(item.id)
+    setTimeout(() => setAddedToCart(false), 2000)
+  }
 
   return (
-    <div className="h-full flex flex-col" style={{ background: 'linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%)' }}>
-      {/* Top bar */}
-      <div
-        className="flex items-center justify-between px-8 py-5 flex-shrink-0"
-        style={{ background: '#fff', borderBottom: '1px solid #fbcfe8', boxShadow: '0 1px 8px rgba(190,24,93,0.05)' }}
-      >
-        <div>
-          <h1 className="text-2xl font-900 text-pink-900" style={{ fontFamily: 'Outfit, sans-serif' }}>Wishlist</h1>
-          <p className="text-sm font-500 mt-0.5" style={{ color: '#f472b6' }}>{items.length} saved items</p>
-        </div>
-        {/* Search */}
-        <div
-          className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl"
-          style={{ background: '#fdf2f8', border: '1.5px solid #fbcfe8', width: 240 }}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f9a8d4" strokeWidth="2.5" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <input
-            className="flex-1 text-sm outline-none bg-transparent"
-            placeholder="Search wishlist..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{ color: '#831843', fontFamily: 'Outfit, sans-serif' }}
-          />
-        </div>
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        background: '#fff',
+        borderRadius: '16px',
+        border: `1.5px solid ${hovered ? PINK_MID : '#f3e0ed'}`,
+        overflow: 'hidden',
+        boxShadow: hovered ? '0 8px 32px rgba(233,30,140,0.13)' : '0 2px 8px rgba(0,0,0,0.04)',
+        transition: 'all 0.22s ease',
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'relative',
+      }}
+    >
+      {/* Badges */}
+      <div style={{ position: 'absolute', top: '10px', left: '10px', display: 'flex', flexDirection: 'column', gap: '4px', zIndex: 2 }}>
+        {!item.inStock && (
+          <span style={{
+            background: '#ff5252', color: '#fff', fontSize: '9px',
+            fontWeight: 700, padding: '3px 8px', borderRadius: '20px',
+          }}>
+            Out of Stock
+          </span>
+        )}
       </div>
 
-      {/* Grid */}
-      <div className="flex-1 overflow-y-auto px-8 py-6">
-        <div className="grid grid-cols-3 gap-4">
-          {filtered.map((item) => {
-            const pct = Math.round(((item.orig - item.price) / item.orig) * 100)
-            return (
-              <div
-                key={item.id}
-                className="rounded-2xl overflow-hidden group transition-all duration-200 hover:-translate-y-1"
-                style={{ background: '#fff', border: '1px solid #fbcfe8', boxShadow: '0 2px 12px rgba(190,24,93,0.06)' }}
-                onMouseEnter={(e) => ((e.currentTarget as HTMLDivElement).style.boxShadow = '0 8px 28px rgba(190,24,93,0.14)')}
-                onMouseLeave={(e) => ((e.currentTarget as HTMLDivElement).style.boxShadow = '0 2px 12px rgba(190,24,93,0.06)')}
-              >
-                {/* Image area */}
-                <div
-                  className="relative h-36 flex items-center justify-center text-5xl"
-                  style={{ background: 'linear-gradient(135deg, #fdf2f8, #fbcfe8)' }}
-                >
-                  {item.img}
-                  {/* Remove btn */}
-                  <button
-                    onClick={() => setItems((prev) => prev.filter((i) => i.id !== item.id))}
-                    className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200"
-                    style={{ background: 'rgba(255,255,255,0.9)', color: '#be185d', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
-                  >
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-                  </button>
-                  {/* Discount badge */}
-                  <span
-                    className="absolute top-2.5 left-2.5 text-xs font-800 px-2 py-1 rounded-lg"
-                    style={{ background: 'linear-gradient(135deg, #be185d, #ec4899)', color: '#fff', fontFamily: 'Outfit, sans-serif' }}
-                  >
-                    {pct}% OFF
-                  </span>
-                  {!item.inStock && (
-                    <div
-                      className="absolute inset-0 flex items-end pb-2 justify-center"
-                      style={{ background: 'rgba(255,255,255,0.6)' }}
-                    >
-                      <span className="text-xs font-700 px-2 py-1 rounded-lg" style={{ background: '#fce7f3', color: '#be185d' }}>Out of Stock</span>
-                    </div>
-                  )}
-                </div>
+      {/* Remove button */}
+      <button
+        onClick={() => onRemove(item?.wishlistId)}
+        title="Remove from wishlist"
+        style={{
+          position: 'absolute', top: '10px', right: '10px', zIndex: 2,
+          width: '30px', height: '30px', borderRadius: '50%',
+          background: '#fff', border: '1.5px solid #f0e0eb',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          cursor: 'pointer', boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+          transition: 'all 0.15s',
+          color: '#bbb', fontSize: '14px', fontWeight: 700,
+        }}
+        onMouseEnter={e => {
+          const el = e.currentTarget as HTMLButtonElement
+          el.style.background = '#fff0f5'
+          el.style.borderColor = PINK
+          el.style.color = PINK
+        }}
+        onMouseLeave={e => {
+          const el = e.currentTarget as HTMLButtonElement
+          el.style.background = '#fff'
+          el.style.borderColor = '#f0e0eb'
+          el.style.color = '#bbb'
+        }}
+      >
+        ×
+      </button>
 
-                {/* Info */}
-                <div className="p-4 flex flex-col gap-2">
-                  <span className="text-xs font-600" style={{ color: '#f9a8d4', fontFamily: 'Outfit, sans-serif' }}>{item.cat}</span>
-                  <p className="font-700 text-pink-900 text-sm leading-snug" style={{ fontFamily: 'Outfit, sans-serif' }}>{item.name}</p>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-xs font-500" style={{ color: '#fbbf24' }}>★</span>
-                    <span className="text-xs font-700 text-pink-800">{item.rating}</span>
-                    <span className="text-xs font-400" style={{ color: '#f9a8d4' }}>({item.reviews})</span>
-                  </div>
-                  <div className="flex items-baseline gap-2 mt-0.5">
-                    <span className="text-base font-900 text-pink-800" style={{ fontFamily: 'Outfit, sans-serif' }}>₹{item.price.toLocaleString('en-IN')}</span>
-                    <span className="text-xs font-400 line-through" style={{ color: '#f9a8d4' }}>₹{item.orig.toLocaleString('en-IN')}</span>
-                  </div>
+      {/* Image */}
+      <div onClick={()=>router.push(`/product/${item.slug}/${item.id}`)} style={{
+        height: '200px', background: '#fdf4fa',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        overflow: 'hidden', cursor: 'pointer',
+      }}>
+        <img
+          src={imgErr ? 'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=300&h=300&fit=crop&auto=format' : item.image}
+          alt={item.name}
+          onError={() => setImgErr(true)}
+          style={{
+            width: '150px', height: '150px', objectFit: 'contain',
+            transform: hovered ? 'scale(1.07)' : 'scale(1)',
+            transition: 'transform 0.25s ease',
+            opacity: item.inStock ? 1 : 0.5,
+          }}
+        />
+      </div>
+
+      {/* Info */}
+      <div style={{ padding: '14px', flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        <p style={{ margin: 0, fontSize: '10px', color: PINK, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+          {item.brand}
+        </p>
+        <h3 style={{
+          margin: 0, fontSize: '13px', fontWeight: 600, color: '#1a1a2e',
+          lineHeight: 1.4, display: '-webkit-box',
+          WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+          minHeight: '36px',
+        }}>
+          {item.name}
+        </h3>
+
+        {/* Rating */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <StarRating rating={item.rating} />
+          <span style={{ fontSize: '11px', color: '#aaa' }}>({item.reviewCount.toLocaleString('en-IN')})</span>
+          {item.assured && <AssuredBadge />}
+        </div>
+
+        {/* Price */}
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', flexWrap: 'wrap' }}>
+          <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: '17px', fontWeight: 800, color: item.inStock ? '#1a1a2e' : '#bbb' }}>
+            {fmt(item.price)}
+          </span>
+          <span style={{ fontSize: '11px', color: '#ccc', textDecoration: 'line-through' }}>
+            {fmt(item.originalPrice)}
+          </span>
+          <span style={{ fontSize: '11px', fontWeight: 700, color: '#27ae60' }}>
+            {item.discount}% off
+          </span>
+        </div>
+
+        {/* Delivery */}
+        {item.inStock
+          ? <span style={{ fontSize: '11px', color: '#27ae60', fontWeight: 500 }}>✓ Free Delivery</span>
+          : <span style={{ fontSize: '11px', color: '#ff5252', fontWeight: 500 }}>Currently unavailable</span>
+        }
+
+        <p style={{ margin: 0, fontSize: '10px', color: '#bbb' }}>Added on {item.addedOn}</p>
+
+        {/* Actions */}
+        <div style={{ display: 'flex', gap: '6px', marginTop: '4px' }}>
+          <button
+            onClick={handleCart}
+            disabled={!item.inStock}
+            style={{
+              flex: 1, padding: '9px 0', border: 'none', borderRadius: '9px',
+              background: !item.inStock ? '#f5f5f5' : addedToCart ? '#27ae60' : `linear-gradient(135deg, ${PINK}, ${PINK_DARK})`,
+              color: !item.inStock ? '#ccc' : '#fff',
+              fontFamily: 'Poppins, sans-serif', fontSize: '11px', fontWeight: 700,
+              cursor: item.inStock ? 'pointer' : 'not-allowed',
+              transition: 'all 0.18s', letterSpacing: '0.02em',
+              boxShadow: item.inStock && !addedToCart ? '0 3px 10px rgba(233,30,140,0.22)' : 'none',
+            }}
+          >
+            {addedToCart ? '✓ Added' : item.inStock ? 'Add to Cart' : 'Notify Me'}
+          </button>
+          <button
+            onClick={() => onShare(item.id)}
+            title="Share"
+            style={{
+              width: '36px', height: '36px', border: '1.5px solid #f0e0eb',
+              borderRadius: '9px', background: '#fff', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              transition: 'all 0.15s', flexShrink: 0,
+            }}
+            onMouseEnter={e => {
+              const el = e.currentTarget as HTMLButtonElement
+              el.style.borderColor = PINK_MID
+              el.style.background = PINK_LIGHT
+            }}
+            onMouseLeave={e => {
+              const el = e.currentTarget as HTMLButtonElement
+              el.style.borderColor = '#f0e0eb'
+              el.style.background = '#fff'
+            }}
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={PINK} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" />
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ── Notification toast ── */
+function Toast({ message, visible }: { message: string; visible: boolean }) {
+  return (
+    <div style={{
+      position: 'fixed', bottom: '28px', left: '50%',
+      transform: `translateX(-50%) translateY(${visible ? 0 : '20px'})`,
+      opacity: visible ? 1 : 0, transition: 'all 0.25s ease',
+      background: '#1a1a2e', color: '#fff', borderRadius: '10px',
+      padding: '12px 22px', fontSize: '13px', fontWeight: 600,
+      boxShadow: '0 8px 24px rgba(0,0,0,0.2)', zIndex: 999,
+      pointerEvents: 'none', whiteSpace: 'nowrap',
+    }}>
+      {message}
+    </div>
+  )
+}
+
+/* ── Share modal ── */
+function ShareModal({ item, onClose }: { item: WishlistItem | null; onClose: () => void }) {
+  if (!item) return null
+  const shareUrl = `https://shophub.in/product/${item.id}`
+  const [copied, setCopied] = useState(false)
+
+  const copy = () => {
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        zIndex: 200, padding: '20px',
+      }}
+    >
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{
+          background: '#fff', borderRadius: '20px', padding: '28px 28px 24px',
+          width: '380px', maxWidth: '100%', boxShadow: '0 20px 60px rgba(0,0,0,0.18)',
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+          <h3 style={{ fontFamily: 'Poppins, sans-serif', fontSize: '16px', fontWeight: 700, color: '#1a1a2e', margin: 0 }}>
+            Share Product
+          </h3>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '20px', color: '#bbb', cursor: 'pointer', lineHeight: 1 }}>×</button>
+        </div>
+        <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', alignItems: 'center' }}>
+          <img src={item.image} alt="" style={{ width: '52px', height: '52px', objectFit: 'contain', borderRadius: '10px', background: '#fdf4fa', border: '1px solid #f3e0ed', padding: '4px' }} />
+          <p style={{ margin: 0, fontSize: '13px', color: '#333', lineHeight: 1.4, fontWeight: 500 }}>{item.name}</p>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '20px' }}>
+          {[
+            { label: 'WhatsApp', icon: '💬', bg: '#25D366', color: '#fff' },
+            { label: 'Instagram', icon: '📸', bg: 'linear-gradient(135deg, #833ab4,#fd1d1d,#fcb045)', color: '#fff' },
+            { label: 'Twitter', icon: '🐦', bg: '#1DA1F2', color: '#fff' },
+            { label: 'Email', icon: '✉️', bg: '#f3e0ed', color: PINK_DARK },
+          ].map(s => (
+            <button key={s.label} style={{
+              border: 'none', borderRadius: '10px', background: s.bg, color: s.color,
+              padding: '10px 4px', cursor: 'pointer', display: 'flex',
+              flexDirection: 'column', alignItems: 'center', gap: '4px', transition: 'opacity 0.15s',
+            }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '0.85' }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '1' }}
+            >
+              <span style={{ fontSize: '18px' }}>{s.icon}</span>
+              <span style={{ fontSize: '9px', fontWeight: 700 }}>{s.label}</span>
+            </button>
+          ))}
+        </div>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{
+            flex: 1, border: '1.5px solid #f0e0eb', borderRadius: '8px',
+            padding: '8px 12px', fontSize: '12px', color: '#888',
+            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+          }}>
+            {shareUrl}
+          </div>
+          <button
+            onClick={copy}
+            style={{
+              padding: '8px 16px', border: 'none', borderRadius: '8px',
+              background: copied ? '#27ae60' : `linear-gradient(135deg, ${PINK}, ${PINK_DARK})`,
+              color: '#fff', fontSize: '12px', fontWeight: 700, cursor: 'pointer',
+              flexShrink: 0, transition: 'background 0.2s',
+            }}
+          >
+            {copied ? '✓ Copied' : 'Copy'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ── Main ── */
+export default function WishList() {
+  const [items, setItems] = useState<WishlistItem[]>([])
+  const [filterCategory, setFilterCategory] = useState('All')
+  const [sortBy, setSortBy] = useState('date')
+  const [shareItem, setShareItem] = useState<WishlistItem | null>(null)
+  const [toast, setToast] = useState<{ visible: boolean; message: string }>({ visible: false, message: '' })
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [selectMode, setSelectMode] = useState(false)
+  const [selected, setSelected] = useState<number[]>([])
+  const [loading, setLoading] = useState(true)
+  const dispatch = useAppDispatch();
+ 
+
+  const showToast = (message: string) => {
+    setToast({ visible: true, message })
+    setTimeout(() => setToast(t => ({ ...t, visible: false })), 2500)
+  }
+
+  const handleRemove = async(id: string|number) => {
+    setItems(prev => prev.filter(i => i.wishlistId !== id))
+    const res = await dispatch(deleteWishlist(id)).unwrap();
+    showToast('Removed from wishlist')
+  }
+
+  const handleRemoveSelected = () => {
+    setItems(prev => prev.filter(i => !selected.includes(i.id)))
+    showToast(`${selected.length} item${selected.length > 1 ? 's' : ''} removed`)
+    setSelected([])
+    setSelectMode(false)
+  }
+
+  const handleMoveToCart = (id: number) => {
+    showToast('Added to cart!')
+  }
+
+  const handleShare = (id: number) => {
+    const item = items.find(i => i.id === id) || null
+    setShareItem(item)
+  }
+
+  const handleToggleSelect = (id: number) => {
+    setSelected(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id])
+  }
+
+  const handleMoveAllSelected = () => {
+    const count = selected.filter(id => items.find(i => i.id === id)?.inStock).length
+    showToast(count > 0 ? `${count} item${count > 1 ? 's' : ''} moved to cart!` : 'No in-stock items selected')
+    setSelected([])
+    setSelectMode(false)
+  }
+
+  const displayed = items
+    .filter(i => filterCategory === 'All' || i.category === filterCategory)
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'price_asc': return a.price - b.price
+        case 'price_desc': return b.price - a.price
+        case 'discount': return b.discount - a.discount
+        case 'rating': return b.rating - a.rating
+        default: return 0
+      }
+    })
+
+  const outOfStockCount = items.filter(i => !i.inStock).length
+  const totalSavings = items.filter(i => i.inStock).reduce((s, i) => s + (i.originalPrice - i.price), 0)
+
+  useEffect(() => {
+  const wishlistItems = async () => {
+    try {
+      const res = await dispatch(getFullWishlist()).unwrap();
+      setItems(res.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  wishlistItems();
+}, [dispatch]);
+ const CATEGORIES = ['All', ...Array.from(new Set(items?.map(i => i.category)))]
+  const SORT_OPTIONS = [
+  { label: 'Date Added', value: 'date' },
+  { label: 'Price: Low to High', value: 'price_asc' },
+  { label: 'Price: High to Low', value: 'price_desc' },
+  { label: 'Discount', value: 'discount' },
+  { label: 'Rating', value: 'rating' },
+]
+
+  if(loading){
+    return <WishlistSkeleton/>
+  }
+
+  return (
+    <div style={{ minHeight: '100vh', background: '#fdf0f8', fontFamily: 'Inter, sans-serif' }}>
+      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '24px 28px 48px' }}>
+        {/* Page header */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+          <div>
+            <h1 style={{ fontFamily: 'Poppins, sans-serif', fontSize: '24px', fontWeight: 800, color: '#1a1a2e', margin: '0 0 4px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <svg width="22" height="20" viewBox="0 0 24 22" fill={PINK}>
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+              My Wishlist
+            </h1>
+            <p style={{ margin: 0, fontSize: '13px', color: '#aaa' }}>
+              {items.length} saved item{items.length !== 1 ? 's' : ''}
+              {outOfStockCount > 0 && <span style={{ color: '#ff5252', marginLeft: '8px' }}>· {outOfStockCount} out of stock</span>}
+            </p>
+          </div>
+
+          {/* Stats pills */}
+          {items.length > 0 && (
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <div style={{ background: '#fff', border: '1.5px solid #f3e0ed', borderRadius: '12px', padding: '10px 16px', textAlign: 'center' }}>
+                <p style={{ margin: '0 0 2px', fontSize: '18px', fontWeight: 800, color: PINK, fontFamily: 'Poppins, sans-serif' }}>{items.length}</p>
+                <p style={{ margin: 0, fontSize: '10px', color: '#aaa', fontWeight: 600 }}>SAVED</p>
+              </div>
+              <div style={{ background: '#fff', border: '1.5px solid #f3e0ed', borderRadius: '12px', padding: '10px 16px', textAlign: 'center' }}>
+                <p style={{ margin: '0 0 2px', fontSize: '18px', fontWeight: 800, color: '#27ae60', fontFamily: 'Poppins, sans-serif' }}>{fmt(totalSavings)}</p>
+                <p style={{ margin: 0, fontSize: '10px', color: '#aaa', fontWeight: 600 }}>TOTAL SAVINGS</p>
+              </div>
+              <div style={{ background: '#fff', border: '1.5px solid #f3e0ed', borderRadius: '12px', padding: '10px 16px', textAlign: 'center' }}>
+                <p style={{ margin: '0 0 2px', fontSize: '18px', fontWeight: 800, color: '#1a1a2e', fontFamily: 'Poppins, sans-serif' }}>{items.filter(i => i.inStock).length}</p>
+                <p style={{ margin: 0, fontSize: '10px', color: '#aaa', fontWeight: 600 }}>IN STOCK</p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {items.length === 0 ? (
+          /* Empty state */
+          <div style={{
+            background: '#fff', borderRadius: '20px', border: '1.5px solid #f3e0ed',
+            padding: '80px 20px', textAlign: 'center',
+          }}>
+            <div style={{
+              width: '100px', height: '100px', borderRadius: '50%',
+              background: PINK_LIGHT, display: 'flex', alignItems: 'center',
+              justifyContent: 'center', margin: '0 auto 20px',
+            }}>
+              <svg width="44" height="40" viewBox="0 0 24 22" fill={PINK_MID}>
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+            </div>
+            <h2 style={{ fontFamily: 'Poppins, sans-serif', fontSize: '22px', fontWeight: 700, color: '#1a1a2e', margin: '0 0 8px' }}>
+              Your wishlist is empty
+            </h2>
+            <p style={{ fontSize: '14px', color: '#aaa', margin: '0 0 28px', maxWidth: '340px', marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.6 }}>
+              Save your favourite items here and shop them whenever you're ready.
+            </p>
+            <button style={{
+              background: `linear-gradient(135deg, ${PINK}, ${PINK_DARK})`,
+              color: '#fff', border: 'none', borderRadius: '12px',
+              padding: '13px 36px', fontFamily: 'Poppins, sans-serif',
+              fontSize: '14px', fontWeight: 700, cursor: 'pointer',
+              boxShadow: '0 4px 16px rgba(233,30,140,0.28)',
+            }}>
+              Explore Products
+            </button>
+          </div>
+        ) : (
+          <>
+            {/* Toolbar */}
+            <div style={{
+              background: '#fff', borderRadius: '14px', border: '1.5px solid #f3e0ed',
+              padding: '12px 18px', marginBottom: '16px',
+              display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap',
+            }}>
+              {/* Category filter pills */}
+              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', flex: 1 }}>
+                {CATEGORIES.map(cat => (
                   <button
-                    disabled={!item.inStock}
-                    className="mt-1 w-full py-2.5 rounded-xl text-sm font-700 text-white transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                    style={{ background: item.inStock ? 'linear-gradient(135deg, #be185d, #ec4899)' : '#fce7f3', color: item.inStock ? '#fff' : '#be185d', fontFamily: 'Outfit, sans-serif' }}
+                    key={cat}
+                    onClick={() => setFilterCategory(cat)}
+                    style={{
+                      padding: '5px 14px', border: `1.5px solid ${filterCategory === cat ? PINK : '#f0e0eb'}`,
+                      borderRadius: '20px',
+                      background: filterCategory === cat ? PINK : '#fff',
+                      color: filterCategory === cat ? '#fff' : '#666',
+                      fontFamily: 'Poppins, sans-serif', fontSize: '12px', fontWeight: 600,
+                      cursor: 'pointer', transition: 'all 0.15s',
+                    }}
                   >
-                    {item.inStock ? '🛒 Add to Cart' : 'Notify Me'}
+                    {cat}
+                    {cat !== 'All' && (
+                      <span style={{ marginLeft: '5px', opacity: 0.75 }}>
+                        ({items.filter(i => i.category === cat).length})
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              {/* Sort */}
+              <select
+                value={sortBy}
+                onChange={e => setSortBy(e.target.value)}
+                style={{
+                  border: '1.5px solid #f0e0eb', borderRadius: '8px',
+                  padding: '6px 10px', fontSize: '12px', color: '#555',
+                  outline: 'none', background: '#fff', cursor: 'pointer', fontWeight: 500,
+                }}
+              >
+                {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
+
+              {/* View toggle */}
+              <div style={{ display: 'flex', border: '1.5px solid #f0e0eb', borderRadius: '8px', overflow: 'hidden' }}>
+                {(['grid', 'list'] as const).map(mode => (
+                  <button
+                    key={mode}
+                    onClick={() => setViewMode(mode)}
+                    style={{
+                      padding: '6px 10px', border: 'none', cursor: 'pointer',
+                      background: viewMode === mode ? PINK_LIGHT : '#fff',
+                      color: viewMode === mode ? PINK : '#aaa', transition: 'all 0.15s',
+                    }}
+                  >
+                    {mode === 'grid'
+                      ? <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><rect x="0" y="0" width="6" height="6" rx="1.5" /><rect x="10" y="0" width="6" height="6" rx="1.5" /><rect x="0" y="10" width="6" height="6" rx="1.5" /><rect x="10" y="10" width="6" height="6" rx="1.5" /></svg>
+                      : <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><rect x="0" y="1" width="16" height="2.5" rx="1.25" /><rect x="0" y="6.75" width="16" height="2.5" rx="1.25" /><rect x="0" y="12.5" width="16" height="2.5" rx="1.25" /></svg>
+                    }
+                  </button>
+                ))}
+              </div>
+
+              {/* Select mode toggle */}
+              <button
+                onClick={() => { setSelectMode(v => !v); setSelected([]) }}
+                style={{
+                  border: `1.5px solid ${selectMode ? PINK : '#f0e0eb'}`,
+                  borderRadius: '8px', background: selectMode ? PINK_LIGHT : '#fff',
+                  color: selectMode ? PINK_DARK : '#666', fontSize: '12px', fontWeight: 600,
+                  padding: '6px 12px', cursor: 'pointer', transition: 'all 0.15s',
+                }}
+              >
+                {selectMode ? 'Cancel' : 'Select'}
+              </button>
+            </div>
+
+            {/* Bulk action bar */}
+            {selectMode && (
+              <div style={{
+                background: '#fff', borderRadius: '12px', border: `1.5px solid ${PINK_MID}`,
+                padding: '12px 18px', marginBottom: '14px',
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px',
+              }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: 600, color: '#1a1a2e' }}>
+                  <div
+                    onClick={() => setSelected(selected.length === displayed.length ? [] : displayed.map(i => i.id))}
+                    style={{
+                      width: '18px', height: '18px', borderRadius: '5px',
+                      border: `2px solid ${selected.length === displayed.length ? PINK : '#ccc'}`,
+                      background: selected.length === displayed.length ? PINK : '#fff',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+                    }}
+                  >
+                    {selected.length === displayed.length && (
+                      <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                        <path d="M1 4l3 3 5-6" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </div>
+                  {selected.length > 0 ? `${selected.length} selected` : 'Select all'}
+                </label>
+
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    onClick={handleMoveAllSelected}
+                    disabled={selected.length === 0}
+                    style={{
+                      padding: '8px 18px', border: 'none', borderRadius: '8px',
+                      background: selected.length > 0 ? `linear-gradient(135deg, ${PINK}, ${PINK_DARK})` : '#f0e0eb',
+                      color: selected.length > 0 ? '#fff' : '#ccc',
+                      fontFamily: 'Poppins, sans-serif', fontSize: '12px', fontWeight: 700,
+                      cursor: selected.length > 0 ? 'pointer' : 'not-allowed',
+                    }}
+                  >
+                    Move to Cart
+                  </button>
+                  <button
+                    onClick={handleRemoveSelected}
+                    disabled={selected.length === 0}
+                    style={{
+                      padding: '8px 18px', border: `1.5px solid ${selected.length > 0 ? '#ff5252' : '#f0e0eb'}`,
+                      borderRadius: '8px', background: '#fff',
+                      color: selected.length > 0 ? '#ff5252' : '#ccc',
+                      fontFamily: 'Poppins, sans-serif', fontSize: '12px', fontWeight: 700,
+                      cursor: selected.length > 0 ? 'pointer' : 'not-allowed',
+                    }}
+                  >
+                    Remove
                   </button>
                 </div>
               </div>
-            )
-          })}
-        </div>
+            )}
+
+            {/* Grid / List */}
+            {viewMode === 'grid' ? (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px' }}>
+                {displayed.map(item => (
+                  <div key={item.id} style={{ position: 'relative' }}>
+                    {selectMode && (
+                      <div
+                        onClick={() => handleToggleSelect(item.id)}
+                        style={{
+                          position: 'absolute', top: '10px', left: '10px', zIndex: 10,
+                          width: '22px', height: '22px', borderRadius: '6px',
+                          border: `2px solid ${selected.includes(item.id) ? PINK : '#ddd'}`,
+                          background: selected.includes(item.id) ? PINK : 'rgba(255,255,255,0.9)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          cursor: 'pointer', boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
+                        }}
+                      >
+                        {selected.includes(item.id) && (
+                          <svg width="11" height="9" viewBox="0 0 10 8" fill="none">
+                            <path d="M1 4l3 3 5-6" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        )}
+                      </div>
+                    )}
+                    <WishlistCard item={item} onRemove={handleRemove} onMoveToCart={handleMoveToCart} onShare={handleShare} />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {displayed.map(item => (
+                  <div key={item.id} style={{ position: 'relative', display: 'flex' }}>
+                    {selectMode && (
+                      <div
+                        onClick={() => handleToggleSelect(item.id)}
+                        style={{
+                          position: 'absolute', top: '18px', left: '18px', zIndex: 10,
+                          width: '22px', height: '22px', borderRadius: '6px',
+                          border: `2px solid ${selected.includes(item.id) ? PINK : '#ddd'}`,
+                          background: selected.includes(item.id) ? PINK : 'rgba(255,255,255,0.9)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          cursor: 'pointer', boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
+                        }}
+                      >
+                        {selected.includes(item.id) && (
+                          <svg width="11" height="9" viewBox="0 0 10 8" fill="none">
+                            <path d="M1 4l3 3 5-6" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        )}
+                      </div>
+                    )}
+                    <div style={{
+                      background: '#fff', borderRadius: '16px', border: '1.5px solid #f3e0ed',
+                      display: 'flex', gap: '16px', padding: '16px 20px',
+                      width: '100%', transition: 'all 0.18s',
+                      boxSizing: 'border-box',
+                    }}
+                      onMouseEnter={e => {
+                        const el = e.currentTarget as HTMLDivElement
+                        el.style.boxShadow = '0 6px 24px rgba(233,30,140,0.1)'
+                        el.style.borderColor = PINK_MID
+                      }}
+                      onMouseLeave={e => {
+                        const el = e.currentTarget as HTMLDivElement
+                        el.style.boxShadow = 'none'
+                        el.style.borderColor = '#f3e0ed'
+                      }}
+                    >
+                      {/* Image */}
+                      <div style={{ width: '100px', height: '100px', background: '#fdf4fa', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #f3e0ed', flexShrink: 0, overflow: 'hidden' }}>
+                        <img src={item.image} alt={item.name} style={{ width: '80px', height: '80px', objectFit: 'contain', opacity: item.inStock ? 1 : 0.5 }} />
+                      </div>
+
+                      {/* Details */}
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ display: 'flex', gap: '6px', marginBottom: '4px', flexWrap: 'wrap', alignItems: 'center' }}>
+                          <span style={{ fontSize: '10px', color: PINK, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{item.brand}</span>
+                          {item.badge && <span style={{ background: item.badge === 'New' ? '#7c3aed' : item.badge === 'Top Rated' ? '#059669' : PINK, color: '#fff', fontSize: '9px', fontWeight: 700, padding: '1px 7px', borderRadius: '20px' }}>{item.badge}</span>}
+                          {!item.inStock && <span style={{ background: '#ff5252', color: '#fff', fontSize: '9px', fontWeight: 700, padding: '1px 7px', borderRadius: '20px' }}>Out of Stock</span>}
+                        </div>
+                        <p style={{ margin: '0 0 6px', fontSize: '14px', fontWeight: 600, color: '#1a1a2e', lineHeight: 1.4, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical' }}>
+                          {item.name}
+                        </p>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                          <StarRating rating={item.rating} />
+                          <span style={{ fontSize: '11px', color: '#aaa' }}>({item.reviewCount.toLocaleString('en-IN')})</span>
+                          {item.assured && <AssuredBadge />}
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                          <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: '18px', fontWeight: 800, color: item.inStock ? '#1a1a2e' : '#bbb' }}>{fmt(item.price)}</span>
+                          <span style={{ fontSize: '12px', color: '#ccc', textDecoration: 'line-through' }}>{fmt(item.originalPrice)}</span>
+                          <span style={{ fontSize: '12px', fontWeight: 700, color: '#27ae60' }}>{item.discount}% off</span>
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', justifyContent: 'center', flexShrink: 0 }}>
+                        <button
+                          onClick={() => { handleMoveToCart(item.id); showToast('Added to cart!') }}
+                          disabled={!item.inStock}
+                          style={{
+                            padding: '9px 20px', border: 'none', borderRadius: '9px',
+                            background: item.inStock ? `linear-gradient(135deg, ${PINK}, ${PINK_DARK})` : '#f5f5f5',
+                            color: item.inStock ? '#fff' : '#ccc',
+                            fontFamily: 'Poppins, sans-serif', fontSize: '12px', fontWeight: 700,
+                            cursor: item.inStock ? 'pointer' : 'not-allowed', whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {item.inStock ? 'Add to Cart' : 'Notify Me'}
+                        </button>
+                        <div style={{ display: 'flex', gap: '6px' }}>
+                          <button
+                            onClick={() => handleShare(item.id)}
+                            style={{
+                              flex: 1, padding: '7px 0', border: '1.5px solid #f0e0eb', borderRadius: '8px',
+                              background: '#fff', color: '#888', fontSize: '11px', fontWeight: 600, cursor: 'pointer',
+                            }}
+                          >
+                            Share
+                          </button>
+                          <button
+                            onClick={() => handleRemove(item.id)}
+                            style={{
+                              flex: 1, padding: '7px 0', border: '1.5px solid #ffe0e0', borderRadius: '8px',
+                              background: '#fff0f0', color: '#ff5252', fontSize: '11px', fontWeight: 600, cursor: 'pointer',
+                            }}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                        <p style={{ margin: 0, fontSize: '10px', color: '#ccc', textAlign: 'center' }}>Added {item.addedOn}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* No results for filter */}
+            {displayed.length === 0 && (
+              <div style={{ background: '#fff', borderRadius: '16px', border: '1.5px solid #f3e0ed', padding: '48px 20px', textAlign: 'center' }}>
+                <p style={{ fontSize: '40px', margin: '0 0 12px' }}>🔍</p>
+                <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: '16px', fontWeight: 700, color: '#1a1a2e', margin: '0 0 6px' }}>No items in this category</p>
+                <button onClick={() => setFilterCategory('All')} style={{ background: 'none', border: 'none', color: PINK, fontSize: '13px', fontWeight: 700, cursor: 'pointer' }}>Show all items</button>
+              </div>
+            )}
+          </>
+        )}
       </div>
+
+      {/* Share modal */}
+      <ShareModal item={shareItem} onClose={() => setShareItem(null)} />
+
+      {/* Toast */}
+      <Toast message={toast.message} visible={toast.visible} />
     </div>
   )
 }

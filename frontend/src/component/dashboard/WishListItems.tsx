@@ -34,166 +34,6 @@ interface WishlistItem {
   badge?: string
 }
 
-const INITIAL_WISHLIST: WishlistItem[] = [
-  {
-    id: 1,
-    name: 'Apple iPhone 15 Pro Max (Natural Titanium, 512GB)',
-    brand: 'Apple',
-    category: 'Smartphones',
-    image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=400&h=400&fit=crop&auto=format',
-    price: 159900,
-    originalPrice: 189900,
-    discount: 15,
-    rating: 4.6,
-    reviewCount: 34210,
-    inStock: true,
-    assured: true,
-    freeDelivery: true,
-    addedOn: '14 Aug 2026',
-    badge: 'Top Rated',
-    slug:'gramin-forerunner',
-    wishlistId:'1'
-  },
-  {
-    id: 2,
-    name: 'Sony WH-1000XM5 Wireless Noise Cancelling Headphones',
-    brand: 'Sony',
-    category: 'Headphones',
-    image: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=400&h=400&fit=crop&auto=format',
-    price: 26990,
-    originalPrice: 34990,
-    discount: 22,
-    rating: 4.7,
-    reviewCount: 22154,
-    inStock: true,
-    assured: true,
-    freeDelivery: true,
-    addedOn: '12 Aug 2026',
-    badge: 'Bestseller',
-    slug:'gramin-forerunner',
-    wishlistId:'2'
-  },
-  {
-    id: 3,
-    name: 'Samsung Galaxy Watch 6 Classic 47mm (Graphite)',
-    brand: 'Samsung',
-    category: 'Smartwatches',
-    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop&auto=format',
-    price: 34999,
-    originalPrice: 44999,
-    discount: 22,
-    rating: 4.4,
-    reviewCount: 9823,
-    inStock: false,
-    assured: true,
-    freeDelivery: true,
-    addedOn: '10 Aug 2026',
-    badge: 'New',
-    slug:'gramin-forerunner',
-    wishlistId:'3'
-  },
-  {
-    id: 4,
-    name: 'Apple AirPods Pro (2nd Gen) with MagSafe Case',
-    brand: 'Apple',
-    category: 'Headphones',
-    image: 'https://images.unsplash.com/photo-1606841837239-c5a1a4a07af7?w=400&h=400&fit=crop&auto=format',
-    price: 19900,
-    originalPrice: 24900,
-    discount: 20,
-    rating: 4.5,
-    reviewCount: 41087,
-    inStock: true,
-    assured: true,
-    freeDelivery: true,
-    addedOn: '9 Aug 2026',
-    slug:'gramin-forerunner',
-    wishlistId:'4'
-  },
-  {
-    id: 5,
-    name: 'Google Pixel 8 Pro (Hazel, 128GB)',
-    brand: 'Google',
-    category: 'Smartphones',
-    image: 'https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=400&h=400&fit=crop&auto=format',
-    price: 79999,
-    originalPrice: 99999,
-    discount: 20,
-    rating: 4.4,
-    reviewCount: 7851,
-    inStock: true,
-    assured: false,
-    freeDelivery: true,
-    addedOn: '7 Aug 2026',
-    slug:'gramin-forerunner',
-    wishlistId:'5'
-  },
-  {
-    id: 6,
-    name: 'Bose QuietComfort 45 Bluetooth Headphones',
-    brand: 'Bose',
-    category: 'Headphones',
-    image: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=400&h=400&fit=crop&auto=format',
-    price: 25990,
-    originalPrice: 34900,
-    discount: 25,
-    rating: 4.5,
-    reviewCount: 15630,
-    inStock: true,
-    assured: true,
-    freeDelivery: true,
-    addedOn: '5 Aug 2026',
-    badge: 'Top Rated',
-    slug:'gramin-forerunner',
-    wishlistId:'6'
-  },
-  {
-    id: 7,
-    name: 'OnePlus 12 5G (Flowy Emerald, 256GB)',
-    brand: 'OnePlus',
-    category: 'Smartphones',
-    image: 'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=400&h=400&fit=crop&auto=format',
-    price: 64999,
-    originalPrice: 69999,
-    discount: 7,
-    rating: 4.3,
-    reviewCount: 8764,
-    inStock: false,
-    assured: true,
-    freeDelivery: true,
-    addedOn: '2 Aug 2026',
-    slug:'gramin-forerunner',
-    wishlistId:'7'
-  },
-  {
-    id: 8,
-    name: 'Garmin Forerunner 265 GPS Running Smartwatch',
-    brand: 'Garmin',
-    category: 'Smartwatches',
-    image: 'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=400&h=400&fit=crop&auto=format',
-    price: 39999,
-    originalPrice: 49999,
-    discount: 20,
-    rating: 4.3,
-    reviewCount: 3207,
-    inStock: true,
-    assured: false,
-    freeDelivery: true,
-    addedOn: '29 Jul 2026',
-    slug:'gramin-forerunner',
-    wishlistId:'8'
-  },
-]
-
-const CATEGORIES = ['All', ...Array.from(new Set(INITIAL_WISHLIST.map(i => i.category)))]
-const SORT_OPTIONS = [
-  { label: 'Date Added', value: 'date' },
-  { label: 'Price: Low to High', value: 'price_asc' },
-  { label: 'Price: High to Low', value: 'price_desc' },
-  { label: 'Discount', value: 'discount' },
-  { label: 'Rating', value: 'rating' },
-]
-
 function StarRating({ rating }: { rating: number }) {
   return (
     <span style={{
@@ -517,6 +357,7 @@ export default function WishListItems() {
   const [selected, setSelected] = useState<number[]>([])
   const [loading, setLoading] = useState(true)
   const dispatch = useAppDispatch();
+ 
 
   const showToast = (message: string) => {
     setToast({ visible: true, message })
@@ -575,7 +416,6 @@ export default function WishListItems() {
   const wishlistItems = async () => {
     try {
       const res = await dispatch(getFullWishlist()).unwrap();
-
       setItems(res.data);
     } catch (error) {
       console.log(error);
@@ -585,6 +425,14 @@ export default function WishListItems() {
   };
   wishlistItems();
 }, [dispatch]);
+ const CATEGORIES = ['All', ...Array.from(new Set(items?.map(i => i.category)))]
+  const SORT_OPTIONS = [
+  { label: 'Date Added', value: 'date' },
+  { label: 'Price: Low to High', value: 'price_asc' },
+  { label: 'Price: High to Low', value: 'price_desc' },
+  { label: 'Discount', value: 'discount' },
+  { label: 'Rating', value: 'rating' },
+]
 
   if(loading){
     return <WishlistSkeleton/>

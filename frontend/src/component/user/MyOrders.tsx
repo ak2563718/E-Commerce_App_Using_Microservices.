@@ -2,6 +2,8 @@
 import { useAppDispatch } from "@/redux/hooks";
 import { getUserOrder } from "@/redux/order/order.Action";
 import { useState, useMemo, useEffect } from "react";
+import LoadingSpinner from "../dashboard/Spinner";
+import OrdersSkeleton from "../dashboard/OrderSkeleton";
 const PINK = "#e91e8c";
 const PINK_DARK = "#c2185b";
 const PINK_LIGHT = "#fce4ec";
@@ -26,130 +28,6 @@ interface Order {
   estimatedDelivery?: string;
 }
 
-const allOrders: Order[] = [
-  {
-    id: "ORD-2026-84710",
-    date: "Sep 3, 2026",
-    status: "OUT_FOR_DELIVERY",
-    total: 391.5,
-    estimatedDelivery: "Sep 8, 2026",
-    items: [
-      {
-        name: "Silk Bloom Midi Dress",
-        variant: "Blush Pink · Size M",
-        qty: 1,
-        price: 189,
-        image: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=80&h=80&fit=crop&auto=format",
-      },
-      {
-        name: "Linen Tote Bag",
-        variant: "Ivory · One Size",
-        qty: 2,
-        price: 64.5,
-        image: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=80&h=80&fit=crop&auto=format",
-      },
-      {
-        name: "Pearl Drop Earrings",
-        variant: "Gold · Pair",
-        qty: 1,
-        price: 42,
-        image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=80&h=80&fit=crop&auto=format",
-      },
-    ],
-  },
-  {
-    id: "ORD-2026-79341",
-    date: "Aug 28, 2026",
-    status: "DELIVERED",
-    total: 128.0,
-    items: [
-      {
-        name: "Wireless Noise-Cancelling Headphones",
-        variant: "Midnight Black",
-        qty: 1,
-        price: 128,
-        image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=80&h=80&fit=crop&auto=format",
-      },
-    ],
-  },
-  {
-    id: "ORD-2026-77820",
-    date: "Aug 21, 2026",
-    status: "PENDING",
-    total: 214.0,
-    items: [
-      {
-        name: "Ceramic Pour-Over Coffee Set",
-        variant: "Matte White",
-        qty: 1,
-        price: 94,
-        image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=80&h=80&fit=crop&auto=format",
-      },
-      {
-        name: "Organic Cotton Throw Blanket",
-        variant: "Oatmeal · 50×60\"",
-        qty: 2,
-        price: 60,
-        image: "https://images.unsplash.com/photo-1600369671236-d1f08c3e0e54?w=80&h=80&fit=crop&auto=format",
-      },
-    ],
-  },
-  {
-    id: "ORD-2026-75108",
-    date: "Aug 15, 2026",
-    status: "SHIPPED",
-    total: 89.99,
-    estimatedDelivery: "Sep 10, 2026",
-    items: [
-      {
-        name: "Leather Journal Notebook",
-        variant: "Dark Brown · A5",
-        qty: 1,
-        price: 44.99,
-        image: "https://images.unsplash.com/photo-1531346680769-a1d79b57de5c?w=80&h=80&fit=crop&auto=format",
-      },
-      {
-        name: "Botanical Scented Candle",
-        variant: "Jasmine & Sandalwood",
-        qty: 1,
-        price: 45,
-        image: "https://images.unsplash.com/photo-1602028915047-37269d1a73f7?w=80&h=80&fit=crop&auto=format",
-      },
-    ],
-  },
-  {
-    id: "ORD-2026-71233",
-    date: "Aug 8, 2026",
-    status: "PROCESSING",
-    total: 56.0,
-    estimatedDelivery: "Sep 12, 2026",
-    items: [
-      {
-        name: "Vitamin C Serum",
-        variant: "30ml",
-        qty: 2,
-        price: 28,
-        image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=80&h=80&fit=crop&auto=format",
-      },
-    ],
-  },
-  {
-    id: "ORD-2026-68904",
-    date: "Jul 29, 2026",
-    status: "CANCELLED",
-    total: 175.0,
-    items: [
-      {
-        name: "Running Shoes",
-        variant: "White/Coral · Size 8",
-        qty: 1,
-        price: 175,
-        image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=80&h=80&fit=crop&auto=format",
-      },
-    ],
-  },
-];
-
 const statusConfig: Record<OrderStatus, { label: string; bg: string; text: string; dot: string }> = {
   DELIVERED: { label: "DELIVERED", bg: "#e8f5e9", text: "#2e7d32", dot: "#43a047" },
   "OUT_FOR_DELIVERY": { label: "OUT_FOR_DELIVERY", bg: PINK_LIGHT, text: PINK_DARK, dot: PINK },
@@ -168,12 +46,14 @@ export default function OrdersList() {
   const [allOrders, setallOrders] = useState<Order[]>([])
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState<Tab>("All");
+  const [loading, setLoading] = useState<boolean>(true)
   const dispatch = useAppDispatch();
   
   useEffect(()=>{
     const getOrder =async()=>{
       const res = await dispatch(getUserOrder()).unwrap();
       setallOrders(res.data)
+      setLoading(false)
     }
     getOrder()
   },[])
@@ -220,6 +100,9 @@ function formatPrice(price: number) {
   }).format(price);
 }
 
+if(loading){
+  return <OrdersSkeleton/>
+}
 
   return (
     <div style={{ minHeight: "100vh", background: "#fdf0f8", fontFamily: "Poppins, sans-serif" }}>
@@ -433,27 +316,6 @@ function formatPrice(price: number) {
                       <span style={{ fontSize: "15px", fontWeight: 800, color: "#1a1a2e" }}>
                         {formatPrice(order?.total)}
                       </span>
-                      <button
-                        onClick={(e) => { e.stopPropagation(); setSelectedOrderId(order.id); }}
-                        style={{
-                          background: `linear-gradient(135deg, ${PINK} 0%, ${PINK_DARK} 100%)`,
-                          color: "#fff",
-                          border: "none",
-                          borderRadius: "8px",
-                          padding: "7px 18px",
-                          fontSize: "12px",
-                          fontFamily: "Poppins, sans-serif",
-                          fontWeight: 700,
-                          cursor: "pointer",
-                          boxShadow: "0 3px 10px rgba(233,30,140,0.28)",
-                          transition: "opacity 0.15s",
-                          letterSpacing: "0.01em",
-                        }}
-                        onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.88"; }}
-                        onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
-                      >
-                        View Details
-                      </button>
                     </div>
                   </div>
                 </div>
