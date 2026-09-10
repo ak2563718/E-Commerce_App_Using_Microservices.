@@ -7,26 +7,28 @@ import {
 import type { NavItem } from './SellerDashboard'
 import { notifications } from './data'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { getProfile } from '@/redux/user/user.Action'
 import { useRouter } from 'next/navigation'
 
-interface Props {
-  active: NavItem
-  setActive: (n: NavItem) => void
-  open: boolean
-  setOpen: (v: boolean) => void
-}
+// interface Props {
+//   active: NavItem
+//   setActive: (n: NavItem) => void
+//   open: boolean
+//   setOpen: (v: boolean) => void
+// }
 
-const NAV: { id: NavItem; label: string; icon: typeof LayoutDashboard }[] = [
-  { id: 'overview', label: 'Overview', icon: LayoutDashboard },
-  { id: 'orders', label: 'Orders', icon: ShoppingBag },
-  { id: 'products', label: 'Products', icon: Package },
-  { id: 'analytics', label: 'Analytics', icon: BarChart2 },
-  { id: 'payouts', label: 'Payouts', icon: Wallet },
+const NAV: { id: NavItem; label: string; icon: typeof LayoutDashboard; route:string }[] = [
+  { id: 'overview', label: 'Overview', icon: LayoutDashboard,  route:'/seller/overview' },
+  { id: 'orders', label: 'Orders', icon: ShoppingBag ,  route:'/seller/orders'},
+  { id: 'products', label: 'Products', icon: Package,  route:'/seller/products' },
+  { id: 'analytics', label: 'Analytics', icon: BarChart2 ,  route:'/seller/analytics'},
+  { id: 'payouts', label: 'Payouts', icon: Wallet,  route:'/seller/payouts' },
 ]
-
-export default function Sidebar({ active, setActive, open, setOpen,  }: Props) {
+// { active, setActive, open, setOpen,  }: Props
+export default function Sidebar() {
+  const [active, setActive] = useState('')
+  const [ open, setOpen] = useState(false)
   const router = useRouter()
   const dispatch = useAppDispatch()
    useEffect(()=>{
@@ -106,7 +108,10 @@ export default function Sidebar({ active, setActive, open, setOpen,  }: Props) {
           return (
             <button
               key={id}
-              onClick={() => setActive(id)}
+              onClick={() => {
+                setActive(id)
+                router.push(NAV.find((n)=>n.id===id)?.route || '/seller/profile')
+              }}
               className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-left"
               style={{
                 background: isActive ? 'rgba(124,58,237,0.35)' : 'transparent',

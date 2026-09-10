@@ -82,7 +82,7 @@ export default function SellerSignup({ onGoLogin }: Props) {
         {/* Tabs */}
         <div className="border-b border-gray-100 flex shrink-0">
           <button
-            onClick={()=>router.push('/seller/login')}
+            onClick={()=>router.push('/seller-portal/login')}
             className="flex-1 py-3.5 text-xs font-bold tracking-wide text-gray-400 hover:text-purple-400 transition-colors"
             style={{ borderBottom: '2px solid transparent' }}
           >

@@ -58,7 +58,7 @@ export default function Navbar({
 
   const handleClick =()=>{
     setMoreOpen(false)
-    router.replace('/seller/information')
+    router.replace('/seller-portal/information')
   }
 
   useEffect(()=>{

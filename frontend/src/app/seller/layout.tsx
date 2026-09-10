@@ -1,19 +1,17 @@
 import SellNavbar from '@/component/seller/SellNavbar'
-import SellerFooter from '@/component/seller/SellerFooter'
-import React, { ReactNode } from 'react'
-
-type props={
-    children:ReactNode
+import Sidebar from '@/component/seller/sellerdashboard/Sidebar'
+import React from 'react'
+type Props ={
+    children:React.ReactNode
 }
-function Layout({children}:props) {
-    
+function layout({ children}:Props) {
   return (
     <div>
-        <SellNavbar/>
-        <div>{children}</div>
-        <SellerFooter/>
+       <SellNavbar/>
+       <Sidebar /> 
+       <div>{children}</div>
     </div>
   )
 }
 
-export default Layout
+export default layout
