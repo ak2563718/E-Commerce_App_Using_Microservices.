@@ -1,20 +1,21 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   User, ShoppingBag, Heart, Bell, LogOut,
-  ChevronLeft, ChevronRight, Settings, Star, ShoppingCart,
+  ChevronLeft, ChevronRight, Settings, ShoppingCart,
   MapPin,
 } from 'lucide-react'
 import type { NavItem } from './UserDashboard'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
-import { useRouter} from 'next/navigation'
+import { useRouter, useParams, usePathname} from 'next/navigation'
+
 
 const NAV: { id: NavItem; label: string; icon: typeof User; route: string }[] = [
   { id: 'profile',       label: 'My Profile',     icon: User,  route: '/user/profile', },
-  { id: 'orders',        label: 'My Orders',       icon: ShoppingBag, route: '/user/order' },
+  { id: 'orders',        label: 'My Orders',       icon: ShoppingBag, route: '/user/orders' },
   { id: 'address',        label:"My Address",       icon:MapPin,      route:"/user/address" },
   { id: 'wishlist',      label: 'Wishlist',        icon: Heart, route: '/user/wishlist' },
-  { id: 'notifications', label: 'Notifications',   icon: Bell, route: '/user/notification' },
+  { id: 'notifications', label: 'Notifications',   icon: Bell, route: '/user/notifications' },
 ]
 
 const NOTIFS = [
@@ -35,6 +36,13 @@ export default function Sidebar() {
   const [active,setActive]= useState('')
   const router = useRouter()
   const unread = NOTIFS.length
+  const pathname = usePathname()
+  useEffect(()=>{
+    const activeItem = NAV.find((n)=>n.route===pathname)
+    if(activeItem){
+      setActive(activeItem.id)
+    }
+  },[pathname])
   return (
     <div className='fixed z-10 h-[650px] w-[280px]'>
     <aside

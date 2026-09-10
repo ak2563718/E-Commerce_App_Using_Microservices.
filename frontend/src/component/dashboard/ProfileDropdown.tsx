@@ -51,17 +51,17 @@ export default function ProfileDropdown({name}:{name:string}) {
             My Profile
           </button>
 
-          <button className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-pink-50 hover:text-pink-600 transition-colors duration-100 group">
+          <button onClick={()=>router.push('/user/orders')} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-pink-50 hover:text-pink-600 transition-colors duration-100 group">
             <Package className="w-4 h-4"/>
             My Orders
           </button>
 
-          <button className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-pink-50 hover:text-pink-600 transition-colors duration-100 group">
+          <button onClick={()=>router.push('/user/wishlist')} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-pink-50 hover:text-pink-600 transition-colors duration-100 group">
             <Heart className="w-4 h-4"/>
             Wishlist
           </button>
 
-          <button className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-pink-50 hover:text-pink-600 transition-colors duration-100 group">
+          <button onClick={()=>router.push('/user/notifications')} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-pink-50 hover:text-pink-600 transition-colors duration-100 group">
             <Bell className="w-4 h-4"/>
             Notifications
           </button>
