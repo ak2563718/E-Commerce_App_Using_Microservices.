@@ -22,15 +22,16 @@ const NOTIFS = [
   { msg: 'Price drop on your wishlist item.' },
 ]
 
-interface Props {
-  active: NavItem
-  setActive: (n: NavItem) => void
-}
-
-export default function Sidebar({ active, setActive }: Props) {
+// interface Props {
+//   active: NavItem
+//   setActive: (n: NavItem) => void
+// }
+// { active, setActive }: Props
+export default function Sidebar() {
   const dispatch = useAppDispatch()
   const { user } = useAppSelector((state)=>state.user)
   const [open, setOpen] = useState(true)
+  const [active,setActive]= useState('')
   const unread = NOTIFS.length
   return (
     <div className='fixed z-10 h-[650px] w-[280px]'>
@@ -130,7 +131,6 @@ export default function Sidebar({ active, setActive }: Props) {
           return (
             <button
               key={id}
-              onClick={() => setActive(id)}
               title={!open ? label : undefined}
               className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-left cursor-pointer w-full"
               style={{
