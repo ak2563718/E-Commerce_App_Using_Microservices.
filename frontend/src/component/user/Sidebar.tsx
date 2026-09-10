@@ -7,13 +7,14 @@ import {
 } from 'lucide-react'
 import type { NavItem } from './UserDashboard'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import { useRouter} from 'next/navigation'
 
-const NAV: { id: NavItem; label: string; icon: typeof User }[] = [
-  { id: 'profile',       label: 'My Profile',     icon: User },
-  { id: 'orders',        label: 'My Orders',       icon: ShoppingBag },
-  { id: 'address',        label:"My Address",       icon:MapPin},
-  { id: 'wishlist',      label: 'Wishlist',        icon: Heart },
-  { id: 'notifications', label: 'Notifications',   icon: Bell },
+const NAV: { id: NavItem; label: string; icon: typeof User; route: string }[] = [
+  { id: 'profile',       label: 'My Profile',     icon: User,  route: '/user/profile', },
+  { id: 'orders',        label: 'My Orders',       icon: ShoppingBag, route: '/user/order' },
+  { id: 'address',        label:"My Address",       icon:MapPin,      route:"/user/address" },
+  { id: 'wishlist',      label: 'Wishlist',        icon: Heart, route: '/user/wishlist' },
+  { id: 'notifications', label: 'Notifications',   icon: Bell, route: '/user/notification' },
 ]
 
 const NOTIFS = [
@@ -32,6 +33,7 @@ export default function Sidebar() {
   const { user } = useAppSelector((state)=>state.user)
   const [open, setOpen] = useState(true)
   const [active,setActive]= useState('')
+  const router = useRouter()
   const unread = NOTIFS.length
   return (
     <div className='fixed z-10 h-[650px] w-[280px]'>
@@ -131,6 +133,10 @@ export default function Sidebar() {
           return (
             <button
               key={id}
+              onClick={()=>{
+                setActive(id)
+                router.push(NAV.find((n)=>n.id===id)?.route || '/user/profile')
+              }}
               title={!open ? label : undefined}
               className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-left cursor-pointer w-full"
               style={{

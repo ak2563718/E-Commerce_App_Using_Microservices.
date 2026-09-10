@@ -111,30 +111,7 @@ export default function WishlistSkeleton({ viewMode = 'grid' }: { viewMode?: 'gr
           100% { background-position: -200% 0; }
         }
       `}</style>
-
-      {/* Header */}
-      <div style={{
-        background: `linear-gradient(135deg, ${PINK} 0%, #c2006e 100%)`,
-        padding: '14px 0',
-        boxShadow: '0 3px 16px rgba(233,30,140,0.25)',
-      }}>
-        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          {/* Logo */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ background: 'rgba(255,255,255,0.25)', borderRadius: '10px', width: '32px', height: '32px' }} />
-            <div style={{ width: '96px', height: '20px', background: 'rgba(255,255,255,0.3)', borderRadius: '5px' }} />
-          </div>
-
-          {/* Nav */}
-          <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
-            {[52, 60, 36].map((w, i) => (
-              <div key={i} style={{ width: w, height: '12px', background: 'rgba(255,255,255,0.25)', borderRadius: '4px' }} />
-            ))}
-            <div style={{ width: '96px', height: '30px', background: 'rgba(255,255,255,0.2)', borderRadius: '8px' }} />
-          </div>
-        </div>
-      </div>
-
+      
       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '24px 28px 48px' }}>
         {/* Page header */}
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
