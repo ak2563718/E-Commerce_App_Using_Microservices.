@@ -48,7 +48,7 @@ export default function SellerLanding() {
   const router = useRouter()
   const { user } = useAppSelector((state)=>state.auth)
   console.log(user)
-  if(user.role === 'SELLER'){
+  if(user && user.role === 'SELLER'){
     return router.replace('/seller/overview')
   }
   return (

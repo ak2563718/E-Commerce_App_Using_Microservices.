@@ -1,10 +1,12 @@
 import SellerLanding from '@/component/seller/SellerLanding'
-import React from 'react'
+import type { ComponentType } from 'react'
+
+const SellerLandingComponent = SellerLanding as unknown as ComponentType
 
 function page() {
   return (
     <div>
-        <SellerLanding/>
+        <SellerLandingComponent />
     </div>
   )
 }

@@ -1,3 +1,4 @@
+import Navbar from '@/component/dashboard/Navbar'
 import SellNavbar from '@/component/seller/SellNavbar'
 import Sidebar from '@/component/seller/sellerdashboard/Sidebar'
 import React from 'react'
@@ -7,8 +8,7 @@ type Props ={
 function layout({ children}:Props) {
   return (
     <div>
-       <SellNavbar/>
-       <Sidebar /> 
+      <SellNavbar/>
        <div>{children}</div>
     </div>
   )
