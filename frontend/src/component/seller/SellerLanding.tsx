@@ -45,12 +45,6 @@ const STATS = [
 
 
 export default function SellerLanding() {
-  const router = useRouter()
-  const { user } = useAppSelector((state)=>state.auth)
-  console.log(user)
-  if(user && user.role === 'SELLER'){
-    return router.replace('/seller/overview')
-  }
   return (
     <div className="min-h-screen w-full" style={{ background: '#faf5ff', fontFamily: 'DM Sans, sans-serif' }}>
     
@@ -79,7 +73,7 @@ export default function SellerLanding() {
 
         <div className="flex items-center gap-4 relative">
           <button
-            onClick={()=>router.replace('/seller-portal/signup')}
+           
             className="px-8 py-3.5 rounded-2xl text-white font-bold text-base flex items-center gap-2 transition-all active:scale-[0.97]"
             style={{
               background: 'linear-gradient(135deg, #7c3aed, #a855f7)',
@@ -89,7 +83,7 @@ export default function SellerLanding() {
             Start Selling Free <ArrowRight className="w-5 h-5" />
           </button>
           <button
-            onClick={()=>router.replace('/seller-portal/login')}
+           
             className="px-8 py-3.5 rounded-2xl font-bold text-base transition-all hover:bg-white"
             style={{ color: '#7c3aed', border: '1.5px solid #ddd6fe' }}
           >
@@ -146,7 +140,7 @@ export default function SellerLanding() {
         </h2>
         <div className="flex items-center gap-4">
           <button
-            onClick={()=>router.replace('/seller-portal/signup')}
+           
             className="px-8 py-3.5 rounded-2xl text-white font-bold text-base flex items-center gap-2 transition-all active:scale-[0.97]"
             style={{
               background: 'linear-gradient(135deg, #7c3aed, #a855f7)',
@@ -156,7 +150,7 @@ export default function SellerLanding() {
             Create Free Account <ArrowRight className="w-5 h-5" />
           </button>
           <button
-            onClick={()=>router.replace('/seller-portal/login')}
+           
             className="text-sm font-semibold hover:opacity-70 transition-opacity"
             style={{ color: '#7c3aed' }}
           >

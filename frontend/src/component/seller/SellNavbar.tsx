@@ -6,13 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
 function SellNavbar() {
-  const router = useRouter()
-  const { user, islogin } = useAppSelector((state)=>state.auth);
-  const dispatch = useAppDispatch()
-  useEffect(()=>{
-    dispatch(authCheckSession())
-  },[])
-  
+
   return (
     <div>
         <nav
@@ -29,7 +23,7 @@ function SellNavbar() {
             className="w-9 h-9 rounded-xl flex items-center justify-center"
             style={{ background: 'linear-gradient(135deg, #e91e8c, #7c3aed)' }}
           >
-            <a href='/seller-portal/information'><Store className="w-5 h-5 text-white" /></a>
+            {/* <a href='/seller-portal/information'><Store className="w-5 h-5 text-white" /></a> */}
           </div>
           <div>
             <span className="font-black text-gray-900 text-lg tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
@@ -57,17 +51,17 @@ function SellNavbar() {
         </div>
 
         {/* CTA buttons */}
-        {user?.role !== 'SELLER' &&
+        {/* {user?.role !== 'SELLER' &&
         <div className="flex items-center gap-3">
           <button
-            onClick={()=>router.push('/seller-portal/login')}
+            // onClick={()=>router.push('/seller-portal/login')}
             className="px-5 py-2 rounded-xl text-sm font-semibold transition-all hover:bg-purple-50"
             style={{ color: '#7c3aed', border: '1.5px solid #ddd6fe' }}
           >
             Sign In
           </button>
           <button
-            onClick={()=>router.push('/seller-portal/signup')}
+            // onClick={()=>router.push('/seller-portal/signup')}
             className="px-5 py-2 rounded-xl text-sm font-bold text-white flex items-center gap-1.5 transition-all active:scale-[0.97]"
             style={{
               background: 'linear-gradient(135deg, #7c3aed, #a855f7)',
@@ -76,7 +70,7 @@ function SellNavbar() {
           >
             Create Account <ChevronRight className="w-4 h-4" />
           </button>
-        </div>}
+        </div>} */}
       </nav>
     </div>
   )

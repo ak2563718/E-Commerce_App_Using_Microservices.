@@ -18,20 +18,7 @@ import { authLogin } from '@/redux/auth/auth.Action'
 export default function SellerLogin() {
   const [data, setData] = useState({ email: '', password: '' })
   const [showPass, setShowPass] = useState(false)
-  const router = useRouter()
-  const dispatch = useAppDispatch()
-  const { loading } = useAppSelector((state)=>state.auth)
-  const handleSubmit = async () => {
-    if (!data.email || !data.password) return
-    try {
-      const res = await dispatch(authLogin(data)).unwrap();
-      toast.success(res.message)
-      await new Promise(r => setTimeout(r, 1800))
-      router.replace('/seller/overview')
-    } catch (error:any) {
-      toast.error(error)
-    }
-  }
+ const [loading, setLoading] = useState(false)
 
   return (
     <div
@@ -53,7 +40,7 @@ export default function SellerLogin() {
             Sign In
           </button>
           <button
-            onClick={()=>router.push('/seller-portal/signup')}
+            
             className="flex-1 py-3.5 text-xs font-bold tracking-wide text-gray-400 hover:text-purple-400 transition-colors"
             style={{ borderBottom: '2px solid transparent' }}
           >
@@ -102,7 +89,7 @@ export default function SellerLogin() {
             </button>
           </div>
 
-          <PurpleButton onClick={handleSubmit} disabled={loading}>
+          <PurpleButton  disabled={loading}>
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Sign In to Dashboard'}
           </PurpleButton>
 
@@ -114,7 +101,7 @@ export default function SellerLogin() {
             New seller?{' '}
             <button
               type="button"
-              onClick={()=>router.push('/seller-portal/signup')}
+              
               className="font-bold hover:opacity-80 transition-opacity"
               style={{ color: '#7c3aed' }}
             >

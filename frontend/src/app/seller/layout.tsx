@@ -1,17 +1,25 @@
-import Navbar from '@/component/dashboard/Navbar'
-import SellNavbar from '@/component/seller/SellNavbar'
 import Sidebar from '@/component/seller/sellerdashboard/Sidebar'
+import SellNavbar from '@/component/seller/SellNavbar'
 import React from 'react'
-type Props ={
-    children:React.ReactNode
+type Props={
+children:React.ReactNode
 }
-function layout({ children}:Props) {
+export default function layout({children}:Props) {
   return (
-    <div>
-      <SellNavbar/>
-       <div>{children}</div>
-    </div>
+    <div className="min-h-screen bg-gray-50">
+  {/* Top Navbar */}
+  <SellNavbar />
+
+  {/* Dashboard Area */}
+  <div className="flex">
+    {/* Sidebar */}
+      <div className='h-screen '><Sidebar /></div>
+
+    {/* Main Content */}
+    <main className="min-w-0 flex-1 overflow-y-auto">
+      {children}
+    </main>
+  </div>
+</div>
   )
 }
-
-export default layout

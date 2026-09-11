@@ -42,9 +42,7 @@ function Field({ label, placeholder, value, onChange, type = 'text' }: {
 
 export default function SellerSignup({ onGoLogin }: Props) {
   const [done, setDone] = useState(false)
-  const router = useRouter()
-  const dispatch = useAppDispatch()
-  const { loading, accessToken } = useAppSelector((state)=>state.auth)
+  const [ loading, setLoading] = useState(false)
   const [form, setForm] = useState({
     businessName: '',
     businessEmail: '',
@@ -57,17 +55,7 @@ export default function SellerSignup({ onGoLogin }: Props) {
 
   const set = (k: keyof typeof form) => (v: string) => setForm(f => ({ ...f, [k]: v }))
 
-  const handleSubmit = async () => {
-    try {
-      const res = await dispatch(sellerSignup({formData:form,accessToken})).unwrap()
-      toast.success(res.message)
-      await new Promise(r => setTimeout(r, 1800))
-      setDone(true)
-    } catch (error:any) {
-      toast.error(error)
-      setDone(false)
-    } 
-  }
+  
   return (
     <div
       className="flex rounded-2xl overflow-hidden"
@@ -82,7 +70,7 @@ export default function SellerSignup({ onGoLogin }: Props) {
         {/* Tabs */}
         <div className="border-b border-gray-100 flex shrink-0">
           <button
-            onClick={()=>router.push('/seller-portal/login')}
+            
             className="flex-1 py-3.5 text-xs font-bold tracking-wide text-gray-400 hover:text-purple-400 transition-colors"
             style={{ borderBottom: '2px solid transparent' }}
           >
@@ -172,7 +160,7 @@ export default function SellerSignup({ onGoLogin }: Props) {
                 />
               </div>
 
-              <PurpleButton onClick={handleSubmit} disabled={loading}>
+              <PurpleButton  disabled={loading}>
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Create Seller Account'}
               </PurpleButton>
 
