@@ -70,6 +70,13 @@ export const RoleName: {
 export type RoleName = (typeof RoleName)[keyof typeof RoleName]
 
 
+export const sellerRole: {
+  SELLER: 'SELLER'
+};
+
+export type sellerRole = (typeof sellerRole)[keyof typeof sellerRole]
+
+
 export const SellerStatus: {
   PENDING: 'PENDING',
   APPROVED: 'APPROVED',
@@ -87,6 +94,10 @@ export const AuthProvider: typeof $Enums.AuthProvider
 export type RoleName = $Enums.RoleName
 
 export const RoleName: typeof $Enums.RoleName
+
+export type sellerRole = $Enums.sellerRole
+
+export const sellerRole: typeof $Enums.sellerRole
 
 export type SellerStatus = $Enums.SellerStatus
 
@@ -1540,6 +1551,37 @@ export namespace Prisma {
 
 
   /**
+   * Count Type SellerCountOutputType
+   */
+
+  export type SellerCountOutputType = {
+    refreshTokens: number
+  }
+
+  export type SellerCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    refreshTokens?: boolean | SellerCountOutputTypeCountRefreshTokensArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * SellerCountOutputType without action
+   */
+  export type SellerCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SellerCountOutputType
+     */
+    select?: SellerCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * SellerCountOutputType without action
+   */
+  export type SellerCountOutputTypeCountRefreshTokensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RefreshTokenWhereInput
+  }
+
+
+  /**
    * Models
    */
 
@@ -1723,7 +1765,6 @@ export namespace Prisma {
     provider?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    seller?: boolean | User$sellerArgs<ExtArgs>
     role?: boolean | User$roleArgs<ExtArgs>
     refreshTokens?: boolean | User$refreshTokensArgs<ExtArgs>
     passwordResets?: boolean | User$passwordResetsArgs<ExtArgs>
@@ -1763,7 +1804,6 @@ export namespace Prisma {
 
   export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "password" | "emailverified" | "provider" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    seller?: boolean | User$sellerArgs<ExtArgs>
     role?: boolean | User$roleArgs<ExtArgs>
     refreshTokens?: boolean | User$refreshTokensArgs<ExtArgs>
     passwordResets?: boolean | User$passwordResetsArgs<ExtArgs>
@@ -1776,7 +1816,6 @@ export namespace Prisma {
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
-      seller: Prisma.$SellerPayload<ExtArgs> | null
       role: Prisma.$UserRolePayload<ExtArgs>[]
       refreshTokens: Prisma.$RefreshTokenPayload<ExtArgs>[]
       passwordResets: Prisma.$PasswordResetTokenPayload<ExtArgs>[]
@@ -2184,7 +2223,6 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    seller<T extends User$sellerArgs<ExtArgs> = {}>(args?: Subset<T, User$sellerArgs<ExtArgs>>): Prisma__SellerClient<$Result.GetResult<Prisma.$SellerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     role<T extends User$roleArgs<ExtArgs> = {}>(args?: Subset<T, User$roleArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserRolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     refreshTokens<T extends User$refreshTokensArgs<ExtArgs> = {}>(args?: Subset<T, User$refreshTokensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RefreshTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     passwordResets<T extends User$passwordResetsArgs<ExtArgs> = {}>(args?: Subset<T, User$passwordResetsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PasswordResetTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2615,25 +2653,6 @@ export namespace Prisma {
      * Limit how many Users to delete.
      */
     limit?: number
-  }
-
-  /**
-   * User.seller
-   */
-  export type User$sellerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Seller
-     */
-    select?: SellerSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Seller
-     */
-    omit?: SellerOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SellerInclude<ExtArgs> | null
-    where?: SellerWhereInput
   }
 
   /**
@@ -4909,7 +4928,6 @@ export namespace Prisma {
 
   export type SellerMinAggregateOutputType = {
     id: string | null
-    userId: string | null
     businessName: string | null
     businessEmail: string | null
     businessPhone: string | null
@@ -4917,6 +4935,8 @@ export namespace Prisma {
     panNumber: string | null
     businessAddress: string | null
     description: string | null
+    role: $Enums.sellerRole | null
+    password: string | null
     status: $Enums.SellerStatus | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -4924,7 +4944,6 @@ export namespace Prisma {
 
   export type SellerMaxAggregateOutputType = {
     id: string | null
-    userId: string | null
     businessName: string | null
     businessEmail: string | null
     businessPhone: string | null
@@ -4932,6 +4951,8 @@ export namespace Prisma {
     panNumber: string | null
     businessAddress: string | null
     description: string | null
+    role: $Enums.sellerRole | null
+    password: string | null
     status: $Enums.SellerStatus | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -4939,7 +4960,6 @@ export namespace Prisma {
 
   export type SellerCountAggregateOutputType = {
     id: number
-    userId: number
     businessName: number
     businessEmail: number
     businessPhone: number
@@ -4947,6 +4967,8 @@ export namespace Prisma {
     panNumber: number
     businessAddress: number
     description: number
+    role: number
+    password: number
     status: number
     createdAt: number
     updatedAt: number
@@ -4956,7 +4978,6 @@ export namespace Prisma {
 
   export type SellerMinAggregateInputType = {
     id?: true
-    userId?: true
     businessName?: true
     businessEmail?: true
     businessPhone?: true
@@ -4964,6 +4985,8 @@ export namespace Prisma {
     panNumber?: true
     businessAddress?: true
     description?: true
+    role?: true
+    password?: true
     status?: true
     createdAt?: true
     updatedAt?: true
@@ -4971,7 +4994,6 @@ export namespace Prisma {
 
   export type SellerMaxAggregateInputType = {
     id?: true
-    userId?: true
     businessName?: true
     businessEmail?: true
     businessPhone?: true
@@ -4979,6 +5001,8 @@ export namespace Prisma {
     panNumber?: true
     businessAddress?: true
     description?: true
+    role?: true
+    password?: true
     status?: true
     createdAt?: true
     updatedAt?: true
@@ -4986,7 +5010,6 @@ export namespace Prisma {
 
   export type SellerCountAggregateInputType = {
     id?: true
-    userId?: true
     businessName?: true
     businessEmail?: true
     businessPhone?: true
@@ -4994,6 +5017,8 @@ export namespace Prisma {
     panNumber?: true
     businessAddress?: true
     description?: true
+    role?: true
+    password?: true
     status?: true
     createdAt?: true
     updatedAt?: true
@@ -5074,14 +5099,15 @@ export namespace Prisma {
 
   export type SellerGroupByOutputType = {
     id: string
-    userId: string
     businessName: string
-    businessEmail: string | null
-    businessPhone: string | null
+    businessEmail: string
+    businessPhone: string
     gstNumber: string | null
     panNumber: string | null
     businessAddress: string | null
     description: string | null
+    role: $Enums.sellerRole
+    password: string
     status: $Enums.SellerStatus
     createdAt: Date
     updatedAt: Date
@@ -5106,7 +5132,6 @@ export namespace Prisma {
 
   export type SellerSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    userId?: boolean
     businessName?: boolean
     businessEmail?: boolean
     businessPhone?: boolean
@@ -5114,15 +5139,17 @@ export namespace Prisma {
     panNumber?: boolean
     businessAddress?: boolean
     description?: boolean
+    role?: boolean
+    password?: boolean
     status?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    refreshTokens?: boolean | Seller$refreshTokensArgs<ExtArgs>
+    _count?: boolean | SellerCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["seller"]>
 
   export type SellerSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    userId?: boolean
     businessName?: boolean
     businessEmail?: boolean
     businessPhone?: boolean
@@ -5130,15 +5157,15 @@ export namespace Prisma {
     panNumber?: boolean
     businessAddress?: boolean
     description?: boolean
+    role?: boolean
+    password?: boolean
     status?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["seller"]>
 
   export type SellerSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    userId?: boolean
     businessName?: boolean
     businessEmail?: boolean
     businessPhone?: boolean
@@ -5146,15 +5173,15 @@ export namespace Prisma {
     panNumber?: boolean
     businessAddress?: boolean
     description?: boolean
+    role?: boolean
+    password?: boolean
     status?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["seller"]>
 
   export type SellerSelectScalar = {
     id?: boolean
-    userId?: boolean
     businessName?: boolean
     businessEmail?: boolean
     businessPhone?: boolean
@@ -5162,37 +5189,37 @@ export namespace Prisma {
     panNumber?: boolean
     businessAddress?: boolean
     description?: boolean
+    role?: boolean
+    password?: boolean
     status?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type SellerOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "businessName" | "businessEmail" | "businessPhone" | "gstNumber" | "panNumber" | "businessAddress" | "description" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["seller"]>
+  export type SellerOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "businessName" | "businessEmail" | "businessPhone" | "gstNumber" | "panNumber" | "businessAddress" | "description" | "role" | "password" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["seller"]>
   export type SellerInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    refreshTokens?: boolean | Seller$refreshTokensArgs<ExtArgs>
+    _count?: boolean | SellerCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type SellerIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }
-  export type SellerIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }
+  export type SellerIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type SellerIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $SellerPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Seller"
     objects: {
-      user: Prisma.$UserPayload<ExtArgs>
+      refreshTokens: Prisma.$RefreshTokenPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      userId: string
       businessName: string
-      businessEmail: string | null
-      businessPhone: string | null
+      businessEmail: string
+      businessPhone: string
       gstNumber: string | null
       panNumber: string | null
       businessAddress: string | null
       description: string | null
+      role: $Enums.sellerRole
+      password: string
       status: $Enums.SellerStatus
       createdAt: Date
       updatedAt: Date
@@ -5590,7 +5617,7 @@ export namespace Prisma {
    */
   export interface Prisma__SellerClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    refreshTokens<T extends Seller$refreshTokensArgs<ExtArgs> = {}>(args?: Subset<T, Seller$refreshTokensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RefreshTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5621,7 +5648,6 @@ export namespace Prisma {
    */
   interface SellerFieldRefs {
     readonly id: FieldRef<"Seller", 'String'>
-    readonly userId: FieldRef<"Seller", 'String'>
     readonly businessName: FieldRef<"Seller", 'String'>
     readonly businessEmail: FieldRef<"Seller", 'String'>
     readonly businessPhone: FieldRef<"Seller", 'String'>
@@ -5629,6 +5655,8 @@ export namespace Prisma {
     readonly panNumber: FieldRef<"Seller", 'String'>
     readonly businessAddress: FieldRef<"Seller", 'String'>
     readonly description: FieldRef<"Seller", 'String'>
+    readonly role: FieldRef<"Seller", 'sellerRole'>
+    readonly password: FieldRef<"Seller", 'String'>
     readonly status: FieldRef<"Seller", 'SellerStatus'>
     readonly createdAt: FieldRef<"Seller", 'DateTime'>
     readonly updatedAt: FieldRef<"Seller", 'DateTime'>
@@ -5886,10 +5914,6 @@ export namespace Prisma {
      */
     data: SellerCreateManyInput | SellerCreateManyInput[]
     skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SellerIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -5960,10 +5984,6 @@ export namespace Prisma {
      * Limit how many Sellers to update.
      */
     limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SellerIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -6033,6 +6053,30 @@ export namespace Prisma {
   }
 
   /**
+   * Seller.refreshTokens
+   */
+  export type Seller$refreshTokensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RefreshToken
+     */
+    select?: RefreshTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RefreshToken
+     */
+    omit?: RefreshTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RefreshTokenInclude<ExtArgs> | null
+    where?: RefreshTokenWhereInput
+    orderBy?: RefreshTokenOrderByWithRelationInput | RefreshTokenOrderByWithRelationInput[]
+    cursor?: RefreshTokenWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RefreshTokenScalarFieldEnum | RefreshTokenScalarFieldEnum[]
+  }
+
+  /**
    * Seller without action
    */
   export type SellerDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6065,6 +6109,7 @@ export namespace Prisma {
     id: string | null
     token: string | null
     userId: string | null
+    sellerId: string | null
     createdAt: Date | null
     expiresAt: Date | null
   }
@@ -6073,6 +6118,7 @@ export namespace Prisma {
     id: string | null
     token: string | null
     userId: string | null
+    sellerId: string | null
     createdAt: Date | null
     expiresAt: Date | null
   }
@@ -6081,6 +6127,7 @@ export namespace Prisma {
     id: number
     token: number
     userId: number
+    sellerId: number
     createdAt: number
     expiresAt: number
     _all: number
@@ -6091,6 +6138,7 @@ export namespace Prisma {
     id?: true
     token?: true
     userId?: true
+    sellerId?: true
     createdAt?: true
     expiresAt?: true
   }
@@ -6099,6 +6147,7 @@ export namespace Prisma {
     id?: true
     token?: true
     userId?: true
+    sellerId?: true
     createdAt?: true
     expiresAt?: true
   }
@@ -6107,6 +6156,7 @@ export namespace Prisma {
     id?: true
     token?: true
     userId?: true
+    sellerId?: true
     createdAt?: true
     expiresAt?: true
     _all?: true
@@ -6187,7 +6237,8 @@ export namespace Prisma {
   export type RefreshTokenGroupByOutputType = {
     id: string
     token: string
-    userId: string
+    userId: string | null
+    sellerId: string | null
     createdAt: Date
     expiresAt: Date
     _count: RefreshTokenCountAggregateOutputType | null
@@ -6213,57 +6264,69 @@ export namespace Prisma {
     id?: boolean
     token?: boolean
     userId?: boolean
+    sellerId?: boolean
     createdAt?: boolean
     expiresAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | RefreshToken$userArgs<ExtArgs>
+    seller?: boolean | RefreshToken$sellerArgs<ExtArgs>
   }, ExtArgs["result"]["refreshToken"]>
 
   export type RefreshTokenSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     token?: boolean
     userId?: boolean
+    sellerId?: boolean
     createdAt?: boolean
     expiresAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | RefreshToken$userArgs<ExtArgs>
+    seller?: boolean | RefreshToken$sellerArgs<ExtArgs>
   }, ExtArgs["result"]["refreshToken"]>
 
   export type RefreshTokenSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     token?: boolean
     userId?: boolean
+    sellerId?: boolean
     createdAt?: boolean
     expiresAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | RefreshToken$userArgs<ExtArgs>
+    seller?: boolean | RefreshToken$sellerArgs<ExtArgs>
   }, ExtArgs["result"]["refreshToken"]>
 
   export type RefreshTokenSelectScalar = {
     id?: boolean
     token?: boolean
     userId?: boolean
+    sellerId?: boolean
     createdAt?: boolean
     expiresAt?: boolean
   }
 
-  export type RefreshTokenOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "token" | "userId" | "createdAt" | "expiresAt", ExtArgs["result"]["refreshToken"]>
+  export type RefreshTokenOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "token" | "userId" | "sellerId" | "createdAt" | "expiresAt", ExtArgs["result"]["refreshToken"]>
   export type RefreshTokenInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | RefreshToken$userArgs<ExtArgs>
+    seller?: boolean | RefreshToken$sellerArgs<ExtArgs>
   }
   export type RefreshTokenIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | RefreshToken$userArgs<ExtArgs>
+    seller?: boolean | RefreshToken$sellerArgs<ExtArgs>
   }
   export type RefreshTokenIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | RefreshToken$userArgs<ExtArgs>
+    seller?: boolean | RefreshToken$sellerArgs<ExtArgs>
   }
 
   export type $RefreshTokenPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "RefreshToken"
     objects: {
-      user: Prisma.$UserPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs> | null
+      seller: Prisma.$SellerPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       token: string
-      userId: string
+      userId: string | null
+      sellerId: string | null
       createdAt: Date
       expiresAt: Date
     }, ExtArgs["result"]["refreshToken"]>
@@ -6660,7 +6723,8 @@ export namespace Prisma {
    */
   export interface Prisma__RefreshTokenClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends RefreshToken$userArgs<ExtArgs> = {}>(args?: Subset<T, RefreshToken$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    seller<T extends RefreshToken$sellerArgs<ExtArgs> = {}>(args?: Subset<T, RefreshToken$sellerArgs<ExtArgs>>): Prisma__SellerClient<$Result.GetResult<Prisma.$SellerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6693,6 +6757,7 @@ export namespace Prisma {
     readonly id: FieldRef<"RefreshToken", 'String'>
     readonly token: FieldRef<"RefreshToken", 'String'>
     readonly userId: FieldRef<"RefreshToken", 'String'>
+    readonly sellerId: FieldRef<"RefreshToken", 'String'>
     readonly createdAt: FieldRef<"RefreshToken", 'DateTime'>
     readonly expiresAt: FieldRef<"RefreshToken", 'DateTime'>
   }
@@ -7093,6 +7158,44 @@ export namespace Prisma {
      * Limit how many RefreshTokens to delete.
      */
     limit?: number
+  }
+
+  /**
+   * RefreshToken.user
+   */
+  export type RefreshToken$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * RefreshToken.seller
+   */
+  export type RefreshToken$sellerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Seller
+     */
+    select?: SellerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Seller
+     */
+    omit?: SellerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SellerInclude<ExtArgs> | null
+    where?: SellerWhereInput
   }
 
   /**
@@ -9291,7 +9394,6 @@ export namespace Prisma {
 
   export const SellerScalarFieldEnum: {
     id: 'id',
-    userId: 'userId',
     businessName: 'businessName',
     businessEmail: 'businessEmail',
     businessPhone: 'businessPhone',
@@ -9299,6 +9401,8 @@ export namespace Prisma {
     panNumber: 'panNumber',
     businessAddress: 'businessAddress',
     description: 'description',
+    role: 'role',
+    password: 'password',
     status: 'status',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -9311,6 +9415,7 @@ export namespace Prisma {
     id: 'id',
     token: 'token',
     userId: 'userId',
+    sellerId: 'sellerId',
     createdAt: 'createdAt',
     expiresAt: 'expiresAt'
   };
@@ -9433,6 +9538,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'sellerRole'
+   */
+  export type EnumsellerRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'sellerRole'>
+    
+
+
+  /**
+   * Reference to a field of type 'sellerRole[]'
+   */
+  export type ListEnumsellerRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'sellerRole[]'>
+    
+
+
+  /**
    * Reference to a field of type 'SellerStatus'
    */
   export type EnumSellerStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SellerStatus'>
@@ -9474,7 +9593,6 @@ export namespace Prisma {
     provider?: EnumAuthProviderFilter<"User"> | $Enums.AuthProvider
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
-    seller?: XOR<SellerNullableScalarRelationFilter, SellerWhereInput> | null
     role?: UserRoleListRelationFilter
     refreshTokens?: RefreshTokenListRelationFilter
     passwordResets?: PasswordResetTokenListRelationFilter
@@ -9489,7 +9607,6 @@ export namespace Prisma {
     provider?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    seller?: SellerOrderByWithRelationInput
     role?: UserRoleOrderByRelationAggregateInput
     refreshTokens?: RefreshTokenOrderByRelationAggregateInput
     passwordResets?: PasswordResetTokenOrderByRelationAggregateInput
@@ -9507,7 +9624,6 @@ export namespace Prisma {
     provider?: EnumAuthProviderFilter<"User"> | $Enums.AuthProvider
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
-    seller?: XOR<SellerNullableScalarRelationFilter, SellerWhereInput> | null
     role?: UserRoleListRelationFilter
     refreshTokens?: RefreshTokenListRelationFilter
     passwordResets?: PasswordResetTokenListRelationFilter
@@ -9566,7 +9682,7 @@ export namespace Prisma {
   export type UserRoleWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     userId?: string
-    userId_roleId?: UserRoleUserIdRoleIdCompoundUniqueInput
+    roleId_userId?: UserRoleRoleIdUserIdCompoundUniqueInput
     AND?: UserRoleWhereInput | UserRoleWhereInput[]
     OR?: UserRoleWhereInput[]
     NOT?: UserRoleWhereInput | UserRoleWhereInput[]
@@ -9575,7 +9691,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"UserRole"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     role?: XOR<RoleScalarRelationFilter, RoleWhereInput>
-  }, "id" | "userId" | "userId_roleId">
+  }, "id" | "userId" | "roleId_userId">
 
   export type UserRoleOrderByWithAggregationInput = {
     id?: SortOrder
@@ -9659,65 +9775,69 @@ export namespace Prisma {
     OR?: SellerWhereInput[]
     NOT?: SellerWhereInput | SellerWhereInput[]
     id?: StringFilter<"Seller"> | string
-    userId?: StringFilter<"Seller"> | string
     businessName?: StringFilter<"Seller"> | string
-    businessEmail?: StringNullableFilter<"Seller"> | string | null
-    businessPhone?: StringNullableFilter<"Seller"> | string | null
+    businessEmail?: StringFilter<"Seller"> | string
+    businessPhone?: StringFilter<"Seller"> | string
     gstNumber?: StringNullableFilter<"Seller"> | string | null
     panNumber?: StringNullableFilter<"Seller"> | string | null
     businessAddress?: StringNullableFilter<"Seller"> | string | null
     description?: StringNullableFilter<"Seller"> | string | null
+    role?: EnumsellerRoleFilter<"Seller"> | $Enums.sellerRole
+    password?: StringFilter<"Seller"> | string
     status?: EnumSellerStatusFilter<"Seller"> | $Enums.SellerStatus
     createdAt?: DateTimeFilter<"Seller"> | Date | string
     updatedAt?: DateTimeFilter<"Seller"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    refreshTokens?: RefreshTokenListRelationFilter
   }
 
   export type SellerOrderByWithRelationInput = {
     id?: SortOrder
-    userId?: SortOrder
     businessName?: SortOrder
-    businessEmail?: SortOrderInput | SortOrder
-    businessPhone?: SortOrderInput | SortOrder
+    businessEmail?: SortOrder
+    businessPhone?: SortOrder
     gstNumber?: SortOrderInput | SortOrder
     panNumber?: SortOrderInput | SortOrder
     businessAddress?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
+    role?: SortOrder
+    password?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    user?: UserOrderByWithRelationInput
+    refreshTokens?: RefreshTokenOrderByRelationAggregateInput
   }
 
   export type SellerWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    userId?: string
+    businessEmail?: string
+    businessPhone?: string
     AND?: SellerWhereInput | SellerWhereInput[]
     OR?: SellerWhereInput[]
     NOT?: SellerWhereInput | SellerWhereInput[]
     businessName?: StringFilter<"Seller"> | string
-    businessEmail?: StringNullableFilter<"Seller"> | string | null
-    businessPhone?: StringNullableFilter<"Seller"> | string | null
     gstNumber?: StringNullableFilter<"Seller"> | string | null
     panNumber?: StringNullableFilter<"Seller"> | string | null
     businessAddress?: StringNullableFilter<"Seller"> | string | null
     description?: StringNullableFilter<"Seller"> | string | null
+    role?: EnumsellerRoleFilter<"Seller"> | $Enums.sellerRole
+    password?: StringFilter<"Seller"> | string
     status?: EnumSellerStatusFilter<"Seller"> | $Enums.SellerStatus
     createdAt?: DateTimeFilter<"Seller"> | Date | string
     updatedAt?: DateTimeFilter<"Seller"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "id" | "userId">
+    refreshTokens?: RefreshTokenListRelationFilter
+  }, "id" | "businessEmail" | "businessPhone">
 
   export type SellerOrderByWithAggregationInput = {
     id?: SortOrder
-    userId?: SortOrder
     businessName?: SortOrder
-    businessEmail?: SortOrderInput | SortOrder
-    businessPhone?: SortOrderInput | SortOrder
+    businessEmail?: SortOrder
+    businessPhone?: SortOrder
     gstNumber?: SortOrderInput | SortOrder
     panNumber?: SortOrderInput | SortOrder
     businessAddress?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
+    role?: SortOrder
+    password?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -9731,14 +9851,15 @@ export namespace Prisma {
     OR?: SellerScalarWhereWithAggregatesInput[]
     NOT?: SellerScalarWhereWithAggregatesInput | SellerScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Seller"> | string
-    userId?: StringWithAggregatesFilter<"Seller"> | string
     businessName?: StringWithAggregatesFilter<"Seller"> | string
-    businessEmail?: StringNullableWithAggregatesFilter<"Seller"> | string | null
-    businessPhone?: StringNullableWithAggregatesFilter<"Seller"> | string | null
+    businessEmail?: StringWithAggregatesFilter<"Seller"> | string
+    businessPhone?: StringWithAggregatesFilter<"Seller"> | string
     gstNumber?: StringNullableWithAggregatesFilter<"Seller"> | string | null
     panNumber?: StringNullableWithAggregatesFilter<"Seller"> | string | null
     businessAddress?: StringNullableWithAggregatesFilter<"Seller"> | string | null
     description?: StringNullableWithAggregatesFilter<"Seller"> | string | null
+    role?: EnumsellerRoleWithAggregatesFilter<"Seller"> | $Enums.sellerRole
+    password?: StringWithAggregatesFilter<"Seller"> | string
     status?: EnumSellerStatusWithAggregatesFilter<"Seller"> | $Enums.SellerStatus
     createdAt?: DateTimeWithAggregatesFilter<"Seller"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Seller"> | Date | string
@@ -9750,19 +9871,23 @@ export namespace Prisma {
     NOT?: RefreshTokenWhereInput | RefreshTokenWhereInput[]
     id?: StringFilter<"RefreshToken"> | string
     token?: StringFilter<"RefreshToken"> | string
-    userId?: StringFilter<"RefreshToken"> | string
+    userId?: StringNullableFilter<"RefreshToken"> | string | null
+    sellerId?: StringNullableFilter<"RefreshToken"> | string | null
     createdAt?: DateTimeFilter<"RefreshToken"> | Date | string
     expiresAt?: DateTimeFilter<"RefreshToken"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    seller?: XOR<SellerNullableScalarRelationFilter, SellerWhereInput> | null
   }
 
   export type RefreshTokenOrderByWithRelationInput = {
     id?: SortOrder
     token?: SortOrder
-    userId?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    sellerId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     expiresAt?: SortOrder
     user?: UserOrderByWithRelationInput
+    seller?: SellerOrderByWithRelationInput
   }
 
   export type RefreshTokenWhereUniqueInput = Prisma.AtLeast<{
@@ -9771,16 +9896,19 @@ export namespace Prisma {
     AND?: RefreshTokenWhereInput | RefreshTokenWhereInput[]
     OR?: RefreshTokenWhereInput[]
     NOT?: RefreshTokenWhereInput | RefreshTokenWhereInput[]
-    userId?: StringFilter<"RefreshToken"> | string
+    userId?: StringNullableFilter<"RefreshToken"> | string | null
+    sellerId?: StringNullableFilter<"RefreshToken"> | string | null
     createdAt?: DateTimeFilter<"RefreshToken"> | Date | string
     expiresAt?: DateTimeFilter<"RefreshToken"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    seller?: XOR<SellerNullableScalarRelationFilter, SellerWhereInput> | null
   }, "id" | "token">
 
   export type RefreshTokenOrderByWithAggregationInput = {
     id?: SortOrder
     token?: SortOrder
-    userId?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    sellerId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     expiresAt?: SortOrder
     _count?: RefreshTokenCountOrderByAggregateInput
@@ -9794,7 +9922,8 @@ export namespace Prisma {
     NOT?: RefreshTokenScalarWhereWithAggregatesInput | RefreshTokenScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"RefreshToken"> | string
     token?: StringWithAggregatesFilter<"RefreshToken"> | string
-    userId?: StringWithAggregatesFilter<"RefreshToken"> | string
+    userId?: StringNullableWithAggregatesFilter<"RefreshToken"> | string | null
+    sellerId?: StringNullableWithAggregatesFilter<"RefreshToken"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"RefreshToken"> | Date | string
     expiresAt?: DateTimeWithAggregatesFilter<"RefreshToken"> | Date | string
   }
@@ -9917,7 +10046,6 @@ export namespace Prisma {
     provider?: $Enums.AuthProvider
     createdAt?: Date | string
     updatedAt?: Date | string
-    seller?: SellerCreateNestedOneWithoutUserInput
     role?: UserRoleCreateNestedManyWithoutUserInput
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
     passwordResets?: PasswordResetTokenCreateNestedManyWithoutUserInput
@@ -9932,7 +10060,6 @@ export namespace Prisma {
     provider?: $Enums.AuthProvider
     createdAt?: Date | string
     updatedAt?: Date | string
-    seller?: SellerUncheckedCreateNestedOneWithoutUserInput
     role?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
     passwordResets?: PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
@@ -9947,7 +10074,6 @@ export namespace Prisma {
     provider?: EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    seller?: SellerUpdateOneWithoutUserNestedInput
     role?: UserRoleUpdateManyWithoutUserNestedInput
     refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
     passwordResets?: PasswordResetTokenUpdateManyWithoutUserNestedInput
@@ -9962,7 +10088,6 @@ export namespace Prisma {
     provider?: EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    seller?: SellerUncheckedUpdateOneWithoutUserNestedInput
     role?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
     passwordResets?: PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -10116,73 +10241,82 @@ export namespace Prisma {
   export type SellerCreateInput = {
     id?: string
     businessName: string
-    businessEmail?: string | null
-    businessPhone?: string | null
+    businessEmail: string
+    businessPhone: string
     gstNumber?: string | null
     panNumber?: string | null
     businessAddress?: string | null
     description?: string | null
+    role: $Enums.sellerRole
+    password: string
     status?: $Enums.SellerStatus
     createdAt?: Date | string
     updatedAt?: Date | string
-    user: UserCreateNestedOneWithoutSellerInput
+    refreshTokens?: RefreshTokenCreateNestedManyWithoutSellerInput
   }
 
   export type SellerUncheckedCreateInput = {
     id?: string
-    userId: string
     businessName: string
-    businessEmail?: string | null
-    businessPhone?: string | null
+    businessEmail: string
+    businessPhone: string
     gstNumber?: string | null
     panNumber?: string | null
     businessAddress?: string | null
     description?: string | null
+    role: $Enums.sellerRole
+    password: string
     status?: $Enums.SellerStatus
     createdAt?: Date | string
     updatedAt?: Date | string
+    refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutSellerInput
   }
 
   export type SellerUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     businessName?: StringFieldUpdateOperationsInput | string
-    businessEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    businessPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    businessEmail?: StringFieldUpdateOperationsInput | string
+    businessPhone?: StringFieldUpdateOperationsInput | string
     gstNumber?: NullableStringFieldUpdateOperationsInput | string | null
     panNumber?: NullableStringFieldUpdateOperationsInput | string | null
     businessAddress?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumsellerRoleFieldUpdateOperationsInput | $Enums.sellerRole
+    password?: StringFieldUpdateOperationsInput | string
     status?: EnumSellerStatusFieldUpdateOperationsInput | $Enums.SellerStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutSellerNestedInput
+    refreshTokens?: RefreshTokenUpdateManyWithoutSellerNestedInput
   }
 
   export type SellerUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
     businessName?: StringFieldUpdateOperationsInput | string
-    businessEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    businessPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    businessEmail?: StringFieldUpdateOperationsInput | string
+    businessPhone?: StringFieldUpdateOperationsInput | string
     gstNumber?: NullableStringFieldUpdateOperationsInput | string | null
     panNumber?: NullableStringFieldUpdateOperationsInput | string | null
     businessAddress?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumsellerRoleFieldUpdateOperationsInput | $Enums.sellerRole
+    password?: StringFieldUpdateOperationsInput | string
     status?: EnumSellerStatusFieldUpdateOperationsInput | $Enums.SellerStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutSellerNestedInput
   }
 
   export type SellerCreateManyInput = {
     id?: string
-    userId: string
     businessName: string
-    businessEmail?: string | null
-    businessPhone?: string | null
+    businessEmail: string
+    businessPhone: string
     gstNumber?: string | null
     panNumber?: string | null
     businessAddress?: string | null
     description?: string | null
+    role: $Enums.sellerRole
+    password: string
     status?: $Enums.SellerStatus
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10191,12 +10325,14 @@ export namespace Prisma {
   export type SellerUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     businessName?: StringFieldUpdateOperationsInput | string
-    businessEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    businessPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    businessEmail?: StringFieldUpdateOperationsInput | string
+    businessPhone?: StringFieldUpdateOperationsInput | string
     gstNumber?: NullableStringFieldUpdateOperationsInput | string | null
     panNumber?: NullableStringFieldUpdateOperationsInput | string | null
     businessAddress?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumsellerRoleFieldUpdateOperationsInput | $Enums.sellerRole
+    password?: StringFieldUpdateOperationsInput | string
     status?: EnumSellerStatusFieldUpdateOperationsInput | $Enums.SellerStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10204,14 +10340,15 @@ export namespace Prisma {
 
   export type SellerUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
     businessName?: StringFieldUpdateOperationsInput | string
-    businessEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    businessPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    businessEmail?: StringFieldUpdateOperationsInput | string
+    businessPhone?: StringFieldUpdateOperationsInput | string
     gstNumber?: NullableStringFieldUpdateOperationsInput | string | null
     panNumber?: NullableStringFieldUpdateOperationsInput | string | null
     businessAddress?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumsellerRoleFieldUpdateOperationsInput | $Enums.sellerRole
+    password?: StringFieldUpdateOperationsInput | string
     status?: EnumSellerStatusFieldUpdateOperationsInput | $Enums.SellerStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10222,13 +10359,15 @@ export namespace Prisma {
     token: string
     createdAt?: Date | string
     expiresAt: Date | string
-    user: UserCreateNestedOneWithoutRefreshTokensInput
+    user?: UserCreateNestedOneWithoutRefreshTokensInput
+    seller?: SellerCreateNestedOneWithoutRefreshTokensInput
   }
 
   export type RefreshTokenUncheckedCreateInput = {
     id?: string
     token: string
-    userId: string
+    userId?: string | null
+    sellerId?: string | null
     createdAt?: Date | string
     expiresAt: Date | string
   }
@@ -10238,13 +10377,15 @@ export namespace Prisma {
     token?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutRefreshTokensNestedInput
+    user?: UserUpdateOneWithoutRefreshTokensNestedInput
+    seller?: SellerUpdateOneWithoutRefreshTokensNestedInput
   }
 
   export type RefreshTokenUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    sellerId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -10252,7 +10393,8 @@ export namespace Prisma {
   export type RefreshTokenCreateManyInput = {
     id?: string
     token: string
-    userId: string
+    userId?: string | null
+    sellerId?: string | null
     createdAt?: Date | string
     expiresAt: Date | string
   }
@@ -10267,7 +10409,8 @@ export namespace Prisma {
   export type RefreshTokenUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    sellerId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -10420,11 +10563,6 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
-  export type SellerNullableScalarRelationFilter = {
-    is?: SellerWhereInput | null
-    isNot?: SellerWhereInput | null
-  }
-
   export type UserRoleListRelationFilter = {
     every?: UserRoleWhereInput
     some?: UserRoleWhereInput
@@ -10555,9 +10693,9 @@ export namespace Prisma {
     isNot?: RoleWhereInput
   }
 
-  export type UserRoleUserIdRoleIdCompoundUniqueInput = {
-    userId: string
+  export type UserRoleRoleIdUserIdCompoundUniqueInput = {
     roleId: string
+    userId: string
   }
 
   export type UserRoleCountOrderByAggregateInput = {
@@ -10663,6 +10801,13 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
+  export type EnumsellerRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.sellerRole | EnumsellerRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.sellerRole[] | ListEnumsellerRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.sellerRole[] | ListEnumsellerRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumsellerRoleFilter<$PrismaModel> | $Enums.sellerRole
+  }
+
   export type EnumSellerStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.SellerStatus | EnumSellerStatusFieldRefInput<$PrismaModel>
     in?: $Enums.SellerStatus[] | ListEnumSellerStatusFieldRefInput<$PrismaModel>
@@ -10672,7 +10817,6 @@ export namespace Prisma {
 
   export type SellerCountOrderByAggregateInput = {
     id?: SortOrder
-    userId?: SortOrder
     businessName?: SortOrder
     businessEmail?: SortOrder
     businessPhone?: SortOrder
@@ -10680,6 +10824,8 @@ export namespace Prisma {
     panNumber?: SortOrder
     businessAddress?: SortOrder
     description?: SortOrder
+    role?: SortOrder
+    password?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -10687,7 +10833,6 @@ export namespace Prisma {
 
   export type SellerMaxOrderByAggregateInput = {
     id?: SortOrder
-    userId?: SortOrder
     businessName?: SortOrder
     businessEmail?: SortOrder
     businessPhone?: SortOrder
@@ -10695,6 +10840,8 @@ export namespace Prisma {
     panNumber?: SortOrder
     businessAddress?: SortOrder
     description?: SortOrder
+    role?: SortOrder
+    password?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -10702,7 +10849,6 @@ export namespace Prisma {
 
   export type SellerMinOrderByAggregateInput = {
     id?: SortOrder
-    userId?: SortOrder
     businessName?: SortOrder
     businessEmail?: SortOrder
     businessPhone?: SortOrder
@@ -10710,9 +10856,21 @@ export namespace Prisma {
     panNumber?: SortOrder
     businessAddress?: SortOrder
     description?: SortOrder
+    role?: SortOrder
+    password?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type EnumsellerRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.sellerRole | EnumsellerRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.sellerRole[] | ListEnumsellerRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.sellerRole[] | ListEnumsellerRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumsellerRoleWithAggregatesFilter<$PrismaModel> | $Enums.sellerRole
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumsellerRoleFilter<$PrismaModel>
+    _max?: NestedEnumsellerRoleFilter<$PrismaModel>
   }
 
   export type EnumSellerStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -10725,10 +10883,21 @@ export namespace Prisma {
     _max?: NestedEnumSellerStatusFilter<$PrismaModel>
   }
 
+  export type UserNullableScalarRelationFilter = {
+    is?: UserWhereInput | null
+    isNot?: UserWhereInput | null
+  }
+
+  export type SellerNullableScalarRelationFilter = {
+    is?: SellerWhereInput | null
+    isNot?: SellerWhereInput | null
+  }
+
   export type RefreshTokenCountOrderByAggregateInput = {
     id?: SortOrder
     token?: SortOrder
     userId?: SortOrder
+    sellerId?: SortOrder
     createdAt?: SortOrder
     expiresAt?: SortOrder
   }
@@ -10737,6 +10906,7 @@ export namespace Prisma {
     id?: SortOrder
     token?: SortOrder
     userId?: SortOrder
+    sellerId?: SortOrder
     createdAt?: SortOrder
     expiresAt?: SortOrder
   }
@@ -10745,6 +10915,7 @@ export namespace Prisma {
     id?: SortOrder
     token?: SortOrder
     userId?: SortOrder
+    sellerId?: SortOrder
     createdAt?: SortOrder
     expiresAt?: SortOrder
   }
@@ -10797,12 +10968,6 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
-  export type SellerCreateNestedOneWithoutUserInput = {
-    create?: XOR<SellerCreateWithoutUserInput, SellerUncheckedCreateWithoutUserInput>
-    connectOrCreate?: SellerCreateOrConnectWithoutUserInput
-    connect?: SellerWhereUniqueInput
-  }
-
   export type UserRoleCreateNestedManyWithoutUserInput = {
     create?: XOR<UserRoleCreateWithoutUserInput, UserRoleUncheckedCreateWithoutUserInput> | UserRoleCreateWithoutUserInput[] | UserRoleUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserRoleCreateOrConnectWithoutUserInput | UserRoleCreateOrConnectWithoutUserInput[]
@@ -10829,12 +10994,6 @@ export namespace Prisma {
     connectOrCreate?: LoginHistoryCreateOrConnectWithoutUserInput | LoginHistoryCreateOrConnectWithoutUserInput[]
     createMany?: LoginHistoryCreateManyUserInputEnvelope
     connect?: LoginHistoryWhereUniqueInput | LoginHistoryWhereUniqueInput[]
-  }
-
-  export type SellerUncheckedCreateNestedOneWithoutUserInput = {
-    create?: XOR<SellerCreateWithoutUserInput, SellerUncheckedCreateWithoutUserInput>
-    connectOrCreate?: SellerCreateOrConnectWithoutUserInput
-    connect?: SellerWhereUniqueInput
   }
 
   export type UserRoleUncheckedCreateNestedManyWithoutUserInput = {
@@ -10879,16 +11038,6 @@ export namespace Prisma {
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
-  }
-
-  export type SellerUpdateOneWithoutUserNestedInput = {
-    create?: XOR<SellerCreateWithoutUserInput, SellerUncheckedCreateWithoutUserInput>
-    connectOrCreate?: SellerCreateOrConnectWithoutUserInput
-    upsert?: SellerUpsertWithoutUserInput
-    disconnect?: SellerWhereInput | boolean
-    delete?: SellerWhereInput | boolean
-    connect?: SellerWhereUniqueInput
-    update?: XOR<XOR<SellerUpdateToOneWithWhereWithoutUserInput, SellerUpdateWithoutUserInput>, SellerUncheckedUpdateWithoutUserInput>
   }
 
   export type UserRoleUpdateManyWithoutUserNestedInput = {
@@ -10945,16 +11094,6 @@ export namespace Prisma {
     update?: LoginHistoryUpdateWithWhereUniqueWithoutUserInput | LoginHistoryUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: LoginHistoryUpdateManyWithWhereWithoutUserInput | LoginHistoryUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: LoginHistoryScalarWhereInput | LoginHistoryScalarWhereInput[]
-  }
-
-  export type SellerUncheckedUpdateOneWithoutUserNestedInput = {
-    create?: XOR<SellerCreateWithoutUserInput, SellerUncheckedCreateWithoutUserInput>
-    connectOrCreate?: SellerCreateOrConnectWithoutUserInput
-    upsert?: SellerUpsertWithoutUserInput
-    disconnect?: SellerWhereInput | boolean
-    delete?: SellerWhereInput | boolean
-    connect?: SellerWhereUniqueInput
-    update?: XOR<XOR<SellerUpdateToOneWithWhereWithoutUserInput, SellerUpdateWithoutUserInput>, SellerUncheckedUpdateWithoutUserInput>
   }
 
   export type UserRoleUncheckedUpdateManyWithoutUserNestedInput = {
@@ -11091,22 +11230,54 @@ export namespace Prisma {
     deleteMany?: UserRoleScalarWhereInput | UserRoleScalarWhereInput[]
   }
 
-  export type UserCreateNestedOneWithoutSellerInput = {
-    create?: XOR<UserCreateWithoutSellerInput, UserUncheckedCreateWithoutSellerInput>
-    connectOrCreate?: UserCreateOrConnectWithoutSellerInput
-    connect?: UserWhereUniqueInput
+  export type RefreshTokenCreateNestedManyWithoutSellerInput = {
+    create?: XOR<RefreshTokenCreateWithoutSellerInput, RefreshTokenUncheckedCreateWithoutSellerInput> | RefreshTokenCreateWithoutSellerInput[] | RefreshTokenUncheckedCreateWithoutSellerInput[]
+    connectOrCreate?: RefreshTokenCreateOrConnectWithoutSellerInput | RefreshTokenCreateOrConnectWithoutSellerInput[]
+    createMany?: RefreshTokenCreateManySellerInputEnvelope
+    connect?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
+  }
+
+  export type RefreshTokenUncheckedCreateNestedManyWithoutSellerInput = {
+    create?: XOR<RefreshTokenCreateWithoutSellerInput, RefreshTokenUncheckedCreateWithoutSellerInput> | RefreshTokenCreateWithoutSellerInput[] | RefreshTokenUncheckedCreateWithoutSellerInput[]
+    connectOrCreate?: RefreshTokenCreateOrConnectWithoutSellerInput | RefreshTokenCreateOrConnectWithoutSellerInput[]
+    createMany?: RefreshTokenCreateManySellerInputEnvelope
+    connect?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
+  }
+
+  export type EnumsellerRoleFieldUpdateOperationsInput = {
+    set?: $Enums.sellerRole
   }
 
   export type EnumSellerStatusFieldUpdateOperationsInput = {
     set?: $Enums.SellerStatus
   }
 
-  export type UserUpdateOneRequiredWithoutSellerNestedInput = {
-    create?: XOR<UserCreateWithoutSellerInput, UserUncheckedCreateWithoutSellerInput>
-    connectOrCreate?: UserCreateOrConnectWithoutSellerInput
-    upsert?: UserUpsertWithoutSellerInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSellerInput, UserUpdateWithoutSellerInput>, UserUncheckedUpdateWithoutSellerInput>
+  export type RefreshTokenUpdateManyWithoutSellerNestedInput = {
+    create?: XOR<RefreshTokenCreateWithoutSellerInput, RefreshTokenUncheckedCreateWithoutSellerInput> | RefreshTokenCreateWithoutSellerInput[] | RefreshTokenUncheckedCreateWithoutSellerInput[]
+    connectOrCreate?: RefreshTokenCreateOrConnectWithoutSellerInput | RefreshTokenCreateOrConnectWithoutSellerInput[]
+    upsert?: RefreshTokenUpsertWithWhereUniqueWithoutSellerInput | RefreshTokenUpsertWithWhereUniqueWithoutSellerInput[]
+    createMany?: RefreshTokenCreateManySellerInputEnvelope
+    set?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
+    disconnect?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
+    delete?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
+    connect?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
+    update?: RefreshTokenUpdateWithWhereUniqueWithoutSellerInput | RefreshTokenUpdateWithWhereUniqueWithoutSellerInput[]
+    updateMany?: RefreshTokenUpdateManyWithWhereWithoutSellerInput | RefreshTokenUpdateManyWithWhereWithoutSellerInput[]
+    deleteMany?: RefreshTokenScalarWhereInput | RefreshTokenScalarWhereInput[]
+  }
+
+  export type RefreshTokenUncheckedUpdateManyWithoutSellerNestedInput = {
+    create?: XOR<RefreshTokenCreateWithoutSellerInput, RefreshTokenUncheckedCreateWithoutSellerInput> | RefreshTokenCreateWithoutSellerInput[] | RefreshTokenUncheckedCreateWithoutSellerInput[]
+    connectOrCreate?: RefreshTokenCreateOrConnectWithoutSellerInput | RefreshTokenCreateOrConnectWithoutSellerInput[]
+    upsert?: RefreshTokenUpsertWithWhereUniqueWithoutSellerInput | RefreshTokenUpsertWithWhereUniqueWithoutSellerInput[]
+    createMany?: RefreshTokenCreateManySellerInputEnvelope
+    set?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
+    disconnect?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
+    delete?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
+    connect?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
+    update?: RefreshTokenUpdateWithWhereUniqueWithoutSellerInput | RefreshTokenUpdateWithWhereUniqueWithoutSellerInput[]
+    updateMany?: RefreshTokenUpdateManyWithWhereWithoutSellerInput | RefreshTokenUpdateManyWithWhereWithoutSellerInput[]
+    deleteMany?: RefreshTokenScalarWhereInput | RefreshTokenScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutRefreshTokensInput = {
@@ -11115,12 +11286,30 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-  export type UserUpdateOneRequiredWithoutRefreshTokensNestedInput = {
+  export type SellerCreateNestedOneWithoutRefreshTokensInput = {
+    create?: XOR<SellerCreateWithoutRefreshTokensInput, SellerUncheckedCreateWithoutRefreshTokensInput>
+    connectOrCreate?: SellerCreateOrConnectWithoutRefreshTokensInput
+    connect?: SellerWhereUniqueInput
+  }
+
+  export type UserUpdateOneWithoutRefreshTokensNestedInput = {
     create?: XOR<UserCreateWithoutRefreshTokensInput, UserUncheckedCreateWithoutRefreshTokensInput>
     connectOrCreate?: UserCreateOrConnectWithoutRefreshTokensInput
     upsert?: UserUpsertWithoutRefreshTokensInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutRefreshTokensInput, UserUpdateWithoutRefreshTokensInput>, UserUncheckedUpdateWithoutRefreshTokensInput>
+  }
+
+  export type SellerUpdateOneWithoutRefreshTokensNestedInput = {
+    create?: XOR<SellerCreateWithoutRefreshTokensInput, SellerUncheckedCreateWithoutRefreshTokensInput>
+    connectOrCreate?: SellerCreateOrConnectWithoutRefreshTokensInput
+    upsert?: SellerUpsertWithoutRefreshTokensInput
+    disconnect?: SellerWhereInput | boolean
+    delete?: SellerWhereInput | boolean
+    connect?: SellerWhereUniqueInput
+    update?: XOR<XOR<SellerUpdateToOneWithWhereWithoutRefreshTokensInput, SellerUpdateWithoutRefreshTokensInput>, SellerUncheckedUpdateWithoutRefreshTokensInput>
   }
 
   export type UserCreateNestedOneWithoutPasswordResetsInput = {
@@ -11307,11 +11496,28 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedEnumsellerRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.sellerRole | EnumsellerRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.sellerRole[] | ListEnumsellerRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.sellerRole[] | ListEnumsellerRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumsellerRoleFilter<$PrismaModel> | $Enums.sellerRole
+  }
+
   export type NestedEnumSellerStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.SellerStatus | EnumSellerStatusFieldRefInput<$PrismaModel>
     in?: $Enums.SellerStatus[] | ListEnumSellerStatusFieldRefInput<$PrismaModel>
     notIn?: $Enums.SellerStatus[] | ListEnumSellerStatusFieldRefInput<$PrismaModel>
     not?: NestedEnumSellerStatusFilter<$PrismaModel> | $Enums.SellerStatus
+  }
+
+  export type NestedEnumsellerRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.sellerRole | EnumsellerRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.sellerRole[] | ListEnumsellerRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.sellerRole[] | ListEnumsellerRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumsellerRoleWithAggregatesFilter<$PrismaModel> | $Enums.sellerRole
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumsellerRoleFilter<$PrismaModel>
+    _max?: NestedEnumsellerRoleFilter<$PrismaModel>
   }
 
   export type NestedEnumSellerStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -11322,39 +11528,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumSellerStatusFilter<$PrismaModel>
     _max?: NestedEnumSellerStatusFilter<$PrismaModel>
-  }
-
-  export type SellerCreateWithoutUserInput = {
-    id?: string
-    businessName: string
-    businessEmail?: string | null
-    businessPhone?: string | null
-    gstNumber?: string | null
-    panNumber?: string | null
-    businessAddress?: string | null
-    description?: string | null
-    status?: $Enums.SellerStatus
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type SellerUncheckedCreateWithoutUserInput = {
-    id?: string
-    businessName: string
-    businessEmail?: string | null
-    businessPhone?: string | null
-    gstNumber?: string | null
-    panNumber?: string | null
-    businessAddress?: string | null
-    description?: string | null
-    status?: $Enums.SellerStatus
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type SellerCreateOrConnectWithoutUserInput = {
-    where: SellerWhereUniqueInput
-    create: XOR<SellerCreateWithoutUserInput, SellerUncheckedCreateWithoutUserInput>
   }
 
   export type UserRoleCreateWithoutUserInput = {
@@ -11386,11 +11559,13 @@ export namespace Prisma {
     token: string
     createdAt?: Date | string
     expiresAt: Date | string
+    seller?: SellerCreateNestedOneWithoutRefreshTokensInput
   }
 
   export type RefreshTokenUncheckedCreateWithoutUserInput = {
     id?: string
     token: string
+    sellerId?: string | null
     createdAt?: Date | string
     expiresAt: Date | string
   }
@@ -11453,45 +11628,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type SellerUpsertWithoutUserInput = {
-    update: XOR<SellerUpdateWithoutUserInput, SellerUncheckedUpdateWithoutUserInput>
-    create: XOR<SellerCreateWithoutUserInput, SellerUncheckedCreateWithoutUserInput>
-    where?: SellerWhereInput
-  }
-
-  export type SellerUpdateToOneWithWhereWithoutUserInput = {
-    where?: SellerWhereInput
-    data: XOR<SellerUpdateWithoutUserInput, SellerUncheckedUpdateWithoutUserInput>
-  }
-
-  export type SellerUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    businessName?: StringFieldUpdateOperationsInput | string
-    businessEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    businessPhone?: NullableStringFieldUpdateOperationsInput | string | null
-    gstNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    panNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    businessAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: EnumSellerStatusFieldUpdateOperationsInput | $Enums.SellerStatus
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SellerUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    businessName?: StringFieldUpdateOperationsInput | string
-    businessEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    businessPhone?: NullableStringFieldUpdateOperationsInput | string | null
-    gstNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    panNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    businessAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: EnumSellerStatusFieldUpdateOperationsInput | $Enums.SellerStatus
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
   export type UserRoleUpsertWithWhereUniqueWithoutUserInput = {
     where: UserRoleWhereUniqueInput
     update: XOR<UserRoleUpdateWithoutUserInput, UserRoleUncheckedUpdateWithoutUserInput>
@@ -11541,7 +11677,8 @@ export namespace Prisma {
     NOT?: RefreshTokenScalarWhereInput | RefreshTokenScalarWhereInput[]
     id?: StringFilter<"RefreshToken"> | string
     token?: StringFilter<"RefreshToken"> | string
-    userId?: StringFilter<"RefreshToken"> | string
+    userId?: StringNullableFilter<"RefreshToken"> | string | null
+    sellerId?: StringNullableFilter<"RefreshToken"> | string | null
     createdAt?: DateTimeFilter<"RefreshToken"> | Date | string
     expiresAt?: DateTimeFilter<"RefreshToken"> | Date | string
   }
@@ -11608,7 +11745,6 @@ export namespace Prisma {
     provider?: $Enums.AuthProvider
     createdAt?: Date | string
     updatedAt?: Date | string
-    seller?: SellerCreateNestedOneWithoutUserInput
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
     passwordResets?: PasswordResetTokenCreateNestedManyWithoutUserInput
     loginHistory?: LoginHistoryCreateNestedManyWithoutUserInput
@@ -11622,7 +11758,6 @@ export namespace Prisma {
     provider?: $Enums.AuthProvider
     createdAt?: Date | string
     updatedAt?: Date | string
-    seller?: SellerUncheckedCreateNestedOneWithoutUserInput
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
     passwordResets?: PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
     loginHistory?: LoginHistoryUncheckedCreateNestedManyWithoutUserInput
@@ -11673,7 +11808,6 @@ export namespace Prisma {
     provider?: EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    seller?: SellerUpdateOneWithoutUserNestedInput
     refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
     passwordResets?: PasswordResetTokenUpdateManyWithoutUserNestedInput
     loginHistory?: LoginHistoryUpdateManyWithoutUserNestedInput
@@ -11687,7 +11821,6 @@ export namespace Prisma {
     provider?: EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    seller?: SellerUncheckedUpdateOneWithoutUserNestedInput
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
     passwordResets?: PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
     loginHistory?: LoginHistoryUncheckedUpdateManyWithoutUserNestedInput
@@ -11760,76 +11893,46 @@ export namespace Prisma {
     data: XOR<UserRoleUpdateManyMutationInput, UserRoleUncheckedUpdateManyWithoutRoleInput>
   }
 
-  export type UserCreateWithoutSellerInput = {
+  export type RefreshTokenCreateWithoutSellerInput = {
     id?: string
-    email: string
-    password: string
-    emailverified?: boolean
-    provider?: $Enums.AuthProvider
+    token: string
     createdAt?: Date | string
-    updatedAt?: Date | string
-    role?: UserRoleCreateNestedManyWithoutUserInput
-    refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
-    passwordResets?: PasswordResetTokenCreateNestedManyWithoutUserInput
-    loginHistory?: LoginHistoryCreateNestedManyWithoutUserInput
+    expiresAt: Date | string
+    user?: UserCreateNestedOneWithoutRefreshTokensInput
   }
 
-  export type UserUncheckedCreateWithoutSellerInput = {
+  export type RefreshTokenUncheckedCreateWithoutSellerInput = {
     id?: string
-    email: string
-    password: string
-    emailverified?: boolean
-    provider?: $Enums.AuthProvider
+    token: string
+    userId?: string | null
     createdAt?: Date | string
-    updatedAt?: Date | string
-    role?: UserRoleUncheckedCreateNestedManyWithoutUserInput
-    refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
-    passwordResets?: PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
-    loginHistory?: LoginHistoryUncheckedCreateNestedManyWithoutUserInput
+    expiresAt: Date | string
   }
 
-  export type UserCreateOrConnectWithoutSellerInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutSellerInput, UserUncheckedCreateWithoutSellerInput>
+  export type RefreshTokenCreateOrConnectWithoutSellerInput = {
+    where: RefreshTokenWhereUniqueInput
+    create: XOR<RefreshTokenCreateWithoutSellerInput, RefreshTokenUncheckedCreateWithoutSellerInput>
   }
 
-  export type UserUpsertWithoutSellerInput = {
-    update: XOR<UserUpdateWithoutSellerInput, UserUncheckedUpdateWithoutSellerInput>
-    create: XOR<UserCreateWithoutSellerInput, UserUncheckedCreateWithoutSellerInput>
-    where?: UserWhereInput
+  export type RefreshTokenCreateManySellerInputEnvelope = {
+    data: RefreshTokenCreateManySellerInput | RefreshTokenCreateManySellerInput[]
+    skipDuplicates?: boolean
   }
 
-  export type UserUpdateToOneWithWhereWithoutSellerInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutSellerInput, UserUncheckedUpdateWithoutSellerInput>
+  export type RefreshTokenUpsertWithWhereUniqueWithoutSellerInput = {
+    where: RefreshTokenWhereUniqueInput
+    update: XOR<RefreshTokenUpdateWithoutSellerInput, RefreshTokenUncheckedUpdateWithoutSellerInput>
+    create: XOR<RefreshTokenCreateWithoutSellerInput, RefreshTokenUncheckedCreateWithoutSellerInput>
   }
 
-  export type UserUpdateWithoutSellerInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
-    emailverified?: BoolFieldUpdateOperationsInput | boolean
-    provider?: EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    role?: UserRoleUpdateManyWithoutUserNestedInput
-    refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
-    passwordResets?: PasswordResetTokenUpdateManyWithoutUserNestedInput
-    loginHistory?: LoginHistoryUpdateManyWithoutUserNestedInput
+  export type RefreshTokenUpdateWithWhereUniqueWithoutSellerInput = {
+    where: RefreshTokenWhereUniqueInput
+    data: XOR<RefreshTokenUpdateWithoutSellerInput, RefreshTokenUncheckedUpdateWithoutSellerInput>
   }
 
-  export type UserUncheckedUpdateWithoutSellerInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
-    emailverified?: BoolFieldUpdateOperationsInput | boolean
-    provider?: EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    role?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
-    refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
-    passwordResets?: PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
-    loginHistory?: LoginHistoryUncheckedUpdateManyWithoutUserNestedInput
+  export type RefreshTokenUpdateManyWithWhereWithoutSellerInput = {
+    where: RefreshTokenScalarWhereInput
+    data: XOR<RefreshTokenUpdateManyMutationInput, RefreshTokenUncheckedUpdateManyWithoutSellerInput>
   }
 
   export type UserCreateWithoutRefreshTokensInput = {
@@ -11840,7 +11943,6 @@ export namespace Prisma {
     provider?: $Enums.AuthProvider
     createdAt?: Date | string
     updatedAt?: Date | string
-    seller?: SellerCreateNestedOneWithoutUserInput
     role?: UserRoleCreateNestedManyWithoutUserInput
     passwordResets?: PasswordResetTokenCreateNestedManyWithoutUserInput
     loginHistory?: LoginHistoryCreateNestedManyWithoutUserInput
@@ -11854,7 +11956,6 @@ export namespace Prisma {
     provider?: $Enums.AuthProvider
     createdAt?: Date | string
     updatedAt?: Date | string
-    seller?: SellerUncheckedCreateNestedOneWithoutUserInput
     role?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     passwordResets?: PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
     loginHistory?: LoginHistoryUncheckedCreateNestedManyWithoutUserInput
@@ -11863,6 +11964,43 @@ export namespace Prisma {
   export type UserCreateOrConnectWithoutRefreshTokensInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutRefreshTokensInput, UserUncheckedCreateWithoutRefreshTokensInput>
+  }
+
+  export type SellerCreateWithoutRefreshTokensInput = {
+    id?: string
+    businessName: string
+    businessEmail: string
+    businessPhone: string
+    gstNumber?: string | null
+    panNumber?: string | null
+    businessAddress?: string | null
+    description?: string | null
+    role: $Enums.sellerRole
+    password: string
+    status?: $Enums.SellerStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SellerUncheckedCreateWithoutRefreshTokensInput = {
+    id?: string
+    businessName: string
+    businessEmail: string
+    businessPhone: string
+    gstNumber?: string | null
+    panNumber?: string | null
+    businessAddress?: string | null
+    description?: string | null
+    role: $Enums.sellerRole
+    password: string
+    status?: $Enums.SellerStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SellerCreateOrConnectWithoutRefreshTokensInput = {
+    where: SellerWhereUniqueInput
+    create: XOR<SellerCreateWithoutRefreshTokensInput, SellerUncheckedCreateWithoutRefreshTokensInput>
   }
 
   export type UserUpsertWithoutRefreshTokensInput = {
@@ -11884,7 +12022,6 @@ export namespace Prisma {
     provider?: EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    seller?: SellerUpdateOneWithoutUserNestedInput
     role?: UserRoleUpdateManyWithoutUserNestedInput
     passwordResets?: PasswordResetTokenUpdateManyWithoutUserNestedInput
     loginHistory?: LoginHistoryUpdateManyWithoutUserNestedInput
@@ -11898,10 +12035,52 @@ export namespace Prisma {
     provider?: EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    seller?: SellerUncheckedUpdateOneWithoutUserNestedInput
     role?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     passwordResets?: PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
     loginHistory?: LoginHistoryUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type SellerUpsertWithoutRefreshTokensInput = {
+    update: XOR<SellerUpdateWithoutRefreshTokensInput, SellerUncheckedUpdateWithoutRefreshTokensInput>
+    create: XOR<SellerCreateWithoutRefreshTokensInput, SellerUncheckedCreateWithoutRefreshTokensInput>
+    where?: SellerWhereInput
+  }
+
+  export type SellerUpdateToOneWithWhereWithoutRefreshTokensInput = {
+    where?: SellerWhereInput
+    data: XOR<SellerUpdateWithoutRefreshTokensInput, SellerUncheckedUpdateWithoutRefreshTokensInput>
+  }
+
+  export type SellerUpdateWithoutRefreshTokensInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    businessName?: StringFieldUpdateOperationsInput | string
+    businessEmail?: StringFieldUpdateOperationsInput | string
+    businessPhone?: StringFieldUpdateOperationsInput | string
+    gstNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    panNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    businessAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumsellerRoleFieldUpdateOperationsInput | $Enums.sellerRole
+    password?: StringFieldUpdateOperationsInput | string
+    status?: EnumSellerStatusFieldUpdateOperationsInput | $Enums.SellerStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SellerUncheckedUpdateWithoutRefreshTokensInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    businessName?: StringFieldUpdateOperationsInput | string
+    businessEmail?: StringFieldUpdateOperationsInput | string
+    businessPhone?: StringFieldUpdateOperationsInput | string
+    gstNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    panNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    businessAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumsellerRoleFieldUpdateOperationsInput | $Enums.sellerRole
+    password?: StringFieldUpdateOperationsInput | string
+    status?: EnumSellerStatusFieldUpdateOperationsInput | $Enums.SellerStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserCreateWithoutPasswordResetsInput = {
@@ -11912,7 +12091,6 @@ export namespace Prisma {
     provider?: $Enums.AuthProvider
     createdAt?: Date | string
     updatedAt?: Date | string
-    seller?: SellerCreateNestedOneWithoutUserInput
     role?: UserRoleCreateNestedManyWithoutUserInput
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
     loginHistory?: LoginHistoryCreateNestedManyWithoutUserInput
@@ -11926,7 +12104,6 @@ export namespace Prisma {
     provider?: $Enums.AuthProvider
     createdAt?: Date | string
     updatedAt?: Date | string
-    seller?: SellerUncheckedCreateNestedOneWithoutUserInput
     role?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
     loginHistory?: LoginHistoryUncheckedCreateNestedManyWithoutUserInput
@@ -11956,7 +12133,6 @@ export namespace Prisma {
     provider?: EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    seller?: SellerUpdateOneWithoutUserNestedInput
     role?: UserRoleUpdateManyWithoutUserNestedInput
     refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
     loginHistory?: LoginHistoryUpdateManyWithoutUserNestedInput
@@ -11970,7 +12146,6 @@ export namespace Prisma {
     provider?: EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    seller?: SellerUncheckedUpdateOneWithoutUserNestedInput
     role?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
     loginHistory?: LoginHistoryUncheckedUpdateManyWithoutUserNestedInput
@@ -11984,7 +12159,6 @@ export namespace Prisma {
     provider?: $Enums.AuthProvider
     createdAt?: Date | string
     updatedAt?: Date | string
-    seller?: SellerCreateNestedOneWithoutUserInput
     role?: UserRoleCreateNestedManyWithoutUserInput
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
     passwordResets?: PasswordResetTokenCreateNestedManyWithoutUserInput
@@ -11998,7 +12172,6 @@ export namespace Prisma {
     provider?: $Enums.AuthProvider
     createdAt?: Date | string
     updatedAt?: Date | string
-    seller?: SellerUncheckedCreateNestedOneWithoutUserInput
     role?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
     passwordResets?: PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
@@ -12028,7 +12201,6 @@ export namespace Prisma {
     provider?: EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    seller?: SellerUpdateOneWithoutUserNestedInput
     role?: UserRoleUpdateManyWithoutUserNestedInput
     refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
     passwordResets?: PasswordResetTokenUpdateManyWithoutUserNestedInput
@@ -12042,7 +12214,6 @@ export namespace Prisma {
     provider?: EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    seller?: SellerUncheckedUpdateOneWithoutUserNestedInput
     role?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
     passwordResets?: PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -12058,6 +12229,7 @@ export namespace Prisma {
   export type RefreshTokenCreateManyUserInput = {
     id?: string
     token: string
+    sellerId?: string | null
     createdAt?: Date | string
     expiresAt: Date | string
   }
@@ -12102,11 +12274,13 @@ export namespace Prisma {
     token?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    seller?: SellerUpdateOneWithoutRefreshTokensNestedInput
   }
 
   export type RefreshTokenUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
+    sellerId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -12114,6 +12288,7 @@ export namespace Prisma {
   export type RefreshTokenUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
+    sellerId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -12186,6 +12361,38 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RefreshTokenCreateManySellerInput = {
+    id?: string
+    token: string
+    userId?: string | null
+    createdAt?: Date | string
+    expiresAt: Date | string
+  }
+
+  export type RefreshTokenUpdateWithoutSellerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneWithoutRefreshTokensNestedInput
+  }
+
+  export type RefreshTokenUncheckedUpdateWithoutSellerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RefreshTokenUncheckedUpdateManyWithoutSellerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

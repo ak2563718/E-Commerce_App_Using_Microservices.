@@ -148,7 +148,6 @@ exports.Prisma.RoleScalarFieldEnum = {
 
 exports.Prisma.SellerScalarFieldEnum = {
   id: 'id',
-  userId: 'userId',
   businessName: 'businessName',
   businessEmail: 'businessEmail',
   businessPhone: 'businessPhone',
@@ -156,6 +155,8 @@ exports.Prisma.SellerScalarFieldEnum = {
   panNumber: 'panNumber',
   businessAddress: 'businessAddress',
   description: 'description',
+  role: 'role',
+  password: 'password',
   status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -165,6 +166,7 @@ exports.Prisma.RefreshTokenScalarFieldEnum = {
   id: 'id',
   token: 'token',
   userId: 'userId',
+  sellerId: 'sellerId',
   createdAt: 'createdAt',
   expiresAt: 'expiresAt'
 };
@@ -207,6 +209,10 @@ exports.AuthProvider = exports.$Enums.AuthProvider = {
 exports.RoleName = exports.$Enums.RoleName = {
   USER: 'USER',
   ADMIN: 'ADMIN',
+  SELLER: 'SELLER'
+};
+
+exports.sellerRole = exports.$Enums.sellerRole = {
   SELLER: 'SELLER'
 };
 

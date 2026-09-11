@@ -20,7 +20,6 @@ model User {
   provider           AuthProvider @default(LOCAL)
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
-  seller             Seller?
   role               UserRole[]
   refreshTokens      RefreshToken[]
   passwordResets     PasswordResetToken[]
@@ -33,14 +32,14 @@ enum AuthProvider {
 
 model UserRole {
   id       String      @id @default(cuid())
-  userId    String    @unique
+  userId    String   @unique 
   user      User     @relation(fields: [userId], references: [id])
   role      Role     @relation(fields: [roleId], references: [id])
   roleId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([userId, roleId])
+  @@unique([roleId, userId])
 }
 model Role {
   id          String        @id @default(cuid())
@@ -57,21 +56,22 @@ enum RoleName {
 }
 model Seller {
   id               String   @id @default(cuid())
-  userId           String   @unique
-  user             User     @relation(fields: [userId], references: [id])
-
   businessName     String
-  businessEmail    String?
-  businessPhone    String?
+  businessEmail    String   @unique
+  businessPhone    String   @unique
   gstNumber        String?
   panNumber        String?
   businessAddress  String?
   description      String?
-
+  role             sellerRole 
+  password         String
   status           SellerStatus @default(PENDING)
-
+  refreshTokens    RefreshToken[]
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+}
+enum sellerRole {
+  SELLER
 }
 
 enum SellerStatus {
@@ -82,8 +82,10 @@ enum SellerStatus {
 model RefreshToken {
   id        String      @id @default(cuid())
   token     String   @unique 
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  userId    String?
+  user      User?     @relation(fields: [userId], references: [id])
+  sellerId  String?
+  seller    Seller?  @relation(fields: [sellerId], references: [id])
   createdAt DateTime @default(now())
   expiresAt DateTime
 }
