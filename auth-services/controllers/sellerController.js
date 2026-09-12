@@ -131,12 +131,12 @@ export const createSellerLogin = asyncHandler(async(req, res, next)=>{
         email:existingSeller.businessEmail,
         name:existingSeller.businessName,
         role:existingSeller.role
-    })
+    },process.env.SECRET_KEY)
     const sellerAccessToken = jwt.sign({
         id:existingSeller.id,
         email:existingSeller.businessEmail,
         role:existingSeller.role,
-    })
+    },process.env.SECRET_KEY)
     await prisma.refreshToken.deleteMany({where:{sellerId:existingSeller.id}})
     const s_token =await prisma.refreshToken.create({data:{token:sellerRefreshToken,sellerId:existingSeller.id}})
     res.cookie('sid',sellerRefreshToken,{
@@ -176,5 +176,39 @@ export const createSellerLogout = asyncHandler(async(req, res, next)=>{
     res.status(200).json({
         message:"Seller logout successfully",
         success:true,
+    })
+})
+
+
+// 5. create seller check seller session
+export const createSellerSession = asyncHandler(async(req, res, next)=>{
+    const token = req.cookies?.sid;
+    if(!token){
+        return next(new AppError("Seller not authorized", 401))
+    }
+    const validate = await prisma.refreshToken.findUnique({where:{token}})
+    if(!validate){
+        return next(new AppError("Invalid Token", 401))
+    }
+    const decode = jwt.verify(token, process.env.SECRET_KEY);
+    const seller = await prisma.seller.findUnique({
+        where:{
+            id:decode.id,
+        },
+        omit:{
+            password:true,
+        }
+    })
+    const sellerAccessToken = jwt.sign({
+        id:seller.id,
+        name:seller.businessName,
+        email:seller.businessEmail,
+        role:seller.role,
+    },process.env.SECRET_KEY)
+    res.status(200).json({
+        message:"Session Restarted",
+        success:true,
+        sellerAccessToken,
+        data:seller
     })
 })

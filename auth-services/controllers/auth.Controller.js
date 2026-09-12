@@ -404,6 +404,9 @@ export const auth_CheckSession = asyncHandler(async(req, res, next)=>{
     const user = await prisma.user.findUnique({
         where:{
             id:r_token.userId,
+        },
+        omit:{
+            password:true,
         }
     })
     const accessToken = await encryptAccessToken(user,decode.role);
@@ -411,7 +414,7 @@ export const auth_CheckSession = asyncHandler(async(req, res, next)=>{
         message:"User logged in ",
         success:true,
         accessToken,
-        data:decode,
+        data:user,
     })
 })
 
