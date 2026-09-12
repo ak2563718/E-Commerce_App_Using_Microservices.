@@ -114,12 +114,12 @@ export const createSellerLogin = asyncHandler(async(req, res, next)=>{
     }
     const normalizedEmail = email.toLowerCase().trim();
     const existingSeller = await prisma.seller.findUnique({
-        where:{businessEmail:normalizedEmail},omit:{password:true}
+        where:{businessEmail:normalizedEmail}
     })
     if(!existingSeller){
         return next(new AppError("Seller not Registered", 401))
     }
-    if(existingSeller.status === "PENDING"){
+    if(existingSeller.status !== "APPROVED"){
         return next(new AppError("Seller not Approved", 401))
     }
     const matched = await bcrypt.compare(password, existingSeller.password)
@@ -138,17 +138,18 @@ export const createSellerLogin = asyncHandler(async(req, res, next)=>{
         role:existingSeller.role,
     },process.env.SECRET_KEY)
     await prisma.refreshToken.deleteMany({where:{sellerId:existingSeller.id}})
-    const s_token =await prisma.refreshToken.create({data:{token:sellerRefreshToken,sellerId:existingSeller.id}})
+    const s_token =await prisma.refreshToken.create({data:{token:sellerRefreshToken,sellerId:existingSeller.id,expiresAt: new Date(Date.now()+7*24*60*60*1000)}})
     res.cookie('sid',sellerRefreshToken,{
         httpOnly:true,
         sameSite:'lax',
         secure:false,
         maxAge:24* 60 * 60* 1000,
     })
+    const {password:_,...safedata} = existingSeller;
     res.status(200).json({
         message:"Seller login Successfully",
         success:true,
-        data:existingSeller,
+        data:safedata,
         sellerAccessToken,
         sellerRefreshToken
     })
@@ -162,7 +163,9 @@ export const createSellerLogout = asyncHandler(async(req, res, next)=>{
         return next(new AppError("Seller not authorized", 401))
     }
     const validate = await prisma.refreshToken.findUnique({
-        token,
+        where:{
+            token
+        }
     })
     if(!validate){
         return next(new AppError("Invalid token", 401))
