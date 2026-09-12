@@ -3,6 +3,7 @@ import { AppError } from "../utils/AppError.js";
 import { prisma } from "../src/db.js";
 import validator from 'validator'
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 // 1. create seller signup controller
 export const createSellerSignup = asyncHandler(async(req, res, next)=>{
@@ -113,7 +114,7 @@ export const createSellerLogin = asyncHandler(async(req, res, next)=>{
     }
     const normalizedEmail = email.toLowerCase().trim();
     const existingSeller = await prisma.seller.findUnique({
-        where:{businessEmail:normalizedEmail}
+        where:{businessEmail:normalizedEmail},omit:{password:true}
     })
     if(!existingSeller){
         return next(new AppError("Seller not Registered", 401))
@@ -125,4 +126,55 @@ export const createSellerLogin = asyncHandler(async(req, res, next)=>{
     if(!matched){
         return next(new AppError("Wrong password!", 400))
     }
+    const sellerRefreshToken = jwt.sign({
+        id:existingSeller.id,
+        email:existingSeller.businessEmail,
+        name:existingSeller.businessName,
+        role:existingSeller.role
+    })
+    const sellerAccessToken = jwt.sign({
+        id:existingSeller.id,
+        email:existingSeller.businessEmail,
+        role:existingSeller.role,
+    })
+    await prisma.refreshToken.deleteMany({where:{sellerId:existingSeller.id}})
+    const s_token =await prisma.refreshToken.create({data:{token:sellerRefreshToken,sellerId:existingSeller.id}})
+    res.cookie('sid',sellerRefreshToken,{
+        httpOnly:true,
+        sameSite:'lax',
+        secure:false,
+        maxAge:24* 60 * 60* 1000,
+    })
+    res.status(200).json({
+        message:"Seller login Successfully",
+        success:true,
+        data:existingSeller,
+        sellerAccessToken,
+        sellerRefreshToken
+    })
+})
+
+
+// 4. create seller logout controller
+export const createSellerLogout = asyncHandler(async(req, res, next)=>{
+    const token = req.cookies?.sid;
+    if(!token){
+        return next(new AppError("Seller not authorized", 401))
+    }
+    const validate = await prisma.refreshToken.findUnique({
+        token,
+    })
+    if(!validate){
+        return next(new AppError("Invalid token", 401))
+    }
+    await prisma.refreshToken.delete({where:{token}})
+    res.clearCookie('sid',{
+        httpOnly:true,
+        secure:false,
+        sameSite:'lax',
+    })
+    res.status(200).json({
+        message:"Seller logout successfully",
+        success:true,
+    })
 })
