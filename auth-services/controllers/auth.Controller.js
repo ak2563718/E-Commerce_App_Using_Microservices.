@@ -46,7 +46,7 @@ export const authRegister = asyncHandler(async(req, res, next)=>{
         if(existingUser.emailverified){
             return next(new AppError("User already Exist", 409))
         }else{
-            const token = await jwt.sign({id:existingUser.id,email:existingUser.email},process.env.SECRET_KEY,{expiresIn:'5m'})
+            const token = jwt.sign({id:existingUser.id,email:existingUser.email},process.env.SECRET_KEY,{expiresIn:'5m'})
             const verificationLink = `http://localhost:3000/auth/verify-email?token=${token}`
             await transport.sendMail({
                 from:`MY-app ${process.env.EMAIL}`,
@@ -260,8 +260,8 @@ export const authLogin = asyncHandler(async(req, res, next) =>{
     if(!matched){
         return next(new AppError("Wrong password!", 400))
     }
-    const refreshToken = await encryptRefreshToken(user,userRole.name);
-    const accessToken = await encryptAccessToken(user,userRole.name);
+    const refreshToken =  encryptRefreshToken(user,userRole.name);
+    const accessToken =  encryptAccessToken(user,userRole.name);
     await prisma.refreshToken.deleteMany({
         where:{
             userId:user.id

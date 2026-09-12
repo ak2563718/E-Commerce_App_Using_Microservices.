@@ -100,3 +100,29 @@ export const updateSellerStatus = asyncHandler(async(req, res, next)=>{
         success:true,
     })
 })
+
+
+// 3. create seller login controller
+export const createSellerLogin = asyncHandler(async(req, res, next)=>{
+    const { email, password} = req.body;
+    if(!email){
+        return next(new AppError("Please Enter Email", 400))
+    }
+    if(!password){
+        return next(new AppError("Please Provide password", 400))
+    }
+    const normalizedEmail = email.toLowerCase().trim();
+    const existingSeller = await prisma.seller.findUnique({
+        where:{businessEmail:normalizedEmail}
+    })
+    if(!existingSeller){
+        return next(new AppError("Seller not Registered", 401))
+    }
+    if(existingSeller.status === "PENDING"){
+        return next(new AppError("Seller not Approved", 401))
+    }
+    const matched = await bcrypt.compare(password, existingSeller.password)
+    if(!matched){
+        return next(new AppError("Wrong password!", 400))
+    }
+})
