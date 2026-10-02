@@ -1,6 +1,7 @@
 import api from "@/lib/axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { useAppSelector } from "../hooks";
 
 const product_uri = process.env.NEXT_PUBLIC_API_URI;
 // 1. create a product details
@@ -23,12 +24,14 @@ export const createProduct = createAsyncThunk<any,any,{rejectValue:string}>(
 );
 
 // 2. get Product by sellerId
-export const sellerProduct = createAsyncThunk<any, void, {rejectValue:string}>(
+export const sellerProduct = createAsyncThunk<any, string, {rejectValue:string}>(
     'get/sellerProduct',
-    async(_, { rejectWithValue})=>{
+    async(accessToken, { rejectWithValue})=>{
         try {
-            const { data } = await api.get(`${product_uri}/product/products/seller`,{
-                headers:{'Content-Type':'application/json'},
+            const { data } = await axios.get(`${product_uri}/product/products/seller`,{
+                headers:{'Content-Type':'application/json',
+                    'Authorization':`Bearer ${accessToken}`
+                },
                 withCredentials:true,
             })
             return data;

@@ -2,6 +2,9 @@
 import { TrendingUp, ShoppingBag, Package, IndianRupee, ArrowUpRight, ArrowDownRight, Clock } from 'lucide-react'
 import { AreaChart, Area, XAxis, YAxis, Tooltip, PieChart, Pie, Cell } from 'recharts'
 import { revenueData, categoryData, recentOrders, topProducts } from './data'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import { useEffect } from 'react'
+import { sellerProduct } from '@/redux/product/product.Action'
 
 const STATUS_STYLES: Record<string, { bg: string; color: string; label: string }> = {
   delivered: { bg: '#dcfce7', color: '#16a34a', label: 'Delivered' },

@@ -507,6 +507,7 @@ function StepMedia({ onBack, onClose }: { onBack: () => void; onClose: () => voi
   const [variants, setVariants] = useState<Variant[]>([])
   const [showVariants, setShowVariants] = useState(false)
   const { aproduct, loading } = useAppSelector((state)=>state.product) 
+  const { sellerAccessToken } = useAppSelector((state)=>state.auth)
   const dispatch = useAppDispatch();
   const addVariant = () => {
     setVariants(v => [...v, { sku: '', price: '', stock: '', images: [], color:'', size:'',costPrice:'',barcode:'',weight:'' }])
@@ -565,8 +566,10 @@ function StepMedia({ onBack, onClose }: { onBack: () => void; onClose: () => voi
       await dispatch(uploadProductVariantImages({id: response.data.id, formData})).unwrap();
     }
   }
-    await dispatch(sellerProduct());
+  if(sellerAccessToken){
+    await dispatch(sellerProduct(sellerAccessToken));
     toast.success("Product add Successfully")
+  }
     onClose()
     } catch (error:any) {
       console.log(error)
@@ -708,15 +711,21 @@ export default function Products() {
   const [showDelete, setShowDelete] = useState(false)
   const [productId, setProductId] = useState('')
   const dispatch = useAppDispatch();
-  const { products , loading} = useAppSelector((state)=>state.product)
+  const { loading, } = useAppSelector((state)=>state.product)
+  const { sellerAccessToken } = useAppSelector((state)=>state.auth)
   const [loader, setLoader] = useState<boolean>(true)
+  const [products, setProducts] = useState<any[]>([])
   const router = useRouter()
 
 
   useEffect(()=>{
     const getProduct =async()=>{
-      const res = await dispatch(sellerProduct()).unwrap();
+      if(sellerAccessToken){
+      const res = await dispatch(sellerProduct(sellerAccessToken)).unwrap();
+      console.log(res.data)
+      setProducts(res.data)
       setLoader(false)
+      }
     }
     getProduct()
   },[dispatch])
@@ -798,7 +807,7 @@ return (
     </div>
 
     {/* Product grid */}
-    <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+    <div className="grid grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3">
       {Array.isArray(filtered) && filtered?.map((p) => {
         const variant = p.variants?.[0];
 

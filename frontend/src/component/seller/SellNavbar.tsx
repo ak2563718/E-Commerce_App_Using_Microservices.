@@ -10,6 +10,7 @@ function SellNavbar() {
  const router = useRouter()
  const [isLogin, setIslogin] = useState(false)
  const dispatch = useAppDispatch();
+ const { sellerAccessToken } = useAppSelector((state)=>state.auth)
  useEffect(()=>{
   const getSellerInfo =async()=>{
     try {
@@ -23,7 +24,7 @@ function SellNavbar() {
   }
   getSellerInfo()
  },[])
- 
+
   return (
     <div>
         <nav

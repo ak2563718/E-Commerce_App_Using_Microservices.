@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { auth_ForgotPassword, auth_ResetPassword, authCheckSession, authLogin, authLogout, authSignup, authVerifyEmail, sellerSignup } from "./auth.Action";
+import { sellerCheckSession } from "./seller.Action";
 
 interface state {
     users:any[]|null,
@@ -9,6 +10,7 @@ interface state {
     error:string|null,
     message:string|null,
     accessToken:string|null,
+    sellerAccessToken:string |null,
 }
 
 const initialState:state={
@@ -19,6 +21,7 @@ const initialState:state={
     error:null,
     message:null,
     accessToken:null,
+    sellerAccessToken:null,
 }
 
 const authSlice = createSlice({
@@ -143,6 +146,15 @@ const authSlice = createSlice({
         }).addCase(sellerSignup.rejected,(state,action)=>{
             state.loading = false;
             state.error = action.payload ?? "failed";
+        });
+
+        builder.addCase(sellerCheckSession.pending,(state)=>{
+            state.loading = true;
+        }).addCase(sellerCheckSession.fulfilled,(state,action)=>{
+            state.loading = false;
+            state.sellerAccessToken = action.payload.sellerAccessToken;
+        }).addCase(sellerCheckSession.rejected,(state,action)=>{
+            state.loading = false;
         })
     }
 })
