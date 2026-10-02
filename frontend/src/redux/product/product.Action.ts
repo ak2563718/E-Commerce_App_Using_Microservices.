@@ -7,10 +7,12 @@ const product_uri = process.env.NEXT_PUBLIC_API_URI;
 // 1. create a product details
 export const createProduct = createAsyncThunk<any,any,{rejectValue:string}>(
     'post/product',
-    async(form, { rejectWithValue })=>{
+    async({form,accessToken}, { rejectWithValue })=>{
         try {
-            const { data } = await api.post(`${product_uri}/product/products`,form,{
-                headers:{'Content-Type':'application/json'},
+            const { data } = await axios.post(`${product_uri}/product/products`,form,{
+                headers:{'Content-Type':'application/json',
+                    'Authorization':`Bearer ${accessToken}`
+                },
                 withCredentials:true,
             })
             return data;
@@ -104,10 +106,12 @@ export const getProductWithSlug = createAsyncThunk<any,string,{rejectValue:strin
 // 5. update product by id
 export const updateProductbyId = createAsyncThunk<any,any,{rejectValue:string}>(
     'update/product',
-    async({id,form}, { rejectWithValue })=>{
+    async({id,form,accessToken}, { rejectWithValue })=>{
         try {
-            const {data} = await api.patch(`${product_uri}/product/products/${id}`,form,{
-                headers:{'Content-Type':'application/json'},
+            const {data} = await axios.patch(`${product_uri}/product/products/${id}`,form,{
+                headers:{'Content-Type':'application/json',
+                    'Authorization':`Bearer ${accessToken}`
+                },
                 withCredentials:true,
             })
             return data;
@@ -121,12 +125,14 @@ export const updateProductbyId = createAsyncThunk<any,any,{rejectValue:string}>(
 )
 
 // 6. delete product by Id
-export const deleteProductbyId = createAsyncThunk<any,string,{rejectValue:string}>(
+export const deleteProductbyId = createAsyncThunk<any,any,{rejectValue:string}>(
     'delete/products',
-    async(id, {rejectWithValue})=>{
+    async({id, accessToken}, {rejectWithValue})=>{
         try {
-           const { data } = await api.delete(`${product_uri}/product/products/${id}`,{
-            headers:{'Content-Type':'application/json'},
+           const { data } = await axios.delete(`${product_uri}/product/products/${id}`,{
+            headers:{'Content-Type':'application/json',
+                'Authorization':`Bearer ${accessToken}`
+            },
             withCredentials:true,
            }) 
            return data;
