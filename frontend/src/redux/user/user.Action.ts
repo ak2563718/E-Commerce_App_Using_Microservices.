@@ -5,23 +5,23 @@ import api from "@/lib/axios";
 const user_uri = process.env.NEXT_PUBLIC_API_URI;
 
 // 1. create user profile
-export const createProfile = createAsyncThunk<any, any,{rejectValue:string}>(
-    'post/profile',
-    async(email, {rejectWithValue})=>{
-        try {
-            const { data } = await axios.post(`${user_uri}/user/users`,email,{
-                headers:{'Content-Type':'application/json'},
-                withCredentials:true,
-            })
-            return data;
-        } catch (error) {
-            if(axios.isAxiosError(error)){
-                return rejectWithValue(error.response?.data.message)
-            }
-            return rejectWithValue('something went wrong')
-        }
-    }
-);
+// export const createProfile = createAsyncThunk<any, any,{rejectValue:string}>(
+//     'post/profile',
+//     async(email, {rejectWithValue})=>{
+//         try {
+//             const { data } = await axios.post(`${user_uri}/user/users`,email,{
+//                 headers:{'Content-Type':'application/json'},
+//                 withCredentials:true,
+//             })
+//             return data;
+//         } catch (error) {
+//             if(axios.isAxiosError(error)){
+//                 return rejectWithValue(error.response?.data.message)
+//             }
+//             return rejectWithValue('something went wrong')
+//         }
+//     }
+// );
 
 // 2. get user profile 
 export const getProfile = createAsyncThunk<any, void, {rejectValue:string} >(

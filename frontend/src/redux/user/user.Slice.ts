@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createProfile, getProfile, updateProfile } from "./user.Action";
+import { getProfile, updateProfile } from "./user.Action";
 import { createAddress, deleteAddress, getAddresswithUserId, updateAddress, updateDefaultAddress } from "./address.type";
 
 interface AddressData {
@@ -44,18 +44,18 @@ const userSlice = createSlice({
     reducers:{},
     extraReducers:(builder)=>{
         // 1. create user profile
-        builder.addCase(createProfile.pending,(state)=>{
-            state.loading = true;
-            state.error = null;
-            state.message = null;
-        }).addCase(createProfile.fulfilled,(state,action)=>{
-            state.loading = false;
-            state.message = action.payload.message;
-            state.user = action.payload.data;
-        }).addCase(createProfile.rejected,(state,action)=>{
-            state.loading = false;
-            state.error = action.payload ?? 'failed';
-        });
+        // builder.addCase(createProfile.pending,(state)=>{
+        //     state.loading = true;
+        //     state.error = null;
+        //     state.message = null;
+        // }).addCase(createProfile.fulfilled,(state,action)=>{
+        //     state.loading = false;
+        //     state.message = action.payload.message;
+        //     state.user = action.payload.data;
+        // }).addCase(createProfile.rejected,(state,action)=>{
+        //     state.loading = false;
+        //     state.error = action.payload ?? 'failed';
+        // });
 
         // 2. get user profile
         builder.addCase(getProfile.pending,(state)=>{

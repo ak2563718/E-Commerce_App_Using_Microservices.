@@ -22,5 +22,5 @@ router.get('/seller/logout',createSellerLogout)
 router.patch('/seller/status/:id',updateSellerStatus)
 
 // role create routes
-router.post('/createrole',adminMiddleware,createRole)
+router.post('/createrole',createRole)
 export default router;

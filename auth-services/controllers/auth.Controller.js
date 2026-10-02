@@ -87,7 +87,7 @@ export const authRegister = asyncHandler(async(req, res, next)=>{
             roleId:userRole.id,
         }
     })
-    const token = await jwt.sign({ id:user.id, email:user.email},process.env.SECRET_KEY,{expiresIn:'5m'})
+    const token = jwt.sign({ id:user.id, email:user.email},process.env.SECRET_KEY,{expiresIn:'5m'})
     const verificationLink = `http://localhost:3000/auth/verify-email?token=${token}`
     await transport.sendMail({
         from:`MY-app ${process.env.EMAIL}`,
@@ -96,7 +96,7 @@ export const authRegister = asyncHandler(async(req, res, next)=>{
         html:`just a checking message. Please click <a href="${verificationLink}">here</a> to verify your email.`
 
     })
-    const userDetails = await axios.post('http://localhost:6005/profile/users',{
+    const userDetails = await axios.post('http://localhost:6005/api/user/users',{
         email:normalizedEmail,
         id:user.id,
     },{
@@ -162,7 +162,6 @@ export const authLogin = asyncHandler(async(req, res, next) =>{
         },
         include:{
             role:true,
-            seller:true,
         }
     })
     if(!user){

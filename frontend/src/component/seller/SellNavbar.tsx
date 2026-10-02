@@ -51,7 +51,6 @@ function SellNavbar() {
         </div>
 
         {/* CTA buttons */}
-        {/* {user?.role !== 'SELLER' &&
         <div className="flex items-center gap-3">
           <button
             // onClick={()=>router.push('/seller-portal/login')}
@@ -70,7 +69,7 @@ function SellNavbar() {
           >
             Create Account <ChevronRight className="w-4 h-4" />
           </button>
-        </div>} */}
+        </div>
       </nav>
     </div>
   )
