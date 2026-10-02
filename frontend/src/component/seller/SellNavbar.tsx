@@ -1,12 +1,29 @@
 'use client'
 import { authCheckSession } from '@/redux/auth/auth.Action'
+import { sellerCheckSession } from '@/redux/auth/seller.Action'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { Store, ChevronRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 function SellNavbar() {
  const router = useRouter()
+ const [isLogin, setIslogin] = useState(false)
+ const dispatch = useAppDispatch();
+ useEffect(()=>{
+  const getSellerInfo =async()=>{
+    try {
+       const res = await dispatch(sellerCheckSession()).unwrap();
+       if(res.data.role === "SELLER"){
+          setIslogin(true)
+        }
+    } catch (error) {
+       setIslogin(false)
+    }
+  }
+  getSellerInfo()
+ },[])
+ 
   return (
     <div>
         <nav
@@ -18,7 +35,7 @@ function SellNavbar() {
         }}
       >
         {/* Logo */}
-        <div className="flex items-center gap-2.5">
+        <div onClick={()=>router.replace('/seller-portal/information')} className="flex items-center gap-2.5 cursor-pointer">
           <div
             className="w-9 h-9 rounded-xl flex items-center justify-center"
             style={{ background: 'linear-gradient(135deg, #e91e8c, #7c3aed)' }}
@@ -51,7 +68,7 @@ function SellNavbar() {
         </div>
 
         {/* CTA buttons */}
-        <div className="flex items-center gap-3">
+        {!isLogin &&<div className="flex items-center gap-3">
           <button
             onClick={()=>router.push('/seller-portal/login')}
             className="px-5 py-2 rounded-xl text-sm font-semibold transition-all hover:bg-purple-50"
@@ -69,7 +86,7 @@ function SellNavbar() {
           >
             Create Account <ChevronRight className="w-4 h-4" />
           </button>
-        </div>
+        </div>}
       </nav>
     </div>
   )

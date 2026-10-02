@@ -4,19 +4,15 @@ import {
   Store, Bell, Settings, LogOut, ChevronLeft, ChevronRight,
   Star,
 } from 'lucide-react'
-import type { NavItem } from './SellerDashboard'
 import { notifications } from './data'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { useEffect, useState } from 'react'
 import { getProfile } from '@/redux/user/user.Action'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { sellerLogout } from '@/redux/auth/seller.Action'
+import { toast } from 'sonner'
 
-// interface Props {
-//   active: NavItem
-//   setActive: (n: NavItem) => void
-//   open: boolean
-//   setOpen: (v: boolean) => void
-// }
+type NavItem = 'overview' | 'orders' | 'products' | 'analytics' | 'payouts'
 
 const NAV: { id: NavItem; label: string; icon: typeof LayoutDashboard; route:string }[] = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard,  route:'/seller/overview' },
@@ -25,19 +21,38 @@ const NAV: { id: NavItem; label: string; icon: typeof LayoutDashboard; route:str
   { id: 'analytics', label: 'Analytics', icon: BarChart2 ,  route:'/seller/analytics'},
   { id: 'payouts', label: 'Payouts', icon: Wallet,  route:'/seller/payouts' },
 ]
-// { active, setActive, open, setOpen,  }: Props
 export default function Sidebar() {
   const [active, setActive] = useState('')
   const [ open, setOpen] = useState(false)
+  const user = "Akash kumar";
   const router = useRouter()
   const dispatch = useAppDispatch()
-   useEffect(()=>{
-       const userProfile = async()=>{
-        const res = await dispatch(getProfile());
-       }
-       userProfile();
-    },[])
-  const { user } = useAppSelector((state)=>state.user);
+  //  useEffect(()=>{
+  //      const userProfile = async()=>{
+  //       const res = await dispatch(getProfile());
+  //      }
+  //      userProfile();
+  //   },[])
+  // const { user } = useAppSelector((state)=>state.user);
+  const pathname = usePathname();
+  useEffect(()=>{
+     const activeItem = NAV.find((n)=>n.route === pathname)
+     if(activeItem){
+      setActive(activeItem.id)
+     }
+  },[pathname])
+  
+  const handleLogout= async()=>{
+    try {
+      const res = await dispatch(sellerLogout()).unwrap();
+      toast.success(res.message)
+      setTimeout(()=>{
+        router.replace('/seller-portal/information')
+      },1000)
+    } catch (error:any) {
+      toast.error(error)
+    }
+  }
   return (
     <aside
       className="flex flex-col shrink-0 transition-all duration-300 relative"
@@ -79,10 +94,10 @@ export default function Sidebar() {
             className="w-9 h-9 rounded-full flex items-center justify-center text-white font-black text-sm shrink-0"
             style={{ background: 'linear-gradient(135deg, #e91e8c, #a855f7)' }}
           >
-            { user?.firstName?.[0].toUpperCase()}{user?.lastName?.[0].toUpperCase()}
+            AK
           </div>
           <div className="overflow-hidden">
-            <div className="text-white text-xs font-bold truncate">{user?.firstName}{" "}{user?.lastName}</div>
+            <div className="text-white text-xs font-bold truncate">AKASH KUMAR</div>
             <div className="flex items-center gap-1 mt-0.5">
               <Star className="w-2.5 h-2.5" style={{ color: '#fbbf24', fill: '#fbbf24' }} />
               <span className="text-xs" style={{ color: 'rgba(255,255,255,0.45)' }}>4.9 · Top Seller</span>
@@ -96,7 +111,7 @@ export default function Sidebar() {
             className="w-9 h-9 rounded-full flex items-center justify-center text-white font-black text-sm"
             style={{ background: 'linear-gradient(135deg, #e91e8c, #a855f7)' }}
           >
-            { user?.firstName?.[0].toUpperCase()}{user?.lastName?.[0].toUpperCase()}
+            AK
           </div>
         </div>
       )}
@@ -155,7 +170,7 @@ export default function Sidebar() {
           {open && <span className="text-sm font-medium">Settings</span>}
         </button>
         <button
-        onClick={()=>router.replace('/')}
+          onClick={handleLogout}
           className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all hover:bg-red-500/10"
           style={{ color: 'rgba(255,100,100,0.6)' }}
         >

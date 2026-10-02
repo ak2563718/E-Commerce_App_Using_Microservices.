@@ -66,7 +66,7 @@ export const sellerLogout = createAsyncThunk<any, void, {rejectValue:string}>(
 )
 
 // 4. check seller session 
-export const sellerCheckSession = createAsyncThunk<any, any, { rejectValue:string}>(
+export const sellerCheckSession = createAsyncThunk<any, void, { rejectValue:string}>(
     'get/checksession',
     async(_, { rejectWithValue })=>{
         try {

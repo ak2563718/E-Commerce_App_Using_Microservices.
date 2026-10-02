@@ -136,7 +136,7 @@ export const createSellerLogin = asyncHandler(async(req, res, next)=>{
         id:existingSeller.id,
         email:existingSeller.businessEmail,
         role:existingSeller.role,
-    },process.env.SECRET_KEY)
+    },process.env.SECRET_KEY,{expiresIn:"15m"})
     await prisma.refreshToken.deleteMany({where:{sellerId:existingSeller.id}})
     const s_token =await prisma.refreshToken.create({data:{token:sellerRefreshToken,sellerId:existingSeller.id,expiresAt: new Date(Date.now()+7*24*60*60*1000)}})
     res.cookie('sid',sellerRefreshToken,{

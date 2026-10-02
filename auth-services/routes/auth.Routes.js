@@ -2,7 +2,7 @@ import express from 'express';
 import { auth_CheckSession, auth_forgotPassword, auth_refresh_AccessToken, auth_resetPassword, authLogin, authLogout, authRegister, authverifyEmail, createRole } from '../controllers/auth.Controller.js';
 import { adminMiddleware, authMiddleware } from '../middleware/authMiddleware.js';
 import { loginLimiter, singupLimiter } from '../config/rateLimiting.js';
-import { createSellerLogin, createSellerLogout, createSellerSession, createSellerSignup, updateSellerStatus } from '../controllers/sellerController.js';
+import { createSellerLogin, createSellerLogout, createSellerSession, createSellerSignup, updateSellerStatus } from '../controllers/seller.Controller.js';
 const router = express.Router();
 // user routes
 router.post('/register',singupLimiter,authRegister)

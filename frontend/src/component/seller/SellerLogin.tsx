@@ -13,6 +13,7 @@ import { useRouter } from 'next/navigation'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { toast } from 'sonner'
 import { authLogin } from '@/redux/auth/auth.Action'
+import { sellerLogin } from '@/redux/auth/seller.Action'
 
 
 export default function SellerLogin() {
@@ -20,7 +21,21 @@ export default function SellerLogin() {
   const [showPass, setShowPass] = useState(false)
  const [loading, setLoading] = useState(false)
  const router = useRouter()
-
+ const dispatch = useAppDispatch()
+ const handleLogin =async()=>{
+  try {
+    setLoading(true)
+    const res = await dispatch(sellerLogin(data)).unwrap();
+    toast.success(res.message)
+    setTimeout(()=>{
+      router.replace('/seller/overview')
+    },1500)
+  } catch (error:any) {
+    toast.success(error)
+  }finally{
+    setLoading(false)
+  }
+ }
   return (
     <div
       className="flex rounded-2xl overflow-hidden"
@@ -90,7 +105,7 @@ export default function SellerLogin() {
             </button>
           </div>
 
-          <PurpleButton  disabled={loading}>
+          <PurpleButton  disabled={loading} onClick={handleLogin}>
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Sign In to Dashboard'}
           </PurpleButton>
 

@@ -9,7 +9,7 @@ import {
 } from './SellerAuthLayout'
 import { useRouter } from 'next/navigation'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
-import { sellerSignup } from '@/redux/auth/auth.Action'
+import { sellerSignup } from '@/redux/auth/seller.Action'
 import { toast } from 'sonner'
 
 
@@ -17,8 +17,8 @@ function Label({ children }: { children: React.ReactNode }) {
   return <label className="text-xs font-semibold text-gray-600 tracking-wide">{children}</label>
 }
 
-function Field({ label, placeholder, value, onChange, type = 'text' }: {
-  label: string; placeholder?: string; value: string; onChange: (v: string) => void; type?: string
+function Field({ label, placeholder, value, onChange, type = 'text', required=false, }: {
+  label: string; placeholder?: string; value: string; onChange: (v: string) => void; type?: string; required:boolean; 
 }) {
   return (
     <div className="flex flex-col gap-1">
@@ -27,12 +27,35 @@ function Field({ label, placeholder, value, onChange, type = 'text' }: {
         type={type}
         placeholder={placeholder}
         value={value}
+        required={required}
         onChange={e => onChange(e.target.value)}
         className="w-full px-3 py-2.5 rounded-xl text-sm outline-none transition-all"
         style={{ border: '1.5px solid #e5e7eb', background: '#fafafa', color: '#111' }}
         onFocus={e => { e.currentTarget.style.border = '1.5px solid #7c3aed'; e.currentTarget.style.background = '#fff' }}
         onBlur={e => { e.currentTarget.style.border = '1.5px solid #e5e7eb'; e.currentTarget.style.background = '#fafafa' }}
       />
+    </div>
+  )
+}
+
+function StrengthBar({ password }: { password: string }) {
+  const strength = password.length === 0 ? 0
+    : password.length < 6 ? 1
+    : password.length < 10 ? 2
+    : /[A-Z]/.test(password) && /[0-9]/.test(password) ? 4
+    : 3
+  const labels = ['', 'Weak', 'Fair', 'Strong', 'Very Strong']
+  const colors = ['', '#f44336', '#ff9800', '#4caf50', '#2196f3']
+  if (!password) return null
+  return (
+    <div className="flex flex-col gap-1 -mt-1">
+      <div className="flex gap-1">
+        {[1, 2, 3, 4].map(i => (
+          <div key={i} className="flex-1 h-1 rounded-full transition-all duration-300"
+            style={{ background: i <= strength ? colors[strength] : '#e5e7eb' }} />
+        ))}
+      </div>
+      <p className="text-xs font-semibold" style={{ color: colors[strength] }}>{labels[strength]}</p>
     </div>
   )
 }
@@ -48,10 +71,25 @@ export default function SellerSignup() {
     panNumber: '',
     businessAddress: '',
     description: '',
+    password:'',
+    rePassword:'',
   })
  const router = useRouter()
-  const set = (k: keyof typeof form) => (v: string) => setForm(f => ({ ...f, [k]: v }))
-
+ const dispatch = useAppDispatch()
+ const set = (k: keyof typeof form) => (v: string) => setForm(f => ({ ...f, [k]: v }))
+ 
+ const handleClick=async()=>{
+  try {
+    setLoading(true)
+    const res = await dispatch(sellerSignup(form)).unwrap();
+    toast.success(res.message)
+    router.replace('/seller-portal/login')
+  } catch (error:any) {
+    toast.error(error)
+  }finally{
+    setLoading(false)
+  }
+ }
   
   return (
     <div
@@ -99,26 +137,29 @@ export default function SellerSignup() {
               </div>
 
               <Field
-                label="Business Name"
+                label="Business Name*"
                 placeholder="e.g. Priya's Fabrics"
                 value={form.businessName}
                 onChange={set('businessName')}
+                required={true}
               />
 
               <Field
-                label="Business Email"
+                label="Business Email*"
                 type="email"
                 placeholder="business@example.com"
                 value={form.businessEmail}
                 onChange={set('businessEmail')}
+                required={true}
               />
 
               <Field
-                label="Business Phone"
+                label="Business Phone*"
                 type="tel"
                 placeholder="+91 98765 43210"
                 value={form.businessPhone}
                 onChange={set('businessPhone')}
+                required={true}
               />
 
               <div className="grid grid-cols-2 gap-3">
@@ -127,24 +168,27 @@ export default function SellerSignup() {
                   placeholder="22ABCDE1234F1Z5"
                   value={form.gstNumber}
                   onChange={set('gstNumber')}
+                  required={false}
                 />
                 <Field
                   label="PAN Number"
                   placeholder="ABCDE1234F"
                   value={form.panNumber}
                   onChange={set('panNumber')}
+                  required={false}
                 />
               </div>
 
               <Field
-                label="Business Address"
+                label="Business Address*"
                 placeholder="Street, City, State, PIN"
                 value={form.businessAddress}
                 onChange={set('businessAddress')}
+                required={true}
               />
 
               <div className="flex flex-col gap-1">
-                <Label>Business Description</Label>
+                <Label>Business Description*</Label>
                 <textarea
                   placeholder="Briefly describe what your business sells..."
                   value={form.description}
@@ -157,7 +201,29 @@ export default function SellerSignup() {
                 />
               </div>
 
-              <PurpleButton  disabled={loading}>
+              <Field
+                  label='Password*'
+                  placeholder='Create Password'
+                  value={form.password}
+                  onChange={set('password')}
+                  required
+              />
+              <StrengthBar password={form.password} />
+              <Field
+                  label='Confirm Password*'
+                  placeholder='Create Password'
+                  value={form.rePassword}
+                  onChange={set('rePassword')}
+                  required
+              />
+              {form.rePassword && form.password !== form.rePassword && (
+                <p className="flex items-center gap-1.5 text-sm font-medium text-red-500">
+                  <span className="text-base">⚠</span>
+                  Passwords do not match
+                </p>
+              )}
+
+              <PurpleButton  disabled={loading} onClick={handleClick}>
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Create Seller Account'}
               </PurpleButton>
 
