@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
 function SellNavbar() {
-
+ const router = useRouter()
   return (
     <div>
         <nav
@@ -53,14 +53,14 @@ function SellNavbar() {
         {/* CTA buttons */}
         <div className="flex items-center gap-3">
           <button
-            // onClick={()=>router.push('/seller-portal/login')}
+            onClick={()=>router.push('/seller-portal/login')}
             className="px-5 py-2 rounded-xl text-sm font-semibold transition-all hover:bg-purple-50"
             style={{ color: '#7c3aed', border: '1.5px solid #ddd6fe' }}
           >
             Sign In
           </button>
           <button
-            // onClick={()=>router.push('/seller-portal/signup')}
+            onClick={()=>router.push('/seller-portal/signup')}
             className="px-5 py-2 rounded-xl text-sm font-bold text-white flex items-center gap-1.5 transition-all active:scale-[0.97]"
             style={{
               background: 'linear-gradient(135deg, #7c3aed, #a855f7)',

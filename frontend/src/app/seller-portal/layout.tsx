@@ -10,7 +10,7 @@ export default function layout({children}:props) {
   return (
     <div>
         <SellNavbar/>
-        {children}
+        <div>{children}</div>
         <SellerFooter/>
     </div>
   )

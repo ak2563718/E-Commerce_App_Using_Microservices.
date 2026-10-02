@@ -4,7 +4,7 @@ import React from 'react'
 export default function page() {
   return (
     <div>
-        <SellerLogin/>
+        <div className='m-5 flex justify-center items-center'><SellerLogin/></div>
     </div>
   )
 }

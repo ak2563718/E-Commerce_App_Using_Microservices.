@@ -12,9 +12,6 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { sellerSignup } from '@/redux/auth/auth.Action'
 import { toast } from 'sonner'
 
-interface Props {
-  onGoLogin: () => void
-}
 
 function Label({ children }: { children: React.ReactNode }) {
   return <label className="text-xs font-semibold text-gray-600 tracking-wide">{children}</label>
@@ -40,7 +37,7 @@ function Field({ label, placeholder, value, onChange, type = 'text' }: {
   )
 }
 
-export default function SellerSignup({ onGoLogin }: Props) {
+export default function SellerSignup() {
   const [done, setDone] = useState(false)
   const [ loading, setLoading] = useState(false)
   const [form, setForm] = useState({
@@ -52,7 +49,7 @@ export default function SellerSignup({ onGoLogin }: Props) {
     businessAddress: '',
     description: '',
   })
-
+ const router = useRouter()
   const set = (k: keyof typeof form) => (v: string) => setForm(f => ({ ...f, [k]: v }))
 
   
@@ -70,7 +67,7 @@ export default function SellerSignup({ onGoLogin }: Props) {
         {/* Tabs */}
         <div className="border-b border-gray-100 flex shrink-0">
           <button
-            
+            onClick={()=>router.push('/seller-portal/login')}
             className="flex-1 py-3.5 text-xs font-bold tracking-wide text-gray-400 hover:text-purple-400 transition-colors"
             style={{ borderBottom: '2px solid transparent' }}
           >
@@ -171,7 +168,6 @@ export default function SellerSignup({ onGoLogin }: Props) {
                 Already a seller?{' '}
                 <button
                   type="button"
-                  onClick={onGoLogin}
                   className="font-bold hover:opacity-80 transition-opacity"
                   style={{ color: '#7c3aed' }}
                 >
@@ -203,7 +199,6 @@ export default function SellerSignup({ onGoLogin }: Props) {
                 </p>
               </div>
               <button
-                onClick={onGoLogin}
                 className="flex items-center gap-2 text-sm font-semibold hover:opacity-80 transition-opacity"
                 style={{ color: '#7c3aed' }}
               >

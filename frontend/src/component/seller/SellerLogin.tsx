@@ -19,6 +19,7 @@ export default function SellerLogin() {
   const [data, setData] = useState({ email: '', password: '' })
   const [showPass, setShowPass] = useState(false)
  const [loading, setLoading] = useState(false)
+ const router = useRouter()
 
   return (
     <div
@@ -40,7 +41,7 @@ export default function SellerLogin() {
             Sign In
           </button>
           <button
-            
+            onClick={()=>router.push('/seller-portal/signup')}
             className="flex-1 py-3.5 text-xs font-bold tracking-wide text-gray-400 hover:text-purple-400 transition-colors"
             style={{ borderBottom: '2px solid transparent' }}
           >
