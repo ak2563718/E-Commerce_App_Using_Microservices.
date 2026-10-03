@@ -15,10 +15,8 @@ datasource db {
 model Order {
   id                    String      @id @default(cuid())
   userId                String
-  sellerId              String
   customerName          String
   orderNumber           String      @unique
-  status                OrderStatus @default(PENDING)
   paymentStatus         PaymentStatus @default(PENDING)
   paymentMethod         PaymentMethod
   subtotal              Decimal     @db.Decimal(12,2)
@@ -41,23 +39,8 @@ model Order {
   updatedAt             DateTime @updatedAt
 
   @@index([userId])
-  @@index([status])
   @@index([paymentStatus])
   @@index([createdAt])
-}
-enum OrderStatus {
-  PENDING
-  CONFIRMED
-  PROCESSING
-  PACKED
-  SHIPPED
-  OUT_FOR_DELIVERY
-  DELIVERED
-  CANCELLED
-  RETURN_REQUESTED
-  RETURN_APPROVED
-  RETURNED
-  REFUNDED
 }
 
 enum PaymentStatus {
@@ -78,6 +61,8 @@ enum PaymentMethod {
 model OrderItem {
   id                String @id @default(cuid())
   orderId           String
+  sellerId          String
+  status            OrderStatus @default(PENDING)
   order             Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
   productId         String
   variantId         String?
@@ -92,7 +77,22 @@ model OrderItem {
   createdAt         DateTime @default(now())
 
   @@index([orderId])
+  @@index([status])
   @@index([productId])
+}
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  PACKED
+  SHIPPED
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+  RETURN_REQUESTED
+  RETURN_APPROVED
+  RETURNED
+  REFUNDED
 }
 
 model ShippingAddress {

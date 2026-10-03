@@ -71,7 +71,6 @@ export const createOrder = asyncHandler(async (req, res, next) => {
     const newOrder = await tx.order.create({
       data: {
         userId,
-        sellerId,
         customerName:users.firstName+" "+users.lastName,
         orderNumber,
         paymentMethod,
@@ -90,6 +89,7 @@ export const createOrder = asyncHandler(async (req, res, next) => {
         // Create order items
         items: {
           create: items.map((item) => ({
+            sellerId,
             productId: item.productId,
             variantId: item.variantId,
             productName: item.productName,
@@ -205,7 +205,6 @@ export const getOrderByNumber = asyncHandler(async (req, res) => {
 
 export const getUserOrders = asyncHandler(async (req, res) => {
   const  userId  = req.user.id;
-
   const orders = await prisma.order.findMany({
     where: {
       userId,
@@ -224,10 +223,10 @@ const data = orders.map((order) => ({
   id: order.orderNumber,
   date: order.createdAt,
   estimatedDelivery: order.deliveryDate,
-  status: order.status,
   total: Number(order.totalAmount),
 
   items: order.items.map((item) => ({
+    status:item.status,
     name: item.productName,
     qty: item.quantity,
     variant: item.variantId,
@@ -239,6 +238,7 @@ const data = orders.map((order) => ({
       data,
       message:"User orders fetched successfully",
       success:true,
+      orders
 });
 });
 
@@ -306,18 +306,29 @@ export const getAllOrders = asyncHandler(async (req, res) => {
 
 export const getsellerOrderbyMiddleware = asyncHandler(async(req, res, next)=>{
   const sellerId = req.user.id;
-  const order = await prisma.order.findMany({
+  const order = await prisma.orderItem.findMany({
     where:{
       sellerId,
+    },
+    include:{
+      order:true
     }
   })
   if(!order){
     return next(new AppError("Order not found", 404))
   }
+  const data = order.map((o)=>({
+    id:o.order.orderNumber,
+    customer:o.order.customerName,
+    product:o.productName,
+    amount:o.totalPrice,
+    status:o.status,
+    date:o.createdAt,
+  }))
   res.status(400).json({
     message:"Order found",
     success:true,
-    data:order
+    data
   })
 })
 

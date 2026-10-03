@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { useEffect, useState } from 'react'
 import { getProfile } from '@/redux/user/user.Action'
 import { usePathname, useRouter } from 'next/navigation'
-import { sellerLogout } from '@/redux/auth/seller.Action'
+import { sellerCheckSession, sellerLogout } from '@/redux/auth/seller.Action'
 import { toast } from 'sonner'
 
 type NavItem = 'overview' | 'orders' | 'products' | 'analytics' | 'payouts'
@@ -34,6 +34,17 @@ export default function Sidebar() {
   //      userProfile();
   //   },[])
   // const { user } = useAppSelector((state)=>state.user);
+  useEffect(()=>{
+    const checkSellerSection = async()=>{
+    try {
+      await dispatch(sellerCheckSession()).unwrap();
+    } catch (error) {
+      router.replace('/seller-portal/information')
+    }
+    }
+    checkSellerSection()
+  },[])
+  
   const pathname = usePathname();
   useEffect(()=>{
      const activeItem = NAV.find((n)=>n.route === pathname)

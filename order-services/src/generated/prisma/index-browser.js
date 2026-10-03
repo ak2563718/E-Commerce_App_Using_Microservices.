@@ -123,10 +123,8 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 exports.Prisma.OrderScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
-  sellerId: 'sellerId',
   customerName: 'customerName',
   orderNumber: 'orderNumber',
-  status: 'status',
   paymentStatus: 'paymentStatus',
   paymentMethod: 'paymentMethod',
   subtotal: 'subtotal',
@@ -149,6 +147,8 @@ exports.Prisma.OrderScalarFieldEnum = {
 exports.Prisma.OrderItemScalarFieldEnum = {
   id: 'id',
   orderId: 'orderId',
+  sellerId: 'sellerId',
+  status: 'status',
   productId: 'productId',
   variantId: 'variantId',
   productName: 'productName',
@@ -201,21 +201,6 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
-exports.OrderStatus = exports.$Enums.OrderStatus = {
-  PENDING: 'PENDING',
-  CONFIRMED: 'CONFIRMED',
-  PROCESSING: 'PROCESSING',
-  PACKED: 'PACKED',
-  SHIPPED: 'SHIPPED',
-  OUT_FOR_DELIVERY: 'OUT_FOR_DELIVERY',
-  DELIVERED: 'DELIVERED',
-  CANCELLED: 'CANCELLED',
-  RETURN_REQUESTED: 'RETURN_REQUESTED',
-  RETURN_APPROVED: 'RETURN_APPROVED',
-  RETURNED: 'RETURNED',
-  REFUNDED: 'REFUNDED'
-};
-
 exports.PaymentStatus = exports.$Enums.PaymentStatus = {
   PENDING: 'PENDING',
   PAID: 'PAID',
@@ -230,6 +215,21 @@ exports.PaymentMethod = exports.$Enums.PaymentMethod = {
   CARD: 'CARD',
   NET_BANKING: 'NET_BANKING',
   WALLET: 'WALLET'
+};
+
+exports.OrderStatus = exports.$Enums.OrderStatus = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  PROCESSING: 'PROCESSING',
+  PACKED: 'PACKED',
+  SHIPPED: 'SHIPPED',
+  OUT_FOR_DELIVERY: 'OUT_FOR_DELIVERY',
+  DELIVERED: 'DELIVERED',
+  CANCELLED: 'CANCELLED',
+  RETURN_REQUESTED: 'RETURN_REQUESTED',
+  RETURN_APPROVED: 'RETURN_APPROVED',
+  RETURNED: 'RETURNED',
+  REFUNDED: 'REFUNDED'
 };
 
 exports.addressType = exports.$Enums.addressType = {

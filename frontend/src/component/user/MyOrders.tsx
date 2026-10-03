@@ -52,6 +52,7 @@ export default function OrdersList() {
   useEffect(()=>{
     const getOrder =async()=>{
       const res = await dispatch(getUserOrder()).unwrap();
+      console.log(res.data)
       setallOrders(res.data)
       setLoading(false)
     }
@@ -83,7 +84,7 @@ export default function OrdersList() {
 
     return result;
   }, [allOrders,search, activeTab]);
-  console.log(filtered)
+  console.log("filtered",filtered)
 
   function formatDate(date: string | Date) {
   return new Date(date).toLocaleDateString("en-US", {
@@ -187,7 +188,7 @@ if(loading){
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             {filtered?.map((order) => {
-              const sc = statusConfig[order.status];
+              const sc = statusConfig[order.items?.[0].status];
               return (
                 <div
                   key={order.id}

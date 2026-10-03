@@ -277,6 +277,7 @@ export default function ProductCheckout() {
   const [orderPlaced, setOrderPlaced] = useState(false)
   const [loading, setLoading] = useState(false)
   const [product, setProduct] = useState<any>({})
+  const [orderplace, setOrderPlace] = useState<boolean>(false)
   const [ORDER_ITEMS,setORDER_ITEMS] =useState<any[]>([{
     id:'',
     name:'',
@@ -364,6 +365,7 @@ const formattedDate = date.toLocaleDateString('en-IN', {
   }
 
   const handlePlaceOrder = async() =>{ 
+    setOrderPlace(true)
     const form ={
       addressId:selectedAddress,
       paymentMethod:paymentMethod,
@@ -383,9 +385,11 @@ const formattedDate = date.toLocaleDateString('en-IN', {
         totalPrice:total,
       }],
     }
+    console.log(form)
     const order = await dispatch(createOrder(form)).unwrap();
     console.log(order.data)
     setOrderPlaced(true)
+    setOrderPlace(false)
   }
   const STEPS: { key: Step; label: string }[] = [
     { key: 'address', label: 'Delivery Address' },
@@ -957,6 +961,7 @@ const formattedDate = date.toLocaleDateString('en-IN', {
                     </button>
                     <button
                       onClick={handlePlaceOrder}
+                      disabled={orderplace}
                       style={{
                         padding: '13px 44px',
                         background: `linear-gradient(135deg, ${PINK}, ${PINK_DARK})`,
