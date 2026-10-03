@@ -1,45 +1,59 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { Search, Filter, Download } from 'lucide-react'
-import { recentOrders } from './data'
-import { useAppDispatch } from '@/redux/hooks'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { getSellerOrder } from '@/redux/order/order.Action'
 
-const ALL_STATUSES = ['all', 'delivered', 'shipped', 'processing', 'cancelled']
+const ALL_STATUSES = ['all', 'DELIVERED', 'SHIPPED', 'PENDING', 'CANCELLED']
 
 const STATUS_STYLES: Record<string, { bg: string; color: string; label: string }> = {
-  delivered: { bg: '#dcfce7', color: '#16a34a', label: 'Delivered' },
-  shipped: { bg: '#dbeafe', color: '#2563eb', label: 'Shipped' },
-  processing: { bg: '#fef9c3', color: '#ca8a04', label: 'Processing' },
-  cancelled: { bg: '#fee2e2', color: '#dc2626', label: 'Cancelled' },
+  DELIVERED: { bg: '#dcfce7', color: '#16a34a', label: 'DELIVERED' },
+  SHIPPED: { bg: '#dbeafe', color: '#2563eb', label: 'SHIPPED' },
+  PENDING: { bg: '#fef9c3', color: '#ca8a04', label: 'PENDING' },
+  CONFIRMED:{bg:'#dcfce7', color:'#16a34a' ,label:'CONFIRMED'},
+  CANCELLED: { bg: '#fee2e2', color: '#dc2626', label: 'CANCELLED' },
 }
 
 // Extend with more mock orders
-const ALL_ORDERS = [
-  ...recentOrders,
-  { id: '#ORD-8815', customer: 'Kiran Patel', product: 'Smart Watch Series 5', amount: 5999, status: 'shipped', date: 'Jul 28, 2025' },
-  { id: '#ORD-8814', customer: 'Divya Menon', product: 'Wireless Earbuds Pro', amount: 2499, status: 'delivered', date: 'Jul 28, 2025' },
-  { id: '#ORD-8813', customer: 'Aditya Kumar', product: 'USB-C Hub 7-in-1', amount: 2199, status: 'processing', date: 'Jul 27, 2025' },
-  { id: '#ORD-8812', customer: 'Neha Gupta', product: 'Leather Crossbody Bag', amount: 1899, status: 'delivered', date: 'Jul 27, 2025' },
-]
+// const ALL_ORDERS = [
+//   { id: '#ORD-8815', customer: 'Kiran Patel', product: 'Smart Watch Series 5', amount: 5999, status: 'SHIPPED', date: 'Jul 28, 2025' },
+//   { id: '#ORD-8814', customer: 'Divya Menon', product: 'Wireless Earbuds Pro', amount: 2499, status: 'DELIVERED', date: 'Jul 28, 2025' },
+//   { id: '#ORD-8813', customer: 'Aditya Kumar', product: 'USB-C Hub 7-in-1', amount: 2199, status: 'PENDING', date: 'Jul 27, 2025' },
+//   { id: '#ORD-8812', customer: 'Neha Gupta', product: 'Leather Crossbody Bag', amount: 1899, status: 'DELIVERED', date: 'Jul 27, 2025' },
+// ]
 
 export default function Orders() {
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState('all')
+  const [ALL_ORDERS, setALL_ORDERS] = useState<any[]>([])
+  const [openOrderId, setOpenOrderId] = useState<string | null>(null);
+  const [ render, setRender ] = useState<boolean>(false)
   const dispatch = useAppDispatch();
+  const { sellerAccessToken } = useAppSelector((state)=>state.auth)
+  useEffect(() => {
+  const getOrders = async () => {
+    if (!sellerAccessToken) return;
 
-  useEffect(()=>{
-    const orders=async()=>{
-      try{
-      const res = await dispatch(getSellerOrder()).unwrap();
-      console.log(res.data)
-      }
-      catch(error){
-        console.log(error)
-      }
+    try {
+      const res = await dispatch(
+        getSellerOrder(sellerAccessToken)
+      ).unwrap();
+      setALL_ORDERS(res.data)
+    } catch (error) {
+      console.log("hello",error);
     }
-    orders()
-  },[])
+  };
+
+  getOrders();
+}, [sellerAccessToken, dispatch, render]);
+
+ const handleCancel =async()=>{
+
+ }
+
+ const handleConfirm = async()=>{
+
+ }
 
   const filtered = ALL_ORDERS.filter(o => {
     const matchSearch = o.id.toLowerCase().includes(search.toLowerCase()) ||
@@ -54,7 +68,7 @@ export default function Orders() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-black text-gray-900" style={{ fontFamily: 'Outfit, sans-serif' }}>Orders</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{ALL_ORDERS.length} total orders · {ALL_ORDERS.filter(o => o.status === 'processing').length} pending</p>
+          <p className="text-sm text-gray-500 mt-0.5">{ALL_ORDERS.length} total orders · {ALL_ORDERS.filter(o => o.status === 'PENDING').length} pending</p>
         </div>
         <button className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white" style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)' }}>
           <Download className="w-4 h-4" /> Export CSV
@@ -117,8 +131,34 @@ export default function Orders() {
                   <td className="px-5 py-3.5 text-sm text-gray-600">{order.product}</td>
                   <td className="px-5 py-3.5 text-sm font-bold text-gray-800">₹{order.amount.toLocaleString('en-IN')}</td>
                   <td className="px-5 py-3.5">
-                    <span className="px-2.5 py-1 rounded-full text-xs font-bold" style={{ background: s.bg, color: s.color }}>{s.label}</span>
-                  </td>
+                  <button
+                    onClick={() =>
+                      setOpenOrderId(
+                        openOrderId === order.id ? null : order.id
+                      )
+                    }
+                    disabled = {s.label !== "PENDING"?true:false}
+                    className="px-2.5 py-1 rounded-full text-xs font-bold"
+                    style={{
+                      background: s.bg,
+                      color: s.color
+                    }}
+                  >
+                    {s.label}
+                  </button>
+
+                  {openOrderId === order.id && (
+                    <div className="relative left-0 top-full z-[100] mt-2 w-25 rounded-lg border bg-white p-1 shadow-lg">
+                      <button onClick={handleConfirm} className="w-full rounded-md px-2 py-1 text-left text-xs hover:bg-gray-100">
+                        CONFIRMED
+                      </button>
+
+                      <button onClick={handleCancel} className="w-full rounded-md px-2 py-1 text-left text-xs hover:bg-gray-100">
+                        CANCELLED
+                      </button>
+                    </div>
+                  )}
+                </td>
                   <td className="px-5 py-3.5 text-xs text-gray-400 font-medium">{order.date}</td>
                   <td className="px-5 py-3.5">
                     <button className="text-xs font-bold px-2.5 py-1 rounded-lg hover:bg-purple-50 transition-colors" style={{ color: '#7c3aed' }}>View</button>

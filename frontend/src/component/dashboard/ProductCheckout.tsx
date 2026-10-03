@@ -962,6 +962,7 @@ const formattedDate = date.toLocaleDateString('en-IN', {
                     <button
                       onClick={handlePlaceOrder}
                       disabled={orderplace}
+                      className={`${orderplace && 'cursor-not-allowed'}`}
                       style={{
                         padding: '13px 44px',
                         background: `linear-gradient(135deg, ${PINK}, ${PINK_DARK})`,

@@ -325,7 +325,7 @@ export const getsellerOrderbyMiddleware = asyncHandler(async(req, res, next)=>{
     status:o.status,
     date:o.createdAt,
   }))
-  res.status(400).json({
+  res.status(200).json({
     message:"Order found",
     success:true,
     data

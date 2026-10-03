@@ -140,12 +140,14 @@ export const getUserOrder = createAsyncThunk<any, void, {rejectValue:string}>(
     }
 )
 
-export const getSellerOrder = createAsyncThunk<any, void,{rejectValue:string}>(
+export const getSellerOrder = createAsyncThunk<any, string,{rejectValue:string}>(
     'get/sellerOrder',
-    async(_, {rejectWithValue})=>{
+    async(accessToken, {rejectWithValue})=>{
         try {
-            const { data } = await api.get(`http://localhost:6004/api/product/order/seller`,{
-                headers:{'Content-Type':"application/json"},
+            const { data } = await axios.get(`http://localhost:6004/api/product/order/sellerId`,{
+                headers:{'Content-Type':"application/json",
+                    "Authorization":`Bearer ${accessToken}`
+                },
                 withCredentials:true,
             })
             return data;
