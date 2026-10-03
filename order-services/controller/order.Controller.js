@@ -10,6 +10,7 @@ export const createOrder = asyncHandler(async (req, res, next) => {
   const userId = req.user.id;
   console.log('address id is ',req.body.addressId)
   const {
+    sellerId,
     addressId,
     paymentMethod,
     subtotal,
@@ -24,13 +25,14 @@ export const createOrder = asyncHandler(async (req, res, next) => {
   } = req.body;
 
   if (
+    !sellerId ||
     !userId ||
     !paymentMethod ||
     !subtotal ||
     !totalAmount ||
     !items
   ) {
-    return next(new AppError('userId, paymentMethod, subtotal, totalAmount and items are required',400))
+    return next(new AppError('sellerId,userId, paymentMethod, subtotal, totalAmount and items are required',400))
   }
 
   // ----------------------------------------------------------
@@ -69,6 +71,7 @@ export const createOrder = asyncHandler(async (req, res, next) => {
     const newOrder = await tx.order.create({
       data: {
         userId,
+        sellerId,
         customerName:users.firstName+" "+users.lastName,
         orderNumber,
         paymentMethod,
@@ -300,6 +303,23 @@ export const getAllOrders = asyncHandler(async (req, res) => {
         message:"Orders fetched successfully",
 })
 });
+
+export const getsellerOrderbyMiddleware = asyncHandler(async(req, res, next)=>{
+  const sellerId = req.user.id;
+  const order = await prisma.order.findMany({
+    where:{
+      sellerId,
+    }
+  })
+  if(!order){
+    return next(new AppError("Order not found", 404))
+  }
+  res.status(400).json({
+    message:"Order found",
+    success:true,
+    data:order
+  })
+})
 
 export const getSellerOrder = asyncHandler(async (req, res, next) => {
 

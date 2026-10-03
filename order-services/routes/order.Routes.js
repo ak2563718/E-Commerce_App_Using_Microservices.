@@ -13,8 +13,9 @@ import {
   cancelOrder,
   getOrderStatusHistory,
   getSellerOrder,
+  getsellerOrderbyMiddleware,
 } from "../controller/order.Controller.js";
-import { authMiddleware } from "../middleware/auth.Middleware.js";
+import { authMiddleware, sellerMiddleware } from "../middleware/auth.Middleware.js";
 
 const router = express.Router();
 
@@ -31,6 +32,7 @@ router.get("/user/order",authMiddleware, getUserOrders);
 
 router.get("/number/:orderNumber", getOrderByNumber);
 router.get('/order/seller', getSellerOrder)
+router.get('/order/sellerId',authMiddleware,sellerMiddleware,getsellerOrderbyMiddleware)
 
 router.get("/order/:id", getOrderById);
 

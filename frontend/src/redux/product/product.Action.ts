@@ -1,7 +1,5 @@
-import api from "@/lib/axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { useAppSelector } from "../hooks";
 
 const product_uri = process.env.NEXT_PUBLIC_API_URI;
 // 1. create a product details

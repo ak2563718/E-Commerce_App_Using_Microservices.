@@ -23,3 +23,13 @@ export const authMiddleware = async(req, res, next)=>{
         })
     }
 }
+
+export const sellerMiddleware = async(req, res, next)=>{
+   if(req.user.role !== "SELLER"){
+      return res.status(402).json({
+         message:"You are not authorized to access this route",
+         success:false,
+      })
+   }
+   next();
+}

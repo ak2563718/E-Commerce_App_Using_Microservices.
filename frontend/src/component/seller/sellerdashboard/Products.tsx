@@ -179,6 +179,7 @@ function StepDetails({ onNext, onClose }: { onNext: () => void; onClose: () => v
   const dispatch = useAppDispatch();
   const { categories } = useAppSelector((state) => state.category)
   const { loading } = useAppSelector((state)=>state.product)
+  const { sellerAccessToken } = useAppSelector((state)=>state.auth)
 
   useEffect(() => {
     dispatch(getAllCategories())
@@ -232,7 +233,7 @@ function StepDetails({ onNext, onClose }: { onNext: () => void; onClose: () => v
         taxPercentage:optional.taxPercentage
       }
       console.log(formdata)
-      const res = await dispatch(createProduct(formdata)).unwrap()
+      const res = await dispatch(createProduct({formdata, sellerAccessToken})).unwrap()
       toast.success(res.message)
       onNext()
     } catch (error:any) { 

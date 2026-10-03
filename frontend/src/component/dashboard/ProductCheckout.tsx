@@ -369,6 +369,7 @@ const formattedDate = date.toLocaleDateString('en-IN', {
       paymentMethod:paymentMethod,
       subtotal:subtotal,
       totalAmount:total,
+      sellerId:product.sellerId,
       items:[{
         productId:product.id,
         variantId:product.variants?.[0].id,
