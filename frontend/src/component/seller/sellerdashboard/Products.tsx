@@ -233,10 +233,12 @@ function StepDetails({ onNext, onClose }: { onNext: () => void; onClose: () => v
         taxPercentage:optional.taxPercentage
       }
       console.log(formdata)
-      const res = await dispatch(createProduct({formdata, sellerAccessToken})).unwrap()
+      const res = await dispatch(createProduct({accessToken:sellerAccessToken,form:formdata})).unwrap()
+      console.log(res)
       toast.success(res.message)
       onNext()
     } catch (error:any) { 
+      console.log(error)
       toast.error(error)
     } 
   }
