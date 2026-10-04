@@ -319,6 +319,7 @@ export const getsellerOrderbyMiddleware = asyncHandler(async(req, res, next)=>{
   }
   const data = order.map((o)=>({
     id:o.order.orderNumber,
+    orderItemId:o.id,
     customer:o.order.customerName,
     product:o.productName,
     amount:o.totalPrice,
@@ -380,7 +381,7 @@ export const getSellerOrder = asyncHandler(async (req, res, next) => {
 // UPDATE ORDER STATUS
 // ============================================================
 
-export const updateOrderStatus = asyncHandler(async (req, res) => {
+export const updateOrderStatus = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
   const {
@@ -393,7 +394,7 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
     return next(new AppError("Order status is required",400));
   }
 
-  const order = await prisma.order.findUnique({
+  const order = await prisma.orderItem.findUnique({
     where: {
       id,
     },
@@ -412,7 +413,7 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
 
   const updatedOrder = await prisma.$transaction(async (tx) => {
     // Update order status
-    const updated = await tx.order.update({
+    const updated = await tx.orderItem.update({
       where: {
         id,
       },
@@ -425,7 +426,7 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
     // Add status history
     await tx.orderStatusHistory.create({
       data: {
-        orderId: id,
+        orderId: order.orderId,
         status,
         changedBy,
         remarks,
@@ -438,7 +439,7 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
   return res.status(200).json({
       data:updatedOrder,
       success:true,
-      message:"Order status updated successfully"
+      message:`Order is ${status.toLowerCase()} by seller`
 });
 });
 

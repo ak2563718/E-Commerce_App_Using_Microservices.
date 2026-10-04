@@ -2,7 +2,8 @@
 import { useEffect, useState } from 'react'
 import { Search, Filter, Download } from 'lucide-react'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
-import { getSellerOrder } from '@/redux/order/order.Action'
+import { getSellerOrder, updateOrderStatus } from '@/redux/order/order.Action'
+import { toast } from 'sonner'
 
 const ALL_STATUSES = ['all', 'DELIVERED', 'SHIPPED', 'PENDING', 'CANCELLED']
 
@@ -48,11 +49,33 @@ export default function Orders() {
 }, [sellerAccessToken, dispatch, render]);
 
  const handleCancel =async()=>{
-
+    try {
+      const form ={
+        status:"CANCELLED",
+        changedBy:"SELLER"
+      }
+      const res = await dispatch(updateOrderStatus({id:openOrderId,form})).unwrap();
+      toast.success(res.message)
+      setRender((prev)=>!prev)
+      setOpenOrderId(null)
+    } catch (error:any) {
+      toast.error(error)
+    }
  }
 
  const handleConfirm = async()=>{
-
+    try {
+      const form ={
+        status:"CONFIRMED",
+        changedBy:"SELLER"
+      }
+      const res = await dispatch(updateOrderStatus({id:openOrderId,form})).unwrap();
+      toast.success(res.message);
+      setOpenOrderId(null)
+      setRender((prev)=>!prev)
+    } catch (error:any) {
+      toast.error(error)
+    }
  }
 
   const filtered = ALL_ORDERS.filter(o => {
@@ -134,7 +157,7 @@ export default function Orders() {
                   <button
                     onClick={() =>
                       setOpenOrderId(
-                        openOrderId === order.id ? null : order.id
+                        openOrderId === order.orderItemId ? null : order.orderItemId
                       )
                     }
                     disabled = {s.label !== "PENDING"?true:false}
@@ -147,7 +170,7 @@ export default function Orders() {
                     {s.label}
                   </button>
 
-                  {openOrderId === order.id && (
+                  {openOrderId === order.orderItemId && (
                     <div className="relative left-0 top-full z-[100] mt-2 w-25 rounded-lg border bg-white p-1 shadow-lg">
                       <button onClick={handleConfirm} className="w-full rounded-md px-2 py-1 text-left text-xs hover:bg-gray-100">
                         CONFIRMED

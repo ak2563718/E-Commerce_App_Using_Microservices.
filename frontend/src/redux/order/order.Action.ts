@@ -159,3 +159,22 @@ export const getSellerOrder = createAsyncThunk<any, string,{rejectValue:string}>
         }
     }
 )
+
+
+export const updateOrderStatus = createAsyncThunk<any, any, {rejectValue:string}>(
+    'patch/orderstatus',
+    async({id,form}, {rejectWithValue})=>{
+        try {
+            const { data } = await axios.patch(`http://localhost:6004/api/product/${id}/status`,form,{
+                headers:{'Content-Type':'application/json'},
+                withCredentials:true,
+            })
+            return data;
+        } catch (error) {
+            if(axios.isAxiosError(error)){
+                return rejectWithValue(error.response?.data.message)
+            }
+            return rejectWithValue("something went wrong")
+        }
+    }
+)
