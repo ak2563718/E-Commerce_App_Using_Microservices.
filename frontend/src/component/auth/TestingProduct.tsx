@@ -280,7 +280,7 @@ const mockProducts = [
   { name: "Vitamin C brightening serum", sku: "BTY-4482", price: "₹899", stock: 42, category: "Beauty", tint: "amber" },
 ];
 
-export default function App() {
+export default function TestingProduct() {
   const [wizardOpen, setWizardOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [catalog, setCatalog] = useState(mockProducts);
