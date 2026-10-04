@@ -718,6 +718,7 @@ export default function Products() {
   const { sellerAccessToken } = useAppSelector((state)=>state.auth)
   const [loader, setLoader] = useState<boolean>(true)
   const [products, setProducts] = useState<any[]>([])
+  const [rerender, setRerender]= useState<boolean>(false)
   const router = useRouter()
 
 
@@ -731,7 +732,7 @@ export default function Products() {
       }
     }
     getProduct()
-  },[dispatch])
+  },[dispatch,rerender])
  
 
  const filtered =  products?.filter((p) => {
@@ -745,10 +746,11 @@ export default function Products() {
 
 const handleDelete =async()=>{
       try {
-        const res =await dispatch(deleteProductbyId(productId)).unwrap();
+        const res =await dispatch(deleteProductbyId({id:productId,accessToken:sellerAccessToken})).unwrap();
         toast.success(res.message)
         setShowDelete(false)
         setProductId('')
+        setRerender((prev)=>!prev)
       } catch (err:any) {
         toast.error(err?.message)
       }               

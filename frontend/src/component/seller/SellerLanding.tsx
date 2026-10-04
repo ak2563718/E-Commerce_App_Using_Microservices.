@@ -1,7 +1,9 @@
 'use client'
-import { useAppSelector } from '@/redux/hooks'
+import { sellerCheckSession } from '@/redux/auth/seller.Action'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { Store, TrendingUp, Package, Star, Shield, Zap, Users, ArrowRight, ChevronRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 const FEATURES = [
   {
@@ -46,6 +48,18 @@ const STATS = [
 
 export default function SellerLanding() {
   const router = useRouter()
+  const dispatch = useAppDispatch();
+  useEffect(()=>{
+    const checksession = async()=>{
+      try {
+        await dispatch(sellerCheckSession()).unwrap();
+        router.replace('/seller/overview')
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    checksession()
+  },[])
   const login =()=>{
     router.push('/seller-portal/login')
   }
