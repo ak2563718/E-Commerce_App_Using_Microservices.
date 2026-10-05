@@ -707,5 +707,68 @@ export const getOrderStatusHistory = asyncHandler(
 // seller dashboard Details
 export const sellerDashobard = asyncHandler(async(req, res, next)=>{
   const sellerId = req.user.id;
-  const 
+  const authorizationHeader = req.headers.authorization;
+  const [
+    sellerResponse,
+    productResponse,
+    orderResponse,
+    totalEarning
+  ]= await Promise.all([
+    // seller Response from auth service
+    axios.get(`http://localhost:6001/api/auth/seller/info`,{
+      headers:{
+        Authorization:authorizationHeader
+      },
+      withCredentials:true,
+    }),
+   
+    // product Response from product service
+    axios.get(`http://localhost:6002/api/product/products/seller`,{
+      headers:{
+        Authorization:authorizationHeader
+      },
+      withCredentials:true,
+    }),
+
+    prisma.orderItem.findMany({
+      where:{
+        sellerId
+      },
+      include:{
+        order:true,
+      }
+    }),
+
+    prisma.orderItem.aggregate({
+      where:{
+        sellerId,
+        status:"DELIVERED"
+      },
+      _sum:{
+        totalPrice:true
+      }
+    })
+  ])
+  console.log(orderResponse)
+  const sellerInfo = sellerResponse.data?.data;
+  const productInfo = productResponse.data?.data;
+  const orderInfo = orderResponse;
+  const totalEarnings = totalEarning._sum.totalPrice ?? 0;
+  const totalProducts = productInfo.length;
+  const avgOrderValue = Math.round(totalEarnings / (orderInfo.length));
+  const slicedProduct = productInfo.slice(0,5);
+
+  res.status(200).json({
+    message:'seller dashboard data fetched',
+    success:true,
+    totalEarnings,
+    totalProducts,
+    avgOrderValue,
+    count:slicedProduct.length,
+    data:{
+      sellerInfo,
+      slicedProduct,
+      orderInfo,
+    },
+  })
 })

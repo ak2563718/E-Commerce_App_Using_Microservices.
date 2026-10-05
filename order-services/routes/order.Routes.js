@@ -14,6 +14,7 @@ import {
   getOrderStatusHistory,
   getSellerOrder,
   getsellerOrderbyMiddleware,
+  sellerDashobard,
 } from "../controller/order.Controller.js";
 import { authMiddleware, sellerMiddleware } from "../middleware/auth.Middleware.js";
 
@@ -67,6 +68,8 @@ router.patch("/:id/address", updateShippingAddress);
 // =============================
 
 router.get("/:orderId/status-history", getOrderStatusHistory);
+
+router.get('/seller/dashboard',authMiddleware,sellerDashobard)
 
 
 export default router;

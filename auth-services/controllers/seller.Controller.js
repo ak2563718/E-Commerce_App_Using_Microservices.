@@ -233,5 +233,9 @@ export const sellerInfo = asyncHandler(async(req, res, next)=>{
     if(!seller){
         return next(new AppError("No seller found", 404))
     }
-    
+    res.status(200).json({
+        data:seller,
+        success:true,
+        message:"seller details found"
+    })
 })
