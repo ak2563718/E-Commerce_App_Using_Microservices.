@@ -701,3 +701,11 @@ export const getOrderStatusHistory = asyncHandler(
   });
   }
 );
+
+
+
+// seller dashboard Details
+export const sellerDashobard = asyncHandler(async(req, res, next)=>{
+  const sellerId = req.user.id;
+  const 
+})

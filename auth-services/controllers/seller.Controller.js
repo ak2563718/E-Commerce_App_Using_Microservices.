@@ -8,6 +8,7 @@ import jwt from 'jsonwebtoken'
 // 1. create seller signup controller
 export const createSellerSignup = asyncHandler(async(req, res, next)=>{
     const {
+        sellerName,
         businessName,
         businessEmail,
         businessPhone,
@@ -17,7 +18,7 @@ export const createSellerSignup = asyncHandler(async(req, res, next)=>{
         description,
         password
     } = req.body;
-    if(!businessName || !businessEmail ||!businessPhone ||!password){
+    if(!sellerName||!businessName || !businessEmail ||!businessPhone ||!password){
         return next(new AppError("Please fill the required field", 400))
     }
     const normalizedEmail = businessEmail.toLowerCase().trim()
@@ -54,6 +55,7 @@ export const createSellerSignup = asyncHandler(async(req, res, next)=>{
     const hashedPassword = await bcrypt.hash(password, 10)
     const seller = await prisma.seller.create({
         data:{
+            sellerName,
             businessName,
             businessEmail:normalizedEmail,
             businessPhone:phone,
@@ -214,4 +216,22 @@ export const createSellerSession = asyncHandler(async(req, res, next)=>{
         sellerAccessToken,
         data:seller
     })
+})
+
+
+// 6. get seller information
+export const sellerInfo = asyncHandler(async(req, res, next)=>{
+    const sellerId = req.user.id;
+    const seller = await prisma.seller.findUnique({
+        where:{
+            id:sellerId
+        },
+        omit:{
+            password:true,
+        }
+    })
+    if(!seller){
+        return next(new AppError("No seller found", 404))
+    }
+    
 })

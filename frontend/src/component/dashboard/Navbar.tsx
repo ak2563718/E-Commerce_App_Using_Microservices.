@@ -65,8 +65,6 @@ export default function Navbar({
     const fetchUserdetails = async()=>{
       try {
         const response = await dispatch(authCheckSession()).unwrap()
-        const getuser = await dispatch(getProfile()).unwrap()
-        setName(getuser.data?.firstName)
       } catch(error:any){
         console.log(error)
       }finally{

@@ -56,6 +56,7 @@ enum RoleName {
 }
 model Seller {
   id               String   @id @default(cuid())
+  sellerName       String   
   businessName     String
   businessEmail    String   @unique
   businessPhone    String   @unique

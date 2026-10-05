@@ -64,6 +64,7 @@ export default function SellerSignup() {
   const [done, setDone] = useState(false)
   const [ loading, setLoading] = useState(false)
   const [form, setForm] = useState({
+    sellerName:'',
     businessName: '',
     businessEmail: '',
     businessPhone: '',
@@ -78,7 +79,7 @@ export default function SellerSignup() {
  const dispatch = useAppDispatch()
  const set = (k: keyof typeof form) => (v: string) => setForm(f => ({ ...f, [k]: v }))
  
- const handleClick=async()=>{
+ const handleSignup=async()=>{
   try {
     setLoading(true)
     const res = await dispatch(sellerSignup(form)).unwrap();
@@ -135,6 +136,14 @@ export default function SellerSignup() {
                 </h2>
                 <p className="text-xs text-gray-400">Fill in your business details to get started</p>
               </div>
+
+              <Field
+                label="Business Name*"
+                placeholder="e.g. Akash kumar"
+                value={form.sellerName}
+                onChange={set('sellerName')}
+                required={true}
+              />
 
               <Field
                 label="Business Name*"
@@ -223,7 +232,7 @@ export default function SellerSignup() {
                 </p>
               )}
 
-              <PurpleButton  disabled={loading} onClick={handleClick}>
+              <PurpleButton  disabled={loading} onClick={handleSignup}>
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Create Seller Account'}
               </PurpleButton>
 

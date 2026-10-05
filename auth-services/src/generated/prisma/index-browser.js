@@ -148,6 +148,7 @@ exports.Prisma.RoleScalarFieldEnum = {
 
 exports.Prisma.SellerScalarFieldEnum = {
   id: 'id',
+  sellerName: 'sellerName',
   businessName: 'businessName',
   businessEmail: 'businessEmail',
   businessPhone: 'businessPhone',

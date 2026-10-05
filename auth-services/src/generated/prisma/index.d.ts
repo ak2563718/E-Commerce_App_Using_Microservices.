@@ -4928,6 +4928,7 @@ export namespace Prisma {
 
   export type SellerMinAggregateOutputType = {
     id: string | null
+    sellerName: string | null
     businessName: string | null
     businessEmail: string | null
     businessPhone: string | null
@@ -4944,6 +4945,7 @@ export namespace Prisma {
 
   export type SellerMaxAggregateOutputType = {
     id: string | null
+    sellerName: string | null
     businessName: string | null
     businessEmail: string | null
     businessPhone: string | null
@@ -4960,6 +4962,7 @@ export namespace Prisma {
 
   export type SellerCountAggregateOutputType = {
     id: number
+    sellerName: number
     businessName: number
     businessEmail: number
     businessPhone: number
@@ -4978,6 +4981,7 @@ export namespace Prisma {
 
   export type SellerMinAggregateInputType = {
     id?: true
+    sellerName?: true
     businessName?: true
     businessEmail?: true
     businessPhone?: true
@@ -4994,6 +4998,7 @@ export namespace Prisma {
 
   export type SellerMaxAggregateInputType = {
     id?: true
+    sellerName?: true
     businessName?: true
     businessEmail?: true
     businessPhone?: true
@@ -5010,6 +5015,7 @@ export namespace Prisma {
 
   export type SellerCountAggregateInputType = {
     id?: true
+    sellerName?: true
     businessName?: true
     businessEmail?: true
     businessPhone?: true
@@ -5099,6 +5105,7 @@ export namespace Prisma {
 
   export type SellerGroupByOutputType = {
     id: string
+    sellerName: string
     businessName: string
     businessEmail: string
     businessPhone: string
@@ -5132,6 +5139,7 @@ export namespace Prisma {
 
   export type SellerSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    sellerName?: boolean
     businessName?: boolean
     businessEmail?: boolean
     businessPhone?: boolean
@@ -5150,6 +5158,7 @@ export namespace Prisma {
 
   export type SellerSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    sellerName?: boolean
     businessName?: boolean
     businessEmail?: boolean
     businessPhone?: boolean
@@ -5166,6 +5175,7 @@ export namespace Prisma {
 
   export type SellerSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    sellerName?: boolean
     businessName?: boolean
     businessEmail?: boolean
     businessPhone?: boolean
@@ -5182,6 +5192,7 @@ export namespace Prisma {
 
   export type SellerSelectScalar = {
     id?: boolean
+    sellerName?: boolean
     businessName?: boolean
     businessEmail?: boolean
     businessPhone?: boolean
@@ -5196,7 +5207,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type SellerOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "businessName" | "businessEmail" | "businessPhone" | "gstNumber" | "panNumber" | "businessAddress" | "description" | "role" | "password" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["seller"]>
+  export type SellerOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "sellerName" | "businessName" | "businessEmail" | "businessPhone" | "gstNumber" | "panNumber" | "businessAddress" | "description" | "role" | "password" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["seller"]>
   export type SellerInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     refreshTokens?: boolean | Seller$refreshTokensArgs<ExtArgs>
     _count?: boolean | SellerCountOutputTypeDefaultArgs<ExtArgs>
@@ -5211,6 +5222,7 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
+      sellerName: string
       businessName: string
       businessEmail: string
       businessPhone: string
@@ -5648,6 +5660,7 @@ export namespace Prisma {
    */
   interface SellerFieldRefs {
     readonly id: FieldRef<"Seller", 'String'>
+    readonly sellerName: FieldRef<"Seller", 'String'>
     readonly businessName: FieldRef<"Seller", 'String'>
     readonly businessEmail: FieldRef<"Seller", 'String'>
     readonly businessPhone: FieldRef<"Seller", 'String'>
@@ -9394,6 +9407,7 @@ export namespace Prisma {
 
   export const SellerScalarFieldEnum: {
     id: 'id',
+    sellerName: 'sellerName',
     businessName: 'businessName',
     businessEmail: 'businessEmail',
     businessPhone: 'businessPhone',
@@ -9775,6 +9789,7 @@ export namespace Prisma {
     OR?: SellerWhereInput[]
     NOT?: SellerWhereInput | SellerWhereInput[]
     id?: StringFilter<"Seller"> | string
+    sellerName?: StringFilter<"Seller"> | string
     businessName?: StringFilter<"Seller"> | string
     businessEmail?: StringFilter<"Seller"> | string
     businessPhone?: StringFilter<"Seller"> | string
@@ -9792,6 +9807,7 @@ export namespace Prisma {
 
   export type SellerOrderByWithRelationInput = {
     id?: SortOrder
+    sellerName?: SortOrder
     businessName?: SortOrder
     businessEmail?: SortOrder
     businessPhone?: SortOrder
@@ -9814,6 +9830,7 @@ export namespace Prisma {
     AND?: SellerWhereInput | SellerWhereInput[]
     OR?: SellerWhereInput[]
     NOT?: SellerWhereInput | SellerWhereInput[]
+    sellerName?: StringFilter<"Seller"> | string
     businessName?: StringFilter<"Seller"> | string
     gstNumber?: StringNullableFilter<"Seller"> | string | null
     panNumber?: StringNullableFilter<"Seller"> | string | null
@@ -9829,6 +9846,7 @@ export namespace Prisma {
 
   export type SellerOrderByWithAggregationInput = {
     id?: SortOrder
+    sellerName?: SortOrder
     businessName?: SortOrder
     businessEmail?: SortOrder
     businessPhone?: SortOrder
@@ -9851,6 +9869,7 @@ export namespace Prisma {
     OR?: SellerScalarWhereWithAggregatesInput[]
     NOT?: SellerScalarWhereWithAggregatesInput | SellerScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Seller"> | string
+    sellerName?: StringWithAggregatesFilter<"Seller"> | string
     businessName?: StringWithAggregatesFilter<"Seller"> | string
     businessEmail?: StringWithAggregatesFilter<"Seller"> | string
     businessPhone?: StringWithAggregatesFilter<"Seller"> | string
@@ -10240,6 +10259,7 @@ export namespace Prisma {
 
   export type SellerCreateInput = {
     id?: string
+    sellerName: string
     businessName: string
     businessEmail: string
     businessPhone: string
@@ -10257,6 +10277,7 @@ export namespace Prisma {
 
   export type SellerUncheckedCreateInput = {
     id?: string
+    sellerName: string
     businessName: string
     businessEmail: string
     businessPhone: string
@@ -10274,6 +10295,7 @@ export namespace Prisma {
 
   export type SellerUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    sellerName?: StringFieldUpdateOperationsInput | string
     businessName?: StringFieldUpdateOperationsInput | string
     businessEmail?: StringFieldUpdateOperationsInput | string
     businessPhone?: StringFieldUpdateOperationsInput | string
@@ -10291,6 +10313,7 @@ export namespace Prisma {
 
   export type SellerUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    sellerName?: StringFieldUpdateOperationsInput | string
     businessName?: StringFieldUpdateOperationsInput | string
     businessEmail?: StringFieldUpdateOperationsInput | string
     businessPhone?: StringFieldUpdateOperationsInput | string
@@ -10308,6 +10331,7 @@ export namespace Prisma {
 
   export type SellerCreateManyInput = {
     id?: string
+    sellerName: string
     businessName: string
     businessEmail: string
     businessPhone: string
@@ -10324,6 +10348,7 @@ export namespace Prisma {
 
   export type SellerUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    sellerName?: StringFieldUpdateOperationsInput | string
     businessName?: StringFieldUpdateOperationsInput | string
     businessEmail?: StringFieldUpdateOperationsInput | string
     businessPhone?: StringFieldUpdateOperationsInput | string
@@ -10340,6 +10365,7 @@ export namespace Prisma {
 
   export type SellerUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
+    sellerName?: StringFieldUpdateOperationsInput | string
     businessName?: StringFieldUpdateOperationsInput | string
     businessEmail?: StringFieldUpdateOperationsInput | string
     businessPhone?: StringFieldUpdateOperationsInput | string
@@ -10817,6 +10843,7 @@ export namespace Prisma {
 
   export type SellerCountOrderByAggregateInput = {
     id?: SortOrder
+    sellerName?: SortOrder
     businessName?: SortOrder
     businessEmail?: SortOrder
     businessPhone?: SortOrder
@@ -10833,6 +10860,7 @@ export namespace Prisma {
 
   export type SellerMaxOrderByAggregateInput = {
     id?: SortOrder
+    sellerName?: SortOrder
     businessName?: SortOrder
     businessEmail?: SortOrder
     businessPhone?: SortOrder
@@ -10849,6 +10877,7 @@ export namespace Prisma {
 
   export type SellerMinOrderByAggregateInput = {
     id?: SortOrder
+    sellerName?: SortOrder
     businessName?: SortOrder
     businessEmail?: SortOrder
     businessPhone?: SortOrder
@@ -11968,6 +11997,7 @@ export namespace Prisma {
 
   export type SellerCreateWithoutRefreshTokensInput = {
     id?: string
+    sellerName: string
     businessName: string
     businessEmail: string
     businessPhone: string
@@ -11984,6 +12014,7 @@ export namespace Prisma {
 
   export type SellerUncheckedCreateWithoutRefreshTokensInput = {
     id?: string
+    sellerName: string
     businessName: string
     businessEmail: string
     businessPhone: string
@@ -12053,6 +12084,7 @@ export namespace Prisma {
 
   export type SellerUpdateWithoutRefreshTokensInput = {
     id?: StringFieldUpdateOperationsInput | string
+    sellerName?: StringFieldUpdateOperationsInput | string
     businessName?: StringFieldUpdateOperationsInput | string
     businessEmail?: StringFieldUpdateOperationsInput | string
     businessPhone?: StringFieldUpdateOperationsInput | string
@@ -12069,6 +12101,7 @@ export namespace Prisma {
 
   export type SellerUncheckedUpdateWithoutRefreshTokensInput = {
     id?: StringFieldUpdateOperationsInput | string
+    sellerName?: StringFieldUpdateOperationsInput | string
     businessName?: StringFieldUpdateOperationsInput | string
     businessEmail?: StringFieldUpdateOperationsInput | string
     businessPhone?: StringFieldUpdateOperationsInput | string

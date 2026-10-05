@@ -54,7 +54,7 @@ function ProductCardSkeleton() {
   );
 }
 
-export default function ProductsLoading({ count = 8 }: { count?: number }) {
+export default function ProductsLoading({ count = 10 }: { count?: number }) {
   return (
     <div className="space-y-6 p-4">
       {/* Header */}

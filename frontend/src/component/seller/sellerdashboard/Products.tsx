@@ -718,7 +718,6 @@ export default function Products() {
   const { sellerAccessToken } = useAppSelector((state)=>state.auth)
   const [loader, setLoader] = useState<boolean>(true)
   const [products, setProducts] = useState<any[]>([])
-  const [rerender, setRerender]= useState<boolean>(false)
   const router = useRouter()
 
 
@@ -732,7 +731,7 @@ export default function Products() {
       }
     }
     getProduct()
-  },[dispatch,rerender])
+  },[dispatch])
  
 
  const filtered =  products?.filter((p) => {
@@ -750,7 +749,7 @@ const handleDelete =async()=>{
         toast.success(res.message)
         setShowDelete(false)
         setProductId('')
-        setRerender((prev)=>!prev)
+        setProducts(products.filter((p)=>p.id !== productId))
       } catch (err:any) {
         toast.error(err?.message)
       }               
