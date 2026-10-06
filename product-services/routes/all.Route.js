@@ -1,7 +1,7 @@
 import express from 'express';
 import { categorybyId, createCategories, deleteCategory, getCategory } from '../controllers/category.Controller.js';
 import { createBrand, deleteBrand, getBrand, getbyId, updateBrand } from '../controllers/brand.Controller.js';
-import { createProduct, deleteProductbyId, deleteWishlist, getFullWishlist, getProdctbyId, getProduct, getProductbySlug, getProductofSeller, getWishlist, manageWhislist, serachProduct, updateProduct } from '../controllers/product.Controller.js';
+import { createProduct, deleteProductbyId, deleteWishlist, getFullWishlist, getProdctbyId, getProduct, getProductbySlug, getProductofSeller, getWishlist, manageWhislist, productByCategory, serachProduct, updateProduct } from '../controllers/product.Controller.js';
 import { createVariant, deleteVariant, getVariants, updateVariant } from '../controllers/variant.Controller.js';
 import { createAttributes, createAttributesvalue, deleteAttributes, deleteAttributesvalue, updateAttributes, updateAttributesValue } from '../controllers/attribute.Controller.js';
 import { deleteProductImage, updateProductImage, uploadProductImages, uploadVariantImages } from '../controllers/image.Controller.js';
@@ -29,6 +29,7 @@ router.get('/products/seller',authMiddleware,sellerMiddleware,getProductofSeller
 router.get('/products/:id',getProdctbyId)
 router.get('/products/slug/:slug',getProductbySlug)
 router.get('/searchproduct',serachProduct)
+router.get("/product/category",productByCategory)
 router.patch('/products/:id',authMiddleware,sellerMiddleware,updateProduct)
 router.delete('/products/:id',authMiddleware,sellerMiddleware,deleteProductbyId)
 

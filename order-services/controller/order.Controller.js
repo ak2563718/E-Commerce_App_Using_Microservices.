@@ -749,7 +749,6 @@ export const sellerDashobard = asyncHandler(async(req, res, next)=>{
       }
     })
   ])
-  console.log(orderResponse)
   const sellerInfo = sellerResponse.data?.data;
   const productInfo = productResponse.data?.data;
   const orderInfo = orderResponse;

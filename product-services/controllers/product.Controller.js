@@ -285,23 +285,33 @@ export const updateProduct = asyncHandler(async(req, res, next)=>{
 // 7. Search product through query
 export const serachProduct = asyncHandler(async(req, res, next)=>{
     const query = req.query.search;
-    console.log(query)
     const products = await prisma.product.findMany({
         where:{
             OR:[
                 {
-                    name:{
-                        contains:query,
-                        mode:'insensitive',
-                    }
+                name:{
+                    contains:query,
+                    mode:'insensitive',
+                }
                 },
                 {
                 category:{
+                    OR:[
+                    {
                     name:{
                         contains:query,
                         mode:'insensitive'
                     }
-                },
+                    },
+                    {
+                    parent:{
+                        name:{
+                            contains:query,
+                            mode:'insensitive'
+                        }
+                    }
+                    }
+            ]},
             },
             ]
         },
@@ -321,6 +331,38 @@ export const serachProduct = asyncHandler(async(req, res, next)=>{
         message:"Product found",
         success:true,
         data:products,
+    })
+})
+
+// search by categoryId
+export const productByCategory = asyncHandler(async(req, res, next)=>{
+    const { categoryId } = req.body;
+    if(!categoryId){
+        return next(new AppError("Category Id is required", 400))
+    }
+    const data = await prisma.product.findMany({
+        where:{
+           category:{
+            OR:[
+                { id:categoryId },
+                { parent:{ id: categoryId}},
+                { parent: { parent: { id: categoryId}}}
+            ]
+           }
+        },
+        include:{
+            images:true,
+            variants:true,
+            attributes:true,
+            reviews:true,
+            brand:true,
+            category:true,
+        }
+    })
+    res.status(200).json({
+        message:"Product found",
+        success:true,
+        data
     })
 })
 
